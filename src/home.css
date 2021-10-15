@@ -1,0 +1,17 @@
+#rcorners1 {
+    border-radius: 15px 50px 30px 5px;
+    background: white;
+    padding: 20px;
+    width: 300px;
+    height: 150px;
+    text-size-adjust: 110%;
+  }
+
+body {
+    background-color: lightgrey;
+    width: 300px
+}
+
+h1 {
+    text-align: center;
+}
