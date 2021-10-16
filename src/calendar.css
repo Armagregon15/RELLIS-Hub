@@ -1,16 +1,6 @@
-#rcorners1 {
-    border-radius: 15px 50px 30px 5px;
-    background: white;
-    padding: 20px;
-    width: 300px;
-    height: 120px;
-    font-size: 20px;
-    font-family: Arial, Helvetica, sans-serif;
-  }
-
 body {
     background-color: lightgrey;
-    width: 300px
+    width: 350px
 }
 
 h1 {
