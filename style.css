@@ -1,0 +1,31 @@
+/* background */ 
+.background {
+    background-color: whitesmoke;
+}
+
+/* Home page content boxes */
+.homebox {
+            padding: 5px 20px; 
+            background:  rgba(80, 0, 0, .1);
+            width: 720px;
+            text-align: center;
+            border-radius: 15px; /* adding rounded corners */
+            margin-bottom: 20px;
+        
+}
+
+/* general text */
+.body {
+    font-size: medium;
+    font-family: frutiger;
+    src: url(frutiger-bold.ttf);
+    color: black;
+}
+
+.calendar { 
+    width: 720px;
+    
+}
+
+
+
