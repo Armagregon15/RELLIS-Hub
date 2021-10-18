@@ -5,13 +5,33 @@
 
 /* Home page content boxes */
 .homebox {
+            margin: auto;
             padding: 5px 20px; 
             background:  rgba(80, 0, 0, .1);
-            width: 720px;
+            width: 300px;
             text-align: center;
             border-radius: 15px; /* adding rounded corners */
             margin-bottom: 20px;
-        
+            font-size: medium;
+            font-family: frutiger;
+            src: url(frutiger-bold.ttf);
+            color: black;
+}
+
+.homeheader {
+            font-family: frutiger;
+            src: url(frutiger-bold.ttf);
+            color: white;
+}
+
+.homehigh {
+             background-color: #500000;
+}
+
+.homefooter {
+            font-family: frutiger;
+            src: url(frutiger-bold.ttf);
+            color: white;
 }
 
 /* general text */
@@ -114,5 +134,4 @@ color: white !important
 @media screen and (max-width: 290px) {
 .weekdays li, .days li {width: 12.2%;}
 }
-
 
