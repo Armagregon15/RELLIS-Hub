@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+
+  <title>The hUb @ RELLIS</title>
+
+ 
+
+</head>
+
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    footer {
+        text-align: center;
+    }
+    h1 {
+        text-align: center;
+    }
+* {box-sizing: border-box;}
+ul {list-style-type: none;}
+body {font-family: Verdana, sans-serif;
+width: 720px;
+}
+
+.month {
+  padding: 70px 25px;
+  width: 100%;
+  background: #1abc9c;
+  text-align: center;
+}
+
+.month ul {
+  margin: 0;
+  padding: 0;
+}
+
+.month ul li {
+  color: white;
+  font-size: 20px;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+}
+
+.month .prev {
+  float: left;
+  padding-top: 10px;
+}
+
+.month .next {
+  float: right;
+  padding-top: 10px;
+}
+
+.weekdays {
+  margin: 0;
+  padding: 10px 0; 
+  background-color: #ddd;
+  text-align:top;
+}
+
+.weekdays li {
+  display: inline-block;
+  width: 13.6%;
+  color: #666;
+  text-align: center;
+}
+
+.days {
+  padding: 10px 0;
+  background: #eee;
+  margin: 0;
+}
+
+.days li {
+  list-style-type: none;
+  display: inline-block;
+  width: 13.6%;
+  text-align: center;
+  margin-bottom: 5px;
+  font-size:12px;
+  color: #777;
+  height: 25px;
+}
+
+.days li .active {
+  padding: 5px;
+  background: #1abc9c;
+  color: white !important
+}
+
+/* Add media queries for smaller screens */
+@media screen and (max-width:720px) {
+  .weekdays li, .days li {width: 13.1%;}
+}
+
+@media screen and (max-width: 420px) {
+  .weekdays li, .days li {width: 12.5%;}
+  .days li .active {padding: 2px;}
+}
+
+@media screen and (max-width: 290px) {
+  .weekdays li, .days li {width: 12.2%;}
+}
+</style>
+</head>
+<body>
+
+<h1>Calendar</h1>
+
+<div class="month">      
+  <ul>
+    <li class="prev">&#10094;</li>
+    <li class="next">&#10095;</li>
+    <li>
+      October<br>
+      <span style="font-size:18px">2021</span>
+    </li>
+  </ul>
+</div>
+
+<ul class="weekdays">
+  <li>Mo</li>
+  <li>Tu</li>
+  <li>We</li>
+  <li>Th</li>
+  <li>Fr</li>
+  <li>Sa</li>
+  <li>Su</li>
+</ul>
+
+<ul class="days">  
+  <li>1<br></li>
+  <li>2<br></li>
+  <li>3<br></li>
+  <li>4<br></li>
+  <li>5<br></li>
+  <li>6<br></li>
+  <li>7<br></li>
+  <li></li><li></li><li></li><li></li><li></li><li></li><li></li>
+  <li>8<br></li>
+  <li>9<br></li>
+  <li><span class="active">10</span><br></li>
+  <li>11<br></li>
+  <li>12<br></li>
+  <li>13<br>  </li>
+  <li>14<br></li>
+  <li></li><li></li><li></li><li></li><li></li><li>Game Night</li><li></li>
+  <li>15<br></li>
+  <li>16<br>  </li>
+  <li>17<br></li>
+  <li>18<br></li>
+  <li>19<br></li>
+  <li>20<br></li>
+  <li>21<br></li>
+  <li></li><li>  Register</li><li></li><li></li><li></li><li></li><li></li>
+  <li>22<br></li>
+  <li>23<br></li>
+  <li>24<br></li>
+  <li>25<br></li>
+  <li>26<br></li>
+  <li><br>27</li>
+  <li>28<br></li>
+  <li></li><li></li><li></li><li></li><li></li><li></li><li>   Free Lunch</li>
+  <li><br>29</li>
+  <li>30<br></li>
+  <li>31<br></li>
+  <li></li><li></li><li></li><li></li><li></li><li></li>
+</ul>
+
+</body>
+<footer>
+    Settings | Home | Calendar
+    </footer>
+</html>
