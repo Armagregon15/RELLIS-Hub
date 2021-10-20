@@ -26,6 +26,9 @@
 
 .homehigh {
              background-color: #500000;
+             width: 400px;
+             margin: auto;
+             margin-bottom: 10px;
 }
 
 .homefooter {
@@ -33,6 +36,7 @@
             src: url(frutiger-bold.ttf);
             color: white;
 }
+
 
 /* general text */
 .body {
