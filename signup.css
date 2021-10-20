@@ -56,3 +56,7 @@ input[type=text], input[type=password]
         background-color: grey; 
         border-radius: 50px 50px 50px 50px; 
     }   
+    a
+    {
+        display: block;
+    }
