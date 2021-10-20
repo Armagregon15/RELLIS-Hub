@@ -42,6 +42,23 @@
     color: black;
 }
 
+a {
+    color: white;
+}
+
+body {
+    font-size: medium;
+    font-family: frutiger;
+    src: url(frutiger-bold.ttf);
+    color: black;
+}
+
+button:hover 
+    {   
+        opacity: 0.7;   
+    }   
+
+
 /* Calendar */
 footer {
     text-align: center;
@@ -135,3 +152,69 @@ color: white !important
 .weekdays li, .days li {width: 12.2%;}
 }
 
+/* Setup and Signup page CSS */
+
+
+.button 
+    {   
+        background-color: #500000;   
+        width: 100%;  
+        color: whitesmoke;   
+        padding: 15px;   
+        margin: 10px 0px;   
+        border: none;   
+        cursor: pointer;   
+    }   
+form 
+{   
+    border: none;   
+}
+
+input[type=text], input[type=password] 
+    {   
+        width: 100%;   
+        margin: 8px 0;  
+        padding: 12px 20px;   
+        display: inline-block;   
+        border: 2px solid white;   
+        box-sizing: border-box;   
+    }  
+
+.cancelbtn 
+    {   
+        width: auto;   
+        padding: 10px 18px;  
+        margin: 10px 5px;  
+    }   
+
+.setupContainer {
+        margin: auto;
+        padding: 5px 20px; 
+        background:  rgba(80, 0, 0, .1);
+        width: 400px;
+        text-align: left;
+        border-radius: 10px; /* adding rounded corners */
+        font-size: medium;
+        font-family: frutiger;
+        src: url(frutiger-bold.ttf);
+        color: black;
+}
+.header1 {
+    font-family: frutiger;
+    src: url(frutiger-bold.ttf);
+}
+.setupHead {
+    font-family: frutiger;
+    src: url(frutiger-bold.ttf);
+    color: white;
+    text-align: center;
+}
+
+.setupHeadHigh {
+     background-color: #500000;
+     border-radius: 15px; /* adding rounded corners */
+}
+
+.centerButton {
+    text-align: center;
+}
