@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "/Users/nick/Documents/SAD Project/flutter_application_1/build/app/intermediates/incremental/mergeDebugResources/merged.dir/values-night-v8/values-night-v8.xml",
+            "outputFile": "/Users/nick/Documents/hUbProject/RELLIS-Hub/flutter_application_1/build/app/intermediates/incremental/mergeDebugResources/merged.dir/values-night-v8/values-night-v8.xml",
             "map": [
                 {
-                    "source": "/Users/nick/Documents/SAD Project/flutter_application_1/android/app/src/main/res/values-night/styles.xml",
+                    "source": "/Users/nick/Documents/hUbProject/RELLIS-Hub/flutter_application_1/android/app/src/main/res/values-night/styles.xml",
                     "from": {
                         "startLines": "3,14",
                         "startColumns": "4,4",
