@@ -70,7 +70,6 @@ class SetUpState extends State<SetUp> {
     answers.add(value);
   }
 
-
   void _answerQuestion() {
     //var aBool = true;
     //aBool = false;
