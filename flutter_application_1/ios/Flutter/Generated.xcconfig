@@ -1,14 +1,13 @@
 // This is a generated file; do not edit or check into version control.
-FLUTTER_ROOT=/Users/nick/Documents/flutter
-FLUTTER_APPLICATION_PATH=/Users/nick/Documents/SAD Project/flutter_application_1
+FLUTTER_ROOT=C:\Users\grego\FLUTTER\flutter_windows_2.8.1-stable\flutter
+FLUTTER_APPLICATION_PATH=C:\Users\grego\OneDrive\Documents\GitHub\Project\RELLIS-Hub\flutter_application_1
 COCOAPODS_PARALLEL_CODE_SIGN=true
-FLUTTER_TARGET=/Users/nick/Documents/SAD Project/flutter_application_1/lib/main.dart
+FLUTTER_TARGET=lib\main.dart
 FLUTTER_BUILD_DIR=build
 FLUTTER_BUILD_NAME=1.0.0
 FLUTTER_BUILD_NUMBER=1
-EXCLUDED_ARCHS[sdk=iphonesimulator*]=i386
-DART_DEFINES=Zmx1dHRlci5pbnNwZWN0b3Iuc3RydWN0dXJlZEVycm9ycz10cnVl,RkxVVFRFUl9XRUJfQVVUT19ERVRFQ1Q9dHJ1ZQ==
+EXCLUDED_ARCHS[sdk=iphonesimulator*]=i386 arm64
 DART_OBFUSCATION=false
-TRACK_WIDGET_CREATION=true
+TRACK_WIDGET_CREATION=false
 TREE_SHAKE_ICONS=false
-PACKAGE_CONFIG=/Users/nick/Documents/SAD Project/flutter_application_1/.dart_tool/package_config.json
+PACKAGE_CONFIG=.packages
