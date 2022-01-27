@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, file_names
 
 import 'package:flutter/material.dart';
+import 'calendar.dart';
 
 // ignore: use_key_in_widget_constructors
 class HomePage extends StatefulWidget {
@@ -25,7 +26,8 @@ class _HomePageState extends State<HomePage> {
           // ignore: deprecated_member_use
           child: FlatButton(
             onPressed: () {
-              Navigator.pop(context);
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => Calendar()));
             },
             child: Text(
               'Welcome',
