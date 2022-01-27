@@ -13,14 +13,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Provider(
-      create: (_) => AppDatabase(),
+        create: (_) => AppDatabase(),
         child: MaterialApp(
-      title: 'The Hub @ RELLIS',
-      theme: ThemeData(
-        primaryColor: const Color(0xFF500000),
-      ),
-      home: LoginHub(),
-    )
-    );
+          title: 'The Hub @ RELLIS',
+          theme: ThemeData(
+            primaryColor: const Color(0xFF500000),
+          ),
+          home: LoginHub(),
+        ));
   }
 }
