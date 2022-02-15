@@ -31,6 +31,22 @@ dependencies:
   flutter:
     sdk: flutter
   sqflite:
+  firebase_core: "^0.7.0"
+  # Newly reworked plugins covered by this migration guide:
+  firebase_auth: "^0.20.1"
+  firebase_crashlytics: "^0.4.0"
+  cloud_firestore: "^0.16.0"
+  cloud_functions: "^0.9.0"
+  firebase_storage: "^7.0.0"
+  firebase_messaging: "^8.0.0-dev.15"
+  firebase_remote_config: "^0.8.0-dev.0"
+  # Updated to work with new core only plugins (no new changes):
+  firebase_admob: "^"
+  firebase_analytics: "^7.0.1"
+  firebase_database: "^6.0.0"
+  firebase_dynamic_links: "^0.7.0"
+  firebase_in_app_messaging: "^0.4.0+1"
+  firebase_performance: "^0.6.0+1"
   moor_flutter: ^4.0.0
   path:
   #this is the stream feed library from https://pub.dev/packages/stream_feed/install
