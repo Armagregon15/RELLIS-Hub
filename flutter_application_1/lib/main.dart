@@ -23,3 +23,5 @@ class MyApp extends StatelessWidget {
         ));
   }
 }
+
+// val db = Firebase.firestore
