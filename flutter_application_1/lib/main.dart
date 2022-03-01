@@ -3,7 +3,9 @@ import 'package:flutter_application_1/setUp.dart';
 import 'package:provider/provider.dart';
 import './loginPage.dart';
 import './welcome.dart';
-import 'package:cloud_firestore/cloud_firestore.dart'
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+import 'data/moor_database.dart';
 
 void main() => runApp(MyApp());
 
