@@ -286,19 +286,53 @@ class _AnswerState extends State<Answer> {
 class Page1 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: const Color(0xffC4DFCB),
-      child: Center(
-        child: Text(
-          "Page Number 1",
-          style: TextStyle(
-            color: Colors.green[900],
-            fontSize: 45,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
+    return MaterialApp(
+        home: Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        backgroundColor: const Color(0xFF500000),
+        title: const Text('The Hub @ Rellis'),
       ),
-    );
+      body: _questionIndex <
+              _questions.length //checks to see if all questions are answered
+          ? Quiz(
+              answerQuestion: _answerQuestion,
+              questionIndex: _questionIndex,
+              questions: _questions,
+            )
+          : MainPage(answers),
+      bottomNavigationBar: BottomNavigationBar(
+        selectedFontSize: 15,
+        selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
+        selectedIconTheme: IconThemeData(
+          color: Colors.white,
+          size: 35,
+        ),
+        unselectedItemColor: Colors.white,
+        selectedItemColor: Colors.white,
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        backgroundColor: const Color(0xFF500000),
+        elevation: 90,
+        type: BottomNavigationBarType.fixed,
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.arrow_back,
+              color: Colors.white,
+            ),
+            label: 'Return',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.arrow_forward,
+              color: Colors.white,
+            ),
+            label: 'Next',
+          ),
+        ],
+      ),
+    ));
   }
 }
 
