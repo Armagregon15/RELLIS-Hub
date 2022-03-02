@@ -27,27 +27,48 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  table_calendar: ^3.0.3
   flutter:
     sdk: flutter
-  sqflite:
-  moor_flutter: ^4.0.0
-  path:
-  #this is the stream feed library from https://pub.dev/packages/stream_feed/install
-  stream_feed: ^0.4.0
-  english_words: ^4.0.0
+  cloud_firestore: ^3.1.4
+  firebase_auth: ^3.3.3
+  firebase_core: ^1.10.5
+  # sqflite:
+  # firebase_core: "^0.7.0"
+  # # Newly reworked plugins covered by this migration guide:
+  # firebase_auth: "^0.20.1"
+  # firebase_crashlytics: "^0.4.0"
+  # cloud_firestore: "^0.16.0"
+  # cloud_functions: "^0.9.0"
+  # firebase_storage: "^7.0.0"
+  # firebase_messaging: "^8.0.0-dev.15"
+  # firebase_remote_config: "^0.8.0-dev.0"
+  # # # Updated to work with new core only plugins (no new changes):
+  # # firebase_admob: "^"
+  # firebase_analytics: "^7.0.1"
+  # firebase_database: "^6.0.0"
+  # firebase_dynamic_links: "^0.7.0"
+  # # firebase_in_app_messaging: "^0.4.0+1"
+  # firebase_performance: "^0.6.0+1"
+  # moor_flutter: ^4.0.0
+  # path:
+  # #this is the stream feed library from https://pub.dev/packages/stream_feed/install
+  # stream_feed: ^0.4.0
+  # english_words: ^4.0.0
 
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   provider: ^6.0.1
-  firebase_core: ^1.11.0
+  # firebase_core: ^1.11.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  moor_generator: ^4.6.0+1
+  # moor_generator: ^4.6.0+1
   build_runner: ^2.1.5
+  
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
