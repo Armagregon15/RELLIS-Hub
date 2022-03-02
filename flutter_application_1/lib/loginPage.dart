@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/setUp.dart';
 //import 'HomePage.dart';
 import 'setUp.dart';
+import 'calendar.dart';
 
 /*
 class LoginPage extends StatelessWidget {
@@ -16,6 +17,7 @@ class LoginPage extends StatelessWidget {
   }
 }
 */
+
 class LoginHub extends StatefulWidget {
   @override
   _LoginHubState createState() => _LoginHubState();
@@ -90,7 +92,7 @@ class _LoginHubState extends State<LoginHub> {
                   child: ElevatedButton(
                     onPressed: () {
                       Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => SetUp()));
+                          MaterialPageRoute(builder: (context) => Page1()));
                     },
                     child: Text('Login'),
                     style: ElevatedButton.styleFrom(

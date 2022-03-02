@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 /*import 'package:flutter_application_1/answer.dart';
 import 'dart:async';
-import 'package:path/path.dart';
+1mport 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 */
@@ -68,16 +68,19 @@ class SetUpState extends State<SetUp> {
   int _selectedIndex = 0;
   //var saveAnswers = [];
 
+  // Indexing Bottom Nav //
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
   }
 
+  // Saving Selection //
   static void saveAnswer(int value) {
     answers.add(value);
   }
 
+  // IDK what this is //
   void _answerQuestion() {
     //var aBool = true;
     //aBool = false;
@@ -94,6 +97,7 @@ class SetUpState extends State<SetUp> {
     }
   }
 
+  // Creation of Pages //
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -146,6 +150,7 @@ class SetUpState extends State<SetUp> {
   }
 }
 
+// Pulling of Informtion from List
 class Question extends StatelessWidget {
   final String questionText;
 
@@ -167,7 +172,7 @@ class Question extends StatelessWidget {
   }
 }
 
-class Quiz extends StatelessWidget {
+class Quiz extends StatefulWidget {
   final List<Map<String, Object>> questions;
   final int questionIndex;
   final VoidCallback answerQuestion;
@@ -179,22 +184,65 @@ class Quiz extends StatelessWidget {
   });
 
   @override
+  State<Quiz> createState() => _QuizState();
+}
+
+// IDK what this is //
+class _QuizState extends State<Quiz> {
+  @override
   Widget build(BuildContext context) {
     return Column(
       // ignore: prefer_const_literals_to_create_immutables
       children: [
         Question(
-          questions[questionIndex]['questionText']?.toString() ?? '',
+          widget.questions[widget.questionIndex]['questionText']?.toString() ??
+              '',
         ),
-        ...(questions[questionIndex]['answers'] as List<Map<String, Object>>)
+        ...(widget.questions[widget.questionIndex]['answers']
+                as List<Map<String, Object>>)
             .map((answer) {
-          return Answer(answerQuestion, answer['text'].toString(),
+          return Answer(widget.answerQuestion, answer['text'].toString(),
               answer['value'].toString());
         }).toList()
       ],
     );
   }
 }
+
+/* class Quiz2 extends StatefulWidget {
+  final List<Map<String, Object>> questions;
+  final int questionIndex;
+  final VoidCallback answerQuestion;
+
+  Quiz2({
+    required this.questions,
+    required this.answerQuestion,
+    required this.questionIndex,
+  });
+
+  @override
+  State<Quiz2> createState() => _QuizState2();
+}
+
+class _QuizState2 extends State<Quiz2> {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      // ignore: prefer_const_literals_to_create_immutables
+      children: [
+        Question(
+          widget.questions[widget.questionIndex]['questionText']?.toString() ?? '',
+        ),
+        ...(widget.questions[widget.questionIndex]['answers'] as List<Map<String, Object>>)
+            .map((answer) {
+          return Answer(widget.answerQuestion, answer['text'].toString(),
+              answer['value'].toString());
+        }).toList()
+      ],
+    );
+  }
+}
+*/
 
 class Answer extends StatefulWidget {
   final VoidCallback selectHandler;
@@ -207,6 +255,7 @@ class Answer extends StatefulWidget {
   State<Answer> createState() => _AnswerState();
 }
 
+// Creating Objects //
 class _AnswerState extends State<Answer> {
   bool click = true;
 
@@ -229,6 +278,46 @@ class _AnswerState extends State<Answer> {
           print(int.parse(get()));
         },
         secondary: const Icon(Icons.dangerous),
+      ),
+    );
+  }
+}
+
+class Page1 extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: const Color(0xffC4DFCB),
+      child: Center(
+        child: Text(
+          "Page Number 1",
+          style: TextStyle(
+            color: Colors.green[900],
+            fontSize: 45,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class Page2 extends StatelessWidget {
+  const Page2({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: const Color(0xffC4DFCB),
+      child: Center(
+        child: Text(
+          "Page Number 2",
+          style: TextStyle(
+            color: Colors.green[900],
+            fontSize: 45,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
       ),
     );
   }
