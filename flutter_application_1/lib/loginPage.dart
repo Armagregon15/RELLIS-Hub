@@ -91,7 +91,7 @@ class _LoginHubState extends State<LoginHub> {
                   child: ElevatedButton(
                     onPressed: () {
                       Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => SetUp()));
+                          MaterialPageRoute(builder: (context) => Page1()));
                     },
                     child: Text('Login'),
                     style: ElevatedButton.styleFrom(
