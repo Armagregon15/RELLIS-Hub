@@ -1,10 +1,16 @@
 // ignore: file_names
 // ignore_for_file: prefer_const_constructors, avoid_print, file_names
 import 'package:flutter/material.dart';
+/*import 'package:flutter_application_1/answer.dart';
+import 'dart:async';
+import 'package:path/path.dart';
+
+import 'package:sqflite/sqflite.dart';
+
+*/
 import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import './result.dart';
 
 // ignore: use_key_in_widget_constructors
@@ -230,96 +236,41 @@ class _AnswerState extends State<Answer> {
   }
 }
 
-
- class Page1 extends StatefulWidget {
+class Page1 extends StatelessWidget {
   @override
-  State<Page1> createState() => _Page1State();
-}
-
-class _Page1State extends State<Page1> {
-  @override
-
-   int _selectedIndex = 0;
-  //var saveAnswers = [];
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
-  bool click = true;
-  bool boolCheck = false;
-  bool newValue = false;
-
-  Widget _buildListItem(BuildContext context, DocumentSnapshot document) {
-    return Card(
-      child: CheckboxListTile(
-        title: Text(document['GroupName'], style: TextStyle(fontSize: 18.0)),
-        value: boolCheck,
-        onChanged: (bool? newValue) {
-          setState(() {
-            boolCheck = !boolCheck;
-          });
-         // SetUpState.saveAnswer(int.parse(get()));
-         // print(int.parse(get()));
-        },
-        secondary: const Icon(Icons.dangerous),
+  Widget build(BuildContext context) {
+    return Container(
+      color: const Color(0xffC4DFCB),
+      child: Center(
+        child: Text(
+          "Page Number 1",
+          style: TextStyle(
+            color: Colors.green[900],
+            fontSize: 45,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
       ),
     );
   }
+}
+
+class Page2 extends StatelessWidget {
+  const Page2({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        backgroundColor: const Color(0xFF500000),
-        title: const Text('The Hub @ Rellis'),
-      ),
-      body: StreamBuilder (
-        stream: FirebaseFirestore.instance.collection('Groups').snapshots(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) return const Text('Loading...');
-      ListView.builder(
-          itemExtent: 80.0,
-          itemCount: snapshot.data.documents.length,
-          itemBuilder: (context, index) =>
-              _buildListItem(context, snapshot.data.documents[index])
-      ),
-     }
-    ),
-
-      bottomNavigationBar: BottomNavigationBar(
-        selectedFontSize: 15,
-        selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
-        selectedIconTheme: IconThemeData(
-          color: Colors.white,
-          size: 35,
+    return Container(
+      color: const Color(0xffC4DFCB),
+      child: Center(
+        child: Text(
+          "Page Number 2",
+          style: TextStyle(
+            color: Colors.green[900],
+            fontSize: 45,
+            fontWeight: FontWeight.w500,
+          ),
         ),
-        unselectedItemColor: Colors.white,
-        selectedItemColor: Colors.white,
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        backgroundColor: const Color(0xFF500000),
-        elevation: 90,
-        type: BottomNavigationBarType.fixed,
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.arrow_back,
-              color: Colors.white,
-            ),
-            label: 'Return',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.arrow_forward,
-              color: Colors.white,
-            ),
-            label: 'Next',
-          ),
-        ],
       ),
     );
   }
