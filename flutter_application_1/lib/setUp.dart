@@ -7,8 +7,6 @@ import 'dart:async';
 import 'package:sqflite/sqflite.dart';
 
 */
-import 'package:flutter/painting.dart';
-import 'package:flutter/widgets.dart';
 import './result.dart';
 
 // ignore: use_key_in_widget_constructors
