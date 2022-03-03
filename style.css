@@ -1,0 +1,226 @@
+/* background */ 
+.background {
+    background-color: whitesmoke;
+}
+
+/* Home page content boxes */
+.homebox {
+            margin: auto;
+            padding: 5px 20px; 
+            background:  rgba(80, 0, 0, .1);
+            width: 300px;
+            text-align: center;
+            border-radius: 15px; /* adding rounded corners */
+            margin-bottom: 20px;
+            font-size: medium;
+            font-family: frutiger;
+            src: url(frutiger-bold.ttf);
+            color: black;
+}
+
+.homeheader {
+            font-family: frutiger;
+            src: url(frutiger-bold.ttf);
+            color: white;
+}
+
+.homehigh {
+             background-color: #500000;
+             width: 400px;
+             margin: auto;
+             margin-bottom: 10px;
+}
+
+.homefooter {
+            font-family: frutiger;
+            src: url(frutiger-bold.ttf);
+            color: white;
+}
+
+
+/* general text */
+.body {
+    font-size: medium;
+    font-family: frutiger;
+    src: url(frutiger-bold.ttf);
+    color: black;
+}
+
+a {
+    color: white;
+    display: block;
+
+}
+
+body {
+    font-size: medium;
+    font-family: frutiger;
+    src: url(frutiger-bold.ttf);
+    color: black;
+}
+
+button:hover 
+    {   
+        opacity: 0.7;   
+    }   
+
+
+/* Calendar */
+footer {
+    text-align: center;
+}
+h1 {
+    text-align: center;
+}
+* {box-sizing: border-box;}
+ul {list-style-type: none;}
+body {font-family: Verdana, sans-serif;
+width: 720px;
+}
+
+.month {
+padding: 70px 25px;
+width: 100%;
+background: #500000;
+text-align: center;
+}
+
+.month ul {
+margin: 0;
+padding: 0;
+}
+
+.month ul li {
+color: white;
+font-size: 20px;
+text-transform: uppercase;
+letter-spacing: 3px;
+}
+
+.month .prev {
+float: left;
+padding-top: 10px;
+}
+
+.month .next {
+float: right;
+padding-top: 10px;
+}
+
+.weekdays {
+margin: 0;
+padding: 10px 0; 
+background-color: #ddd;
+text-align:top;
+}
+
+.weekdays li {
+display: inline-block;
+width: 13.6%;
+color: #666;
+text-align: center;
+}
+
+.days {
+padding: 10px 0;
+background: #eee;
+margin: 0;
+}
+
+.days li {
+list-style-type: none;
+display: inline-block;
+width: 13.6%;
+text-align: center;
+margin-bottom: 5px;
+font-size:12px;
+color: #777;
+height: 25px;
+}
+
+.days li .active {
+padding: 5px;
+background: #500000;
+color: white !important
+}
+
+/* Add media queries for smaller screens */
+@media screen and (max-width:720px) {
+.weekdays li, .days li {width: 13.1%;}
+}
+
+@media screen and (max-width: 420px) {
+.weekdays li, .days li {width: 12.5%;}
+.days li .active {padding: 2px;}
+}
+
+@media screen and (max-width: 290px) {
+.weekdays li, .days li {width: 12.2%;}
+}
+
+/* Setup and Signup page CSS */
+
+
+.button 
+    {   
+        background-color: #500000;   
+        width: 100%;  
+        color: whitesmoke;   
+        padding: 15px;   
+        margin: 10px 0px;   
+        border: none;   
+        cursor: pointer;   
+    }   
+form 
+{   
+    border: none;   
+}
+
+input[type=text], input[type=password] 
+    {   
+        width: 100%;   
+        margin: 8px 0;  
+        padding: 12px 20px;   
+        display: inline-block;   
+        border: 2px solid white;   
+        box-sizing: border-box;   
+    }  
+
+.cancelbtn 
+    {   
+        width: auto;   
+        padding: 10px 18px;  
+        margin: 10px 5px;  
+    }   
+
+.setupContainer {
+        margin: auto;
+        padding: 5px 20px; 
+        background:  rgba(80, 0, 0, .1);
+        width: 400px;
+        text-align: left;
+        border-radius: 10px; /* adding rounded corners */
+        font-size: medium;
+        font-family: frutiger;
+        src: url(frutiger-bold.ttf);
+        color: black;
+}
+.header1 {
+    font-family: frutiger;
+    src: url(frutiger-bold.ttf);
+}
+.setupHead {
+    font-family: frutiger;
+    src: url(frutiger-bold.ttf);
+    color: white;
+    text-align: center;
+}
+
+.setupHeadHigh {
+     background-color: #500000;
+     border-radius: 15px; /* adding rounded corners */
+}
+
+.centerButton {
+    text-align: center;
+}
