@@ -260,15 +260,55 @@ class Page2 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: const Color(0xffC4DFCB),
-      child: Center(
-        child: Text(
-          "Page Number 2",
-          style: TextStyle(
-            color: Colors.green[900],
-            fontSize: 45,
-            fontWeight: FontWeight.w500,
+    return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        backgroundColor: const Color(0xFF500000),
+        title: const Text('The Hub @ Rellis'),
+      ),
+      body: StreamBuilder (
+        stream: FirebaseFirestore.instance.collection('Groups').snapshots(),
+        builder: (context, AsyncSnapshot snapshot) {
+          if (!snapshot.hasData) return const Text('Loading...');
+          // return const Text('No Events');
+          return ListView.builder(
+            itemExtent: 80.0,
+            itemCount: snapshot.data.documents.length,
+            itemBuilder: (context, index) =>
+              _buildListItem(context, snapshot.data.documents[index])
+      );
+     }
+    ),
+
+      bottomNavigationBar: BottomNavigationBar(
+        selectedFontSize: 15,
+        selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
+        selectedIconTheme: IconThemeData(
+          color: Colors.white,
+          size: 35,
+        ),
+        unselectedItemColor: Colors.white,
+        selectedItemColor: Colors.white,
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        backgroundColor: const Color(0xFF500000),
+        elevation: 90,
+        type: BottomNavigationBarType.fixed,
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.arrow_back,
+              color: Colors.white,
+            ),
+            label: 'Return',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.arrow_forward,
+              color: Colors.white,
+            ),
+            label: 'Next',
+
           ),
         ),
       ),
