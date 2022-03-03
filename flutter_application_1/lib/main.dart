@@ -5,8 +5,6 @@ import './loginPage.dart';
 import './welcome.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import 'data/moor_database.dart';
-
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
@@ -14,15 +12,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Provider(
-        create: (_) => AppDatabase(),
-        child: MaterialApp(
-          title: 'The Hub @ RELLIS',
-          theme: ThemeData(
-            primaryColor: const Color(0xFF500000),
-          ),
-          home: LoginHub(),
-        ));
+    return MaterialApp(
+      title: 'The Hub @ RELLIS',
+      theme: ThemeData(
+        primaryColor: const Color(0xFF500000),
+      ),
+      home: LoginHub(),
+    );
   }
 }
 
