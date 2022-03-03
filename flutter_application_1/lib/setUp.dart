@@ -279,14 +279,15 @@ class _Page1State extends State<Page1> {
       ),
       body: StreamBuilder (
         stream: FirebaseFirestore.instance.collection('Groups').snapshots(),
-        builder: (context, snapshot) {
+        builder: (context, AsyncSnapshot snapshot) {
           if (!snapshot.hasData) return const Text('Loading...');
-      ListView.builder(
-          itemExtent: 80.0,
-          itemCount: snapshot.data.documents.length,
-          itemBuilder: (context, index) =>
+          // return const Text('No Events');
+          return ListView.builder(
+            itemExtent: 80.0,
+            itemCount: snapshot.data.documents.length,
+            itemBuilder: (context, index) =>
               _buildListItem(context, snapshot.data.documents[index])
-      ),
+      );
      }
     ),
 
