@@ -5,9 +5,7 @@ import 'calendar.dart';
 class MainPage extends StatefulWidget {
   @override
   HomePage createState() => HomePage();
-  MainPage(List<int> answers, {Key? key}) : super(key: key) {
-    List<int> choices = answers;
-  }
+  MainPage({Key? key}) : super(key: key) {}
 }
 
 class HomePage extends State<MainPage> {
