@@ -6,6 +6,8 @@ import 'package:flutter/widgets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import './result.dart';
+import 'firebase_options.dart';
+import './HomePage.dart';
 
 // ignore: use_key_in_widget_constructors
 class SetUp extends StatefulWidget {
@@ -106,7 +108,7 @@ class SetUpState extends State<SetUp> {
               questionIndex: _questionIndex,
               questions: _questions,
             )
-          : MainPage(answers),
+          : MainPage(/*answers*/),
       bottomNavigationBar: BottomNavigationBar(
         selectedFontSize: 15,
         selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
@@ -238,7 +240,6 @@ class Page1 extends StatefulWidget {
 class _Page1State extends State<Page1> {
   @override
   int _selectedIndex = 0;
-  //var saveAnswers = [];
 
   void _onItemTapped(int index) {
     setState(() {
@@ -246,11 +247,20 @@ class _Page1State extends State<Page1> {
     });
   }
 
+  // List of Widgets index //
+  static const List<Widget> _widgetOptions = <Widget>[
+    TestPage1(),
+    TestPage2(),
+    TestPage3(),
+  ];
+
   bool click = true;
   bool boolCheck = false;
   bool newValue = false;
 
-  Widget _buildListItem(BuildContext context, DocumentSnapshot document) {
+  // Unused //
+
+  /* Widget _buildListItem(BuildContext context, DocumentSnapshot document) {
     return Card(
       child: CheckboxListTile(
         title: Text(document['GroupName'], style: TextStyle(fontSize: 18.0)),
@@ -266,6 +276,7 @@ class _Page1State extends State<Page1> {
       ),
     );
   }
+  */
 
   @override
   Widget build(BuildContext context) {
@@ -275,24 +286,9 @@ class _Page1State extends State<Page1> {
         backgroundColor: const Color(0xFF500000),
         title: const Text('The Hub @ Rellis'),
       ),
-      body: FutureBuilder<QuerySnapshot>(
-          future: FirebaseFirestore.instance.collection('Events').get(),
-          builder: (context, AsyncSnapshot snapshot) {
-            if (!snapshot.hasData) return const Text('Loading...');
-            final List<DocumentSnapshot> documents = snapshot.data.docs;
-            return ListView(
-                children: documents
-                    .map((doc) => Card(
-                          child: ListTile(
-                            title: Text(doc['GroupName']),
-                          ),
-                        ))
-                    .toList());
-            // itemExtent: 80.0,
-            // itemCount: snapshot.data.docs.length,
-            // itemBuilder: (context, index) =>
-            //     _buildListItem(context, snapshot.data.docs[index])
-          }),
+      body: Center(
+        child: _widgetOptions.elementAt(_selectedIndex),
+      ),
       bottomNavigationBar: BottomNavigationBar(
         selectedFontSize: 15,
         selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
@@ -302,25 +298,116 @@ class _Page1State extends State<Page1> {
         ),
         unselectedItemColor: Colors.white,
         selectedItemColor: Colors.white,
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
         backgroundColor: const Color(0xFF500000),
         elevation: 90,
         type: BottomNavigationBarType.fixed,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(
-              Icons.arrow_back,
+              Icons.school,
               color: Colors.white,
             ),
-            label: 'Return',
+            label: 'Schools',
           ),
           BottomNavigationBarItem(
             icon: Icon(
-              Icons.arrow_forward,
+              Icons.person,
               color: Colors.white,
             ),
-            label: 'Next',
+            label: 'Clubs',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.favorite,
+              color: Colors.white,
+            ),
+            label: 'Interests',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+      ),
+    );
+  }
+}
+
+class TestPage1 extends StatelessWidget {
+  const TestPage1({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        body: FutureBuilder<QuerySnapshot>(
+            future: FirebaseFirestore.instance.collection('Events').get(),
+            builder: (context, AsyncSnapshot snapshot) {
+              if (!snapshot.hasData) return const Text('Loading...');
+              final List<DocumentSnapshot> documents = snapshot.data.docs;
+              return ListView(
+                  children: documents
+                      .map((doc) => Card(
+                            child: ListTile(
+                              title: Text(doc['GroupName']),
+                            ),
+                          ))
+                      .toList());
+              // itemExtent: 80.0,
+              // itemCount: snapshot.data.docs.length,
+              // itemBuilder: (context, index) =>
+              //     _buildListItem(context, snapshot.data.docs[index])
+            }));
+  }
+}
+
+class TestPage2 extends StatelessWidget {
+  const TestPage2({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Color.fromARGB(255, 221, 165, 139),
+      child: Center(
+        child: Text(
+          "Clubs",
+          style: TextStyle(
+            color: Color.fromARGB(255, 253, 253, 253),
+            fontSize: 45,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class TestPage3 extends StatelessWidget {
+  const TestPage3({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Color.fromARGB(255, 162, 132, 230),
+      child: Column(
+        children: [
+          Center(
+            child: Text(
+              "Interests",
+              style: TextStyle(
+                color: Color.fromARGB(255, 253, 253, 253),
+                fontSize: 45,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+          IconButton(
+            icon: Icon(
+              Icons.circle,
+              color: Colors.black,
+            ),
+            tooltip: 'Submit',
+            onPressed: () {
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => MainPage()));
+            },
           ),
         ],
       ),
