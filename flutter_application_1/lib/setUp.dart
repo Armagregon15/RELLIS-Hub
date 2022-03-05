@@ -259,7 +259,7 @@ class _Page1State extends State<Page1> {
 
   // Unused //
 
-  /* Widget _buildListItem(BuildContext context, DocumentSnapshot document) {
+  /*Widget _buildListItem(BuildContext context, DocumentSnapshot document) {
     return Card(
       child: CheckboxListTile(
         title: Text(document['GroupName'], style: TextStyle(fontSize: 18.0)),
@@ -330,33 +330,55 @@ class _Page1State extends State<Page1> {
   }
 }
 
-class TestPage1 extends StatelessWidget {
+// Schools //
+class TestPage1 extends StatefulWidget {
   const TestPage1({Key? key}) : super(key: key);
 
   @override
+  State<TestPage1> createState() => _TestPage1State();
+}
+
+class _TestPage1State extends State<TestPage1> {
+  int _selectedIndex = 0;
+
+  bool click = true;
+  bool boolCheck = false;
+  bool newValue = false;
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: FutureBuilder<QuerySnapshot>(
-            future: FirebaseFirestore.instance.collection('Events').get(),
-            builder: (context, AsyncSnapshot snapshot) {
-              if (!snapshot.hasData) return const Text('Loading...');
-              final List<DocumentSnapshot> documents = snapshot.data.docs;
-              return ListView(
-                  children: documents
-                      .map((doc) => Card(
-                            child: ListTile(
-                              title: Text(doc['GroupName']),
-                            ),
-                          ))
-                      .toList());
-              // itemExtent: 80.0,
-              // itemCount: snapshot.data.docs.length,
-              // itemBuilder: (context, index) =>
-              //     _buildListItem(context, snapshot.data.docs[index])
-            }));
+    return StreamBuilder<DocumentSnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('Groups')
+            .doc('{anyCard')
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return Text("Loading");
+          } else {
+            Map<String, dynamic> documentFields =
+                snapshot.data?.data() as Map<String, dynamic>;
+            return Card(
+              child: CheckboxListTile(
+                title: Text(documentFields['GroupName'],
+                    style: TextStyle(fontSize: 18.0)),
+                value: boolCheck,
+                onChanged: (bool? newValue) {
+                  setState(() {
+                    boolCheck = !boolCheck;
+                  });
+                  // SetUpState.saveAnswer(int.parse(get()));
+                  // print(int.parse(get()));
+                },
+                secondary: const Icon(Icons.dangerous),
+              ),
+            );
+          }
+        });
   }
 }
 
+// Clubs //
 class TestPage2 extends StatelessWidget {
   const TestPage2({Key? key}) : super(key: key);
 
@@ -378,6 +400,7 @@ class TestPage2 extends StatelessWidget {
   }
 }
 
+// Interests //
 class TestPage3 extends StatelessWidget {
   const TestPage3({Key? key}) : super(key: key);
 
