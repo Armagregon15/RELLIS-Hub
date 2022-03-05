@@ -1,5 +1,7 @@
 // ignore: file_names
 // ignore_for_file: prefer_const_constructors, avoid_print, file_names
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
@@ -345,36 +347,74 @@ class _TestPage1State extends State<TestPage1> {
   bool boolCheck = false;
   bool newValue = false;
 
+  Widget _buildListItem(BuildContext context, DocumentSnapshot document) {
+    return Card(
+      child: CheckboxListTile(
+        title: Text(document['GroupName'], style: TextStyle(fontSize: 18.0)),
+        value: boolCheck,
+        onChanged: (bool? newValue) {
+          setState(() {
+            boolCheck = !boolCheck;
+          });
+        },
+        secondary: const Icon(Icons.dangerous),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<DocumentSnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection('Groups')
-            .doc('za9ndxLTLGVx449SKnRT')
-            .snapshots(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return Text("Loading");
-          } else {
-            Map<String, dynamic> documentFields =
-                snapshot.data?.data() as Map<String, dynamic>;
-            return Card(
-              child: CheckboxListTile(
-                title: Text(documentFields['GroupName'],
-                    style: TextStyle(fontSize: 18.0)),
-                value: boolCheck,
-                onChanged: (bool? newValue) {
-                  setState(() {
-                    boolCheck = !boolCheck;
-                  });
-                },
-                secondary: const Icon(Icons.dangerous),
-              ),
-            );
-          }
-        });
+    return Scaffold(
+      body: StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance.collection('Groups').snapshots(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return Text("Loading");
+            } else {
+              return ListView.builder(
+                itemExtent: 80.0,
+                itemCount: snapshot.data?.docs.length,
+                itemBuilder: (context, index) =>
+                    _buildListItem(context, snapshot.data!.docs[index]),
+              );
+            }
+          }),
+    );
   }
 }
+
+/* 
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: StreamBuilder(
+          stream: FirebaseFirestore.instance
+              .collection('Groups')
+              .snapshots(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return Text("Loading");
+            } else {
+              Map<String, dynamic> documentFields =
+                  snapshot.data?.data() as Map<String, dynamic>;
+              return Card(
+                child: CheckboxListTile(
+                  title: Text(documentFields['GroupName'],
+                      style: TextStyle(fontSize: 18.0)),
+                  value: boolCheck,
+                  onChanged: (bool? newValue) {
+                    setState(() {
+                      boolCheck = !boolCheck;
+                    });
+                  },
+                  secondary: const Icon(Icons.dangerous),
+                ),
+              );
+            }
+          }),
+    );
+  }
+} */
 
 // Clubs //
 class TestPage2 extends StatelessWidget {
