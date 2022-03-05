@@ -350,7 +350,7 @@ class _TestPage1State extends State<TestPage1> {
     return StreamBuilder<DocumentSnapshot>(
         stream: FirebaseFirestore.instance
             .collection('Groups')
-            .doc('{anyCard')
+            .doc('za9ndxLTLGVx449SKnRT')
             .snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
@@ -367,8 +367,6 @@ class _TestPage1State extends State<TestPage1> {
                   setState(() {
                     boolCheck = !boolCheck;
                   });
-                  // SetUpState.saveAnswer(int.parse(get()));
-                  // print(int.parse(get()));
                 },
                 secondary: const Icon(Icons.dangerous),
               ),
