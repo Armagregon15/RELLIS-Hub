@@ -1,14 +1,8 @@
-// ignore: file_names
 // ignore_for_file: prefer_const_constructors, avoid_print, file_names
-import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
-import 'package:flutter/widgets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import './result.dart';
-import 'firebase_options.dart';
 
 class formStart extends StatefulWidget {
   @override
@@ -33,7 +27,6 @@ class _formStartState extends State<formStart> {
   ];
 
   // Variables for Checkboxes //
-  bool click = true;
   bool boolCheck = false;
   bool newValue = false;
 
@@ -111,7 +104,7 @@ class _schoolFormState extends State<schoolForm> {
         value: boolCheck,
         onChanged: (bool? newValue) {
           setState(() {
-            boolCheck = !boolCheck;
+            boolCheck = newValue!;
           });
         },
       ),
@@ -154,9 +147,7 @@ class clubForm extends StatefulWidget {
 class _clubFormState extends State<clubForm> {
   @override
   bool click = true;
-
   bool boolCheck = false;
-
   bool newValue = false;
 
   Widget _buildListItem(BuildContext context, DocumentSnapshot document) {
@@ -208,18 +199,16 @@ class interestForm extends StatefulWidget {
 
 class _interestFormState extends State<interestForm> {
   @override
-  bool click = true;
-  bool boolCheck = false;
-  bool newValue = false;
+  bool _boolCheck = false;
 
   Widget _buildListItem(BuildContext context, DocumentSnapshot document) {
     return Card(
       child: CheckboxListTile(
         title: Text(document['GroupName'], style: TextStyle(fontSize: 18.0)),
-        value: boolCheck,
+        value: _boolCheck,
         onChanged: (bool? newValue) {
           setState(() {
-            boolCheck = !boolCheck;
+            _boolCheck = newValue!;
           });
         },
       ),
@@ -232,7 +221,6 @@ class _interestFormState extends State<interestForm> {
         body: StreamBuilder<QuerySnapshot>(
             stream: FirebaseFirestore.instance
                 .collection('Groups')
-                //.where(FieldPath.documentId, isEqualTo: "School")
                 .where('GroupType', isEqualTo: 'Interest')
                 .snapshots(),
             builder: (context, snapshot) {
