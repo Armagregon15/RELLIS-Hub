@@ -1,28 +1,19 @@
-// ignore_for_file: prefer_const_constructors, use_key_in_widget_constructors, file_names
+// ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/setUp.dart';
-//import 'HomePage.dart';
-import 'setUp.dart';
-import 'calendar.dart';
+import 'package:flutter_application_1/loginPage.dart';
+//import './main.dart';
 
-/*
-class LoginPage extends StatelessWidget {
+// ignore: use_key_in_widget_constructors
+class Welcome extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: LoginHub(),
-    );
+    return Scaffold();
   }
 }
-*/
-class LoginHub extends StatefulWidget {
-  @override
-  _LoginHubState createState() => _LoginHubState();
-}
 
-class _LoginHubState extends State<LoginHub> {
+// ignore: use_key_in_widget_constructors
+class WelcomeState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -91,7 +82,7 @@ class _LoginHubState extends State<LoginHub> {
                   child: ElevatedButton(
                     onPressed: () {
                       Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => formStart()));
+                          MaterialPageRoute(builder: (context) => LoginHub()));
                     },
                     child: Text('Login'),
                     style: ElevatedButton.styleFrom(

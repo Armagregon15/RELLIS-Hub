@@ -11,14 +11,14 @@ INTEREST
     <head>
         <meta charset = "utf-8"> 
         <title>set-up</title>
-        <link rel="stylesheet" href="signup.css">
+        <link rel="stylesheet" href="style.css">
     </head>
     <body>
-        <center> <h1> The Hub @ RELLIS </h1> </center> 
+        <center> <h1 class = "header1"> The Hub @ RELLIS </h1> </center> 
         <!--University form-->
         <form>
-            <div class = "container">
-                <h2>Univeristy</h2>
+            <div class = "setupContainer">
+                <h2 class = "setupHead setupHeadHigh" >Univeristy</h2>
 
                 <input type="radio" name="school" value="Texas A&M University-Commerce"> Texas A&M University-Commerce <br>
                 <input type="radio" name="school" value="Prairie View A&M University"> Prairie View A&M University <br>
@@ -37,26 +37,27 @@ INTEREST
         <br>
         <!--Club form-->
         <form>
-            <div class = "container">
-                <h2>Clubs</h2>
+            <div class = "setupContainer">
+                <h2 class = "setupHead setupHeadHigh">Clubs</h2>
 
-                <input type="radio" name="club" value= "RELLIS RANGERS"> RELLIS Rangers <br>
-                <input type="radio" name="club" value= "RELLIS COMPUTING CLUB"> RELLIS Computing Club <br>
-                <input type="radio" name="club" value= "RELLIS CYBERSECURITY CLUB"> RELLIS Cybersecurity Club <br>
-                <input type="radio" name="club" value= "STUDENT ADVISARY COUNSEL"> Student Advisary Councel <br>
+                <input type="radio" name="club1" value= "RELLIS RANGERS"> RELLIS Rangers <br>
+                <input type="radio" name="club2" value= "RELLIS COMPUTING CLUB"> RELLIS Computing Club <br>
+                <input type="radio" name="club3" value= "RELLIS CYBERSECURITY CLUB"> RELLIS Cybersecurity Club <br>
+                <input type="radio" name="club4" value= "STUDENT ADVISARY COUNSEL"> Student Advisary Councel <br>
             </div>
         </form>
         <br>
         <!--Interest form.-->
-            <div class = "container">
-                <h2>Interests</h2>
+            <div class = "setupContainer">
+                <h2 class = "setupHead setupHeadHigh">Interests</h2>
                 <input type="radio" name = "interest" value= "programming"> Programming<br>
-                <input type="radio" name = "interest" value= "businesss"> Business<br>
-                <input type="radio" name = "interest" value= "Outdoors"> Outdoors<br>
-                <input type="radio" name = "interest" value= "Sports"> Sports<br>
+                <input type="radio" name = "interest1" value= "businesss"> Business<br>
+                <input type="radio" name = "interest2" value= "Outdoors"> Outdoors<br>
+                <input type="radio" name = "interest3" value= "Sports"> Sports<br>
             </div>
         </form>
         <br>
-        <button type="submit"><a href = "home.html">Submit</a></button>
+        <div class = "centerButton">
+        <button type="submit" class = "setupHead setupHeadHigh" ><a href = "home.html">Submit</a></button>
+        </div>
     </body>
-</html>
