@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_const_constructors, avoid_print, file_names
 
+import 'dart:html';
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import './result.dart';
@@ -93,7 +95,6 @@ class schoolForm extends StatefulWidget {
 }
 
 class _schoolFormState extends State<schoolForm> {
-  bool click = true;
   bool boolCheck = false;
   bool newValue = false;
 
@@ -242,5 +243,37 @@ class _interestFormState extends State<interestForm> {
                 context, MaterialPageRoute(builder: (context) => MainPage()));
           },
         ));
+  }
+}
+
+// CAnt figure out error //
+
+class joe extends StatefulWidget {
+  joe({Key? key}) : super(key: key);
+
+  @override
+  State<joe> createState() => _joeState();
+}
+
+class _joeState extends State<joe> {
+  bool boolCheck = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: CheckboxListTile(
+        title: aquireName(context, snapshot.data!.docs[index]),
+        value: boolCheck,
+        onChanged: (bool? newValue) {
+          setState(() {
+            boolCheck = newValue!;
+          });
+        },
+      ),
+    );
+  }
+
+  Widget aquireName(BuildContext context, DocumentSnapshot document) {
+    return Text(document['GroupName']);
   }
 }
