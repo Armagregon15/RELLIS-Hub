@@ -122,7 +122,11 @@ class _schoolFormState extends State<schoolForm> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: StreamBuilder<QuerySnapshot>(
-          stream: FirebaseFirestore.instance.collection('Groups').snapshots(),
+          stream: FirebaseFirestore.instance
+              .collection('Groups')
+              //.where(FieldPath.documentId, isEqualTo: "School")
+              .where('GroupType', isEqualTo: 'School')
+              .snapshots(),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
               return Text("Loading");
@@ -140,60 +144,115 @@ class _schoolFormState extends State<schoolForm> {
 }
 
 // Clubs Form //
-class clubForm extends StatelessWidget {
+class clubForm extends StatefulWidget {
   const clubForm({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: Color.fromARGB(255, 221, 165, 139),
-      child: Center(
-        child: Text(
-          "Clubs",
-          style: TextStyle(
-            color: Color.fromARGB(255, 253, 253, 253),
-            fontSize: 45,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
+  State<clubForm> createState() => _clubFormState();
+}
+
+class _clubFormState extends State<clubForm> {
+  @override
+  bool click = true;
+
+  bool boolCheck = false;
+
+  bool newValue = false;
+
+  Widget _buildListItem(BuildContext context, DocumentSnapshot document) {
+    return Card(
+      child: CheckboxListTile(
+        title: Text(document['GroupName'], style: TextStyle(fontSize: 18.0)),
+        value: boolCheck,
+        onChanged: (bool? newValue) {
+          setState(() {
+            boolCheck = !boolCheck;
+          });
+        },
       ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance
+              .collection('Groups')
+              //.where(FieldPath.documentId, isEqualTo: "School")
+              .where('GroupType', isEqualTo: 'Club')
+              .snapshots(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return Text("Loading");
+            } else {
+              return ListView.builder(
+                itemExtent: 80.0,
+                itemCount: snapshot.data?.docs.length,
+                itemBuilder: (context, index) =>
+                    _buildListItem(context, snapshot.data!.docs[index]),
+              );
+            }
+          }),
     );
   }
 }
 
 // Interests Form //
-class interestForm extends StatelessWidget {
+class interestForm extends StatefulWidget {
   const interestForm({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: Color.fromARGB(255, 162, 132, 230),
-      child: Column(
-        children: [
-          Center(
-            child: Text(
-              "Interests",
-              style: TextStyle(
-                color: Color.fromARGB(255, 253, 253, 253),
-                fontSize: 45,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-          IconButton(
-            icon: Icon(
-              Icons.circle,
-              color: Colors.black,
-            ),
-            tooltip: 'Submit',
-            onPressed: () {
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => MainPage()));
-            },
-          ),
-        ],
+  State<interestForm> createState() => _interestFormState();
+}
+
+class _interestFormState extends State<interestForm> {
+  @override
+  bool click = true;
+  bool boolCheck = false;
+  bool newValue = false;
+
+  Widget _buildListItem(BuildContext context, DocumentSnapshot document) {
+    return Card(
+      child: CheckboxListTile(
+        title: Text(document['GroupName'], style: TextStyle(fontSize: 18.0)),
+        value: boolCheck,
+        onChanged: (bool? newValue) {
+          setState(() {
+            boolCheck = !boolCheck;
+          });
+        },
       ),
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        body: StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance
+                .collection('Groups')
+                //.where(FieldPath.documentId, isEqualTo: "School")
+                .where('GroupType', isEqualTo: 'Interest')
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return Text("Loading");
+              } else {
+                return ListView.builder(
+                  itemExtent: 80.0,
+                  itemCount: snapshot.data?.docs.length,
+                  itemBuilder: (context, index) =>
+                      _buildListItem(context, snapshot.data!.docs[index]),
+                );
+              }
+            }),
+        floatingActionButton: FloatingActionButton.extended(
+          label: const Text("Submit"),
+          onPressed: () {
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => MainPage()));
+          },
+        ));
   }
 }
