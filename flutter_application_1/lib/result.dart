@@ -125,22 +125,13 @@ class HomePage extends State<MainPage> {
                                   ),
                                   Container(
                                       padding: const EdgeInsets.all(8),
-                                      child: Center(
-                                          child: Text(
-                                              school1[SetUpState.answers[0]]
-                                                  [0]))),
+                                      child: Center(child: Text("butt"[0]))),
                                   Container(
                                       padding: const EdgeInsets.all(8),
-                                      child: Center(
-                                          child: Text(
-                                              school1[SetUpState.answers[0]]
-                                                  [1]))),
+                                      child: Center(child: Text("butt"[1]))),
                                   Container(
                                       padding: const EdgeInsets.all(8),
-                                      child: Center(
-                                          child: Text(
-                                              school1[SetUpState.answers[0]]
-                                                  [2]))),
+                                      child: Center(child: Text("butt"[2]))),
                                 ],
                               ),
                             ),
@@ -178,22 +169,16 @@ class HomePage extends State<MainPage> {
                                   ),
                                   Container(
                                       padding: const EdgeInsets.all(8),
-                                      child: Center(
-                                          child: Text(
-                                              school1[SetUpState.answers[1]]
-                                                  [0]))),
+                                      child: Center(child: Text("butt"[0]))),
                                   Container(
                                       padding: const EdgeInsets.all(8),
                                       child: Center(
                                           child: Text(
-                                              school1[SetUpState.answers[1]]
+                                              "butt" //school1[SetUpState.answers[1]]
                                                   [1]))),
                                   Container(
                                       padding: const EdgeInsets.all(8),
-                                      child: Center(
-                                          child: Text(
-                                              school1[SetUpState.answers[1]]
-                                                  [2]))),
+                                      child: Center(child: Text("butt"[2]))),
                                 ],
                               ),
                             ),
@@ -231,22 +216,13 @@ class HomePage extends State<MainPage> {
                                   ),
                                   Container(
                                       padding: const EdgeInsets.all(8),
-                                      child: Center(
-                                          child: Text(
-                                              school1[SetUpState.answers[2]]
-                                                  [0]))),
+                                      child: Center(child: Text("butt"[0]))),
                                   Container(
                                       padding: const EdgeInsets.all(8),
-                                      child: Center(
-                                          child: Text(
-                                              school1[SetUpState.answers[2]]
-                                                  [1]))),
+                                      child: Center(child: Text("butt"[1]))),
                                   Container(
                                       padding: const EdgeInsets.all(8),
-                                      child: Center(
-                                          child: Text(
-                                              school1[SetUpState.answers[2]]
-                                                  [2]))),
+                                      child: Center(child: Text("butt"[2]))),
                                 ],
                               ),
                             ),
