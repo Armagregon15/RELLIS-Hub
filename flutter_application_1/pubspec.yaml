@@ -44,6 +44,8 @@ dependencies:
 
   firebase_core: ^1.13.0
   cloud_firestore: ^3.1.10
+  firebase_auth: ^3.3.9
+  # firebase_auth: ^0.18.0+1
 
 dependencies_overrides:
   cloud_firestore_web: ^2.6.5
