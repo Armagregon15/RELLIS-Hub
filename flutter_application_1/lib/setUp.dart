@@ -29,8 +29,6 @@ class _formStartState extends State<formStart> {
   ];
 
   // Variables for Checkboxes //
-  bool boolCheck = false;
-  bool newValue = false;
 
 // Parent Page //
   @override
@@ -98,17 +96,9 @@ class _schoolFormState extends State<schoolForm> {
   bool boolCheck = false;
   bool newValue = false;
 
-  Widget _buildListItem(BuildContext context, DocumentSnapshot document) {
+  Widget _buildList(BuildContext context, DocumentSnapshot document) {
     return Card(
-      child: CheckboxListTile(
-        title: Text(document['GroupName'], style: TextStyle(fontSize: 18.0)),
-        value: boolCheck,
-        onChanged: (bool? newValue) {
-          setState(() {
-            boolCheck = newValue!;
-          });
-        },
-      ),
+      child: _buildItem(title: document['GroupName']),
     );
   }
 
@@ -129,7 +119,7 @@ class _schoolFormState extends State<schoolForm> {
                 itemExtent: 80.0,
                 itemCount: snapshot.data?.docs.length,
                 itemBuilder: (context, index) =>
-                    _buildListItem(context, snapshot.data!.docs[index]),
+                    _buildList(context, snapshot.data!.docs[index]),
               );
             }
           }),
@@ -151,17 +141,9 @@ class _clubFormState extends State<clubForm> {
   bool boolCheck = false;
   bool newValue = false;
 
-  Widget _buildListItem(BuildContext context, DocumentSnapshot document) {
+  Widget _buildList(BuildContext context, DocumentSnapshot document) {
     return Card(
-      child: CheckboxListTile(
-        title: Text(document['GroupName'], style: TextStyle(fontSize: 18.0)),
-        value: boolCheck,
-        onChanged: (bool? newValue) {
-          setState(() {
-            boolCheck = !boolCheck;
-          });
-        },
-      ),
+      child: _buildItem(title: document['GroupName']),
     );
   }
 
@@ -171,7 +153,6 @@ class _clubFormState extends State<clubForm> {
       body: StreamBuilder<QuerySnapshot>(
           stream: FirebaseFirestore.instance
               .collection('Groups')
-              //.where(FieldPath.documentId, isEqualTo: "School")
               .where('GroupType', isEqualTo: 'Club')
               .snapshots(),
           builder: (context, snapshot) {
@@ -182,7 +163,7 @@ class _clubFormState extends State<clubForm> {
                 itemExtent: 80.0,
                 itemCount: snapshot.data?.docs.length,
                 itemBuilder: (context, index) =>
-                    _buildListItem(context, snapshot.data!.docs[index]),
+                    _buildList(context, snapshot.data!.docs[index]),
               );
             }
           }),
@@ -199,20 +180,10 @@ class interestForm extends StatefulWidget {
 }
 
 class _interestFormState extends State<interestForm> {
-  @override
   bool _boolCheck = false;
-
-  Widget _buildListItem(BuildContext context, DocumentSnapshot document) {
+  Widget _buildList(BuildContext context, DocumentSnapshot document) {
     return Card(
-      child: CheckboxListTile(
-        title: Text(document['GroupName'], style: TextStyle(fontSize: 18.0)),
-        value: _boolCheck,
-        onChanged: (bool? newValue) {
-          setState(() {
-            _boolCheck = newValue!;
-          });
-        },
-      ),
+      child: _buildItem(title: document['GroupName']),
     );
   }
 
@@ -232,7 +203,7 @@ class _interestFormState extends State<interestForm> {
                   itemExtent: 80.0,
                   itemCount: snapshot.data?.docs.length,
                   itemBuilder: (context, index) =>
-                      _buildListItem(context, snapshot.data!.docs[index]),
+                      _buildList(context, snapshot.data!.docs[index]),
                 );
               }
             }),
@@ -246,34 +217,27 @@ class _interestFormState extends State<interestForm> {
   }
 }
 
-// CAnt figure out error //
+class _buildItem extends StatefulWidget {
+  final title;
 
-class joe extends StatefulWidget {
-  joe({Key? key}) : super(key: key);
+  _buildItem({required this.title});
 
   @override
-  State<joe> createState() => _joeState();
+  __buildItemState createState() => __buildItemState();
 }
 
-class _joeState extends State<joe> {
-  bool boolCheck = false;
+class __buildItemState extends State<_buildItem> {
+  bool selected = false;
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: CheckboxListTile(
-        title: aquireName(context, snapshot.data!.docs[index]),
-        value: boolCheck,
-        onChanged: (bool? newValue) {
+    return CheckboxListTile(
+        title: Text(widget.title, style: TextStyle(fontSize: 18.0)),
+        value: selected,
+        onChanged: (bool? val) {
           setState(() {
-            boolCheck = newValue!;
+            selected = val!;
           });
-        },
-      ),
-    );
-  }
-
-  Widget aquireName(BuildContext context, DocumentSnapshot document) {
-    return Text(document['GroupName']);
+        });
   }
 }
