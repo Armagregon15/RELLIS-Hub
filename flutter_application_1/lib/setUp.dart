@@ -1,7 +1,4 @@
 // ignore_for_file: prefer_const_constructors, avoid_print, file_names
-
-import 'dart:html';
-
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import './result.dart';
@@ -29,8 +26,6 @@ class _formStartState extends State<formStart> {
   ];
 
   // Variables for Checkboxes //
-  bool boolCheck = false;
-  bool newValue = false;
 
 // Parent Page //
   @override
@@ -95,44 +90,40 @@ class schoolForm extends StatefulWidget {
 }
 
 class _schoolFormState extends State<schoolForm> {
-  bool boolCheck = false;
-  bool newValue = false;
-
-  Widget _buildListItem(BuildContext context, DocumentSnapshot document) {
+  Widget _buildList(BuildContext context, DocumentSnapshot document) {
     return Card(
-      child: CheckboxListTile(
-        title: Text(document['GroupName'], style: TextStyle(fontSize: 18.0)),
-        value: boolCheck,
-        onChanged: (bool? newValue) {
-          setState(() {
-            boolCheck = newValue!;
-          });
-        },
-      ),
+      child: _buildItem(title: document['GroupName']),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: StreamBuilder<QuerySnapshot>(
-          stream: FirebaseFirestore.instance
-              .collection('Groups')
-              .where('GroupType', isEqualTo: 'School')
-              .snapshots(),
-          builder: (context, snapshot) {
-            if (!snapshot.hasData) {
-              return Text("Loading");
-            } else {
-              return ListView.builder(
-                itemExtent: 80.0,
-                itemCount: snapshot.data?.docs.length,
-                itemBuilder: (context, index) =>
-                    _buildListItem(context, snapshot.data!.docs[index]),
-              );
-            }
-          }),
-    );
+        body: StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance
+                .collection('Groups')
+                //.where(FieldPath.documentId, isEqualTo: "School")
+                .where('GroupType', isEqualTo: 'School')
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return Text("Loading");
+              } else {
+                return ListView.builder(
+                  itemExtent: 80.0,
+                  itemCount: snapshot.data?.docs.length,
+                  itemBuilder: (context, index) =>
+                      _buildList(context, snapshot.data!.docs[index]),
+                );
+              }
+            }),
+        floatingActionButton: FloatingActionButton.extended(
+          label: const Text("Save"),
+          onPressed: () {
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => MainPage()));
+          },
+        ));
   }
 }
 
@@ -146,46 +137,37 @@ class clubForm extends StatefulWidget {
 
 class _clubFormState extends State<clubForm> {
   @override
-  bool click = true;
-  bool boolCheck = false;
-  bool newValue = false;
-
-  Widget _buildListItem(BuildContext context, DocumentSnapshot document) {
+  Widget _buildList(BuildContext context, DocumentSnapshot document) {
     return Card(
-      child: CheckboxListTile(
-        title: Text(document['GroupName'], style: TextStyle(fontSize: 18.0)),
-        value: boolCheck,
-        onChanged: (bool? newValue) {
-          setState(() {
-            boolCheck = !boolCheck;
-          });
-        },
-      ),
+      child: _buildItem(title: document['GroupName']),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: StreamBuilder<QuerySnapshot>(
-          stream: FirebaseFirestore.instance
-              .collection('Groups')
-              //.where(FieldPath.documentId, isEqualTo: "School")
-              .where('GroupType', isEqualTo: 'Club')
-              .snapshots(),
-          builder: (context, snapshot) {
-            if (!snapshot.hasData) {
-              return Text("Loading");
-            } else {
-              return ListView.builder(
-                itemExtent: 80.0,
-                itemCount: snapshot.data?.docs.length,
-                itemBuilder: (context, index) =>
-                    _buildListItem(context, snapshot.data!.docs[index]),
-              );
-            }
-          }),
-    );
+        body: StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance
+                .collection('Groups')
+                .where('GroupType', isEqualTo: 'Club')
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return Text("Loading");
+              } else {
+                return ListView.builder(
+                  itemExtent: 80.0,
+                  itemCount: snapshot.data?.docs.length,
+                  itemBuilder: (context, index) =>
+                      _buildList(context, snapshot.data!.docs[index]),
+                );
+              }
+            }),
+        floatingActionButton: FloatingActionButton.extended(
+            label: const Text("Save"),
+            onPressed: () {
+              // Implementation for saving selection goes here
+            }));
   }
 }
 
@@ -198,20 +180,10 @@ class interestForm extends StatefulWidget {
 }
 
 class _interestFormState extends State<interestForm> {
-  @override
   bool _boolCheck = false;
-
-  Widget _buildListItem(BuildContext context, DocumentSnapshot document) {
+  Widget _buildList(BuildContext context, DocumentSnapshot document) {
     return Card(
-      child: CheckboxListTile(
-        title: Text(document['GroupName'], style: TextStyle(fontSize: 18.0)),
-        value: _boolCheck,
-        onChanged: (bool? newValue) {
-          setState(() {
-            _boolCheck = newValue!;
-          });
-        },
-      ),
+      child: _buildItem(title: document['GroupName']),
     );
   }
 
@@ -231,50 +203,61 @@ class _interestFormState extends State<interestForm> {
                   itemExtent: 80.0,
                   itemCount: snapshot.data?.docs.length,
                   itemBuilder: (context, index) =>
-                      _buildListItem(context, snapshot.data!.docs[index]),
+                      _buildList(context, snapshot.data!.docs[index]),
                 );
               }
             }),
         floatingActionButton: FloatingActionButton.extended(
           label: const Text("Submit"),
           onPressed: () {
-            Navigator.push(
-                context, MaterialPageRoute(builder: (context) => MainPage()));
+            // Implementation for saving selection goes here
           },
         ));
   }
 }
 
-// CAnt figure out error //
-/*
-class joe extends StatefulWidget {
-  joe({Key? key}) : super(key: key);
+// Builds Items //
+class _buildItem extends StatefulWidget {
+  final title;
+
+  _buildItem({required this.title});
 
   @override
-  State<joe> createState() => _joeState();
+  __buildItemState createState() => __buildItemState();
 }
 
-
-class _joeState extends State<joe> {
-  bool boolCheck = false;
+class __buildItemState extends State<_buildItem> {
+  bool selected = false;
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: CheckboxListTile(
-        title: aquireName(context, snapshot.data!.docs[index]),
-        value: boolCheck,
-        onChanged: (bool? newValue) {
+    return CheckboxListTile(
+        //key: ValueKey(record.name),
+        title: Text(widget.title, style: TextStyle(fontSize: 18.0)),
+        value: selected,
+        onChanged: (bool? val) {
           setState(() {
-            boolCheck = newValue!;
+            selected = val!;
           });
-        },
-      ),
-    );
-  }
-
-  Widget aquireName(BuildContext context, DocumentSnapshot document) {
-    return Text(document['GroupName']);
+        });
   }
 }
-*/
+
+/*
+class Record {
+    final String refGroupName;
+    final DocumentReference refGroupID;
+
+    Record(this.refGroupName, this.refGroupID);
+
+    Record.fromMap(Map<String, dynamic> map, {required this.refGroupID})
+      : assert(map['GroupName'] != null),
+        refGroupName = map['GroupName'];
+
+   Record.fromCollection(DocumentSnapshot snapshot)
+      : this.fromMap(snapshot.data(), reference: snapshot.reference);
+
+    @override
+    String toString() => "Record<$refGroupName:>";
+    }
+    */
