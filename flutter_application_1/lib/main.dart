@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/setUp.dart';
+import 'package:flutter_application_1/auth_stuff.dart';
 import 'package:provider/provider.dart';
 import './loginPage.dart';
-import './welcome.dart';
 import './SetUp.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'firebase_options.dart';
@@ -11,10 +10,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  FirebaseAuth auth = FirebaseAuth.instance;
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
-    
   );
   runApp(MyApp());
 }
@@ -24,20 +21,40 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'The Hub @ RELLIS',
-      theme: ThemeData(
-        primaryColor: const Color(0xFF500000),
+    return MultiProvider(
+      providers: [
+        Provider<AuthenticationService>(
+          create: (_) => AuthenticationService(FirebaseAuth.instance),
+          builder: (context, _) => MyApp(),
+        ),
+        StreamProvider(
+          create: (context) =>
+              context.read<AuthenticationService>().authStateChanges,
+          initialData: [],
+        ),
+      ],
+      child: MaterialApp(
+        title: 'The Hub @ RELLIS',
+        theme: ThemeData(
+          primaryColor: const Color(0xFF500000),
+        ),
+        home: const AuthenticationWrapper(),
       ),
-      home: LoginHub(),
-      //routes: <String, WidgetBuilder>{
-      //'/screen1': (BuildContext context) => _Page2State(),
-      //'/screen2' : (BuildContext context) => new Screen2(),
-      //'/screen3' : (BuildContext context) => new Screen3(),
-      //'/screen4' : (BuildContext context) => new Screen4()
-      // },
     );
   }
 }
 
+class AuthenticationWrapper extends StatelessWidget {
+  const AuthenticationWrapper({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final firebaseUser = context.watch<User>();
+
+    if (firebaseUser != null) {
+      return formStart();
+    }
+    return LoginHub();
+  }
+}
 // val db = Firebase.firestore

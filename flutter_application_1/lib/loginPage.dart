@@ -21,12 +21,8 @@ class LoginPage extends StatelessWidget {
   }
 }
 */
-class LoginHub extends StatefulWidget {
-  @override
-  _LoginHubState createState() => _LoginHubState();
-}
 
-class _LoginHubState extends State<LoginHub> {
+class LoginHub extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   @override
