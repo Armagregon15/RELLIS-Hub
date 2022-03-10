@@ -118,7 +118,6 @@ class _schoolFormState extends State<schoolForm> {
       body: StreamBuilder<QuerySnapshot>(
           stream: FirebaseFirestore.instance
               .collection('Groups')
-              //.where(FieldPath.documentId, isEqualTo: "School")
               .where('GroupType', isEqualTo: 'School')
               .snapshots(),
           builder: (context, snapshot) {
@@ -247,13 +246,14 @@ class _interestFormState extends State<interestForm> {
 }
 
 // CAnt figure out error //
-
+/*
 class joe extends StatefulWidget {
   joe({Key? key}) : super(key: key);
 
   @override
   State<joe> createState() => _joeState();
 }
+
 
 class _joeState extends State<joe> {
   bool boolCheck = false;
@@ -277,3 +277,4 @@ class _joeState extends State<joe> {
     return Text(document['GroupName']);
   }
 }
+*/
