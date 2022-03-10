@@ -204,6 +204,35 @@ class _interestFormState extends State<interestForm> {
                   itemCount: snapshot.data?.docs.length,
                   itemBuilder: (context, index) =>
                       _buildList(context, snapshot.data!.docs[index]),
+                      return InkWell(
+              onTap: () {
+                setState(() {
+                  imageList[index].isSelected = !imageList[index].isSelected;
+                });
+              },
+              child: Stack(
+                children: [
+                  _getImage(imageList[index].imageURL),
+                  Opacity(
+                    opacity: imageList[index].isSelected ? 1 : 0,
+                    child: Stack(
+                      children: [
+                        Container(
+                          width: double.infinity,
+                          height: double.infinity,
+                          color: Colors.black38,
+                        ),
+                        Center(
+                          child: CircleAvatar(
+                            backgroundColor: Colors.greenAccent,
+                            child: Icon(
+                              Icons.check,
+                              color: Colors.white,
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
                 );
               }
             }),
