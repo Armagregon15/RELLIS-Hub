@@ -150,7 +150,6 @@ class LoginHub extends StatelessWidget {
                     ),
                   ),
                 ),
-
               ],
             ),
           ),
