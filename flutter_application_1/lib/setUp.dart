@@ -182,7 +182,7 @@ class _clubFormState extends State<clubForm> {
         body: StreamBuilder<QuerySnapshot>(
             stream: FirebaseFirestore.instance
                 .collection('Groups')
-                //.where(FieldPath.documentId, isEqualTo: "School")
+
                 .where('GroupType', isEqualTo: 'Club')
                 .snapshots(),
             builder: (context, snapshot) {
@@ -193,11 +193,14 @@ class _clubFormState extends State<clubForm> {
                   itemExtent: 80.0,
                   itemCount: snapshot.data?.docs.length,
                   itemBuilder: (context, index) =>
+
                       _buildListItem(context, snapshot.data!.docs[index]),
+
                 );
               }
             }),
         floatingActionButton: FloatingActionButton.extended(
+
           label: const Text("Sign Out"),
           onPressed: () async {
             context.read<AuthenticationService>().signOut();
@@ -206,6 +209,7 @@ class _clubFormState extends State<clubForm> {
             // Implementation for saving selection goes here
           },
         ));
+
   }
 }
 
