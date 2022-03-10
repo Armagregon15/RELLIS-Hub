@@ -26,9 +26,9 @@ class MyApp extends StatelessWidget {
       providers: [
         Provider<AuthenticationService>(
           create: (_) => AuthenticationService(FirebaseAuth.instance),
-          builder: (context) ={
-            return Text(context.watch<AuthenticationService(_firebaseAuth))
-          } MyApp(),
+          // builder: (context) ={
+          //   return Text(context.watch<AuthenticationService(_firebaseAuth))
+          // } MyApp(),
         ),
         StreamProvider(
           create: (context) =>
