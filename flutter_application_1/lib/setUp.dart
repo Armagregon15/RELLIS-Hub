@@ -91,7 +91,8 @@ class _schoolFormState extends State<schoolForm> {
   Widget _buildList(BuildContext context, DocumentSnapshot document) {
     bool isSelect = true;
     return Card(
-      child: _buildItem(title: document['GroupName']),
+      child:
+          _buildItem(title: document['GroupName'], value: document['GroupID']),
     );
   }
 
@@ -131,7 +132,8 @@ class _clubFormState extends State<clubForm> {
   @override
   Widget _buildList(BuildContext context, DocumentSnapshot document) {
     return Card(
-      child: _buildItem(title: document['GroupName']),
+      child:
+          _buildItem(title: document['GroupName'], value: document['GroupID']),
     );
   }
 
@@ -172,13 +174,16 @@ class interestForm extends StatefulWidget {
 
 class _interestFormState extends State<interestForm> {
   Widget _buildList(BuildContext context, DocumentSnapshot document) {
+    int currentIndex = 0;
     return Card(
-      child: _buildItem(title: document['GroupName']),
+      child:
+          _buildItem(title: document['GroupName'], value: document['GroupID']),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    int currentIndex = 0;
     return Scaffold(
         body: StreamBuilder<QuerySnapshot>(
             stream: FirebaseFirestore.instance
@@ -234,7 +239,8 @@ class __buildItemState extends State<_buildItem> {
 */
 class _buildItem extends StatefulWidget {
   final title;
-  _buildItem({required this.title});
+  final value;
+  _buildItem({required this.title, required this.value});
 
   @override
   __buildItemState createState() => __buildItemState();
@@ -242,7 +248,7 @@ class _buildItem extends StatefulWidget {
 
 class __buildItemState extends State<_buildItem> {
   bool selected = true;
-
+  int index = 0;
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -252,6 +258,7 @@ class __buildItemState extends State<_buildItem> {
       onTap: () {
         setState(() {
           selected = !selected;
+          print(widget.value);
         });
       },
     );
