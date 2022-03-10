@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/auth_stuff.dart';
+import 'package:flutter_application_1/authentication_service.dart';
 import 'package:provider/provider.dart';
 import './loginPage.dart';
 import './SetUp.dart';
@@ -11,6 +11,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
+    
     options: DefaultFirebaseOptions.currentPlatform,
   );
   runApp(MyApp());
@@ -25,20 +26,22 @@ class MyApp extends StatelessWidget {
       providers: [
         Provider<AuthenticationService>(
           create: (_) => AuthenticationService(FirebaseAuth.instance),
-          builder: (context, _) => MyApp(),
+          builder: (context) ={
+            return Text(context.watch<AuthenticationService(_firebaseAuth))
+          } MyApp(),
         ),
         StreamProvider(
           create: (context) =>
               context.read<AuthenticationService>().authStateChanges,
           initialData: [],
-        ),
+        )
       ],
       child: MaterialApp(
         title: 'The Hub @ RELLIS',
         theme: ThemeData(
           primaryColor: const Color(0xFF500000),
         ),
-        home: const AuthenticationWrapper(),
+        home: AuthenticationWrapper(),
       ),
     );
   }
