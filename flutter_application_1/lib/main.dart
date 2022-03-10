@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/authentication_service.dart';
+import 'package:flutter_application_1/setUp.dart';
 import 'package:provider/provider.dart';
 import './loginPage.dart';
-import './SetUp.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -11,7 +11,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-    
     options: DefaultFirebaseOptions.currentPlatform,
   );
   runApp(MyApp());

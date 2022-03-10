@@ -7,7 +7,7 @@ class AuthenticationService {
 
   Stream<User?> get authStateChanges => _firebaseAuth.idTokenChanges();
 
-  Future<void> signout() async {
+  Future<void> signOut() async {
     await _firebaseAuth.signOut();
   }
 
@@ -18,7 +18,7 @@ class AuthenticationService {
           email: email, password: password);
       return "Signed in";
     } on FirebaseAuthException catch (e) {
-      return e.message;
+      return null;
     }
   }
 
