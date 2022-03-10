@@ -90,8 +90,8 @@ class schoolForm extends StatefulWidget {
 class _schoolFormState extends State<schoolForm> {
   Widget _buildList(BuildContext context, DocumentSnapshot document) {
     bool isSelect = true;
-    return  Card(
-        child: _buildItem(title: document['GroupName']),
+    return Card(
+      child: _buildItem(title: document['GroupName']),
     );
   }
 
@@ -131,7 +131,7 @@ class _clubFormState extends State<clubForm> {
   @override
   Widget _buildList(BuildContext context, DocumentSnapshot document) {
     return Card(
-     child: _buildItem(title: document['GroupName']),
+      child: _buildItem(title: document['GroupName']),
     );
   }
 
@@ -247,10 +247,10 @@ class __buildItemState extends State<_buildItem> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      child: Container (),
-      onTap: () { 
-        print("Tapped on container"); 
-    },
-    ),
+      child: Container(),
+      onTap: () {
+        print("Tapped on container");
+      },
+    );
   }
 }
