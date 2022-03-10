@@ -117,33 +117,36 @@ class LoginHub extends StatelessWidget {
                     ),
                   ),
                 ),
-                Container(
-                  height: 50,
-                  width: 250,
-                  decoration: BoxDecoration(
-                      color: Color(0xFF500000),
-                      borderRadius: BorderRadius.circular(20)),
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      dynamic result = await context
-                          .read<AuthenticationService>()
-                          .signUp(
-                              email: emailController.text.trim(),
-                              password: passwordController.text.trim());
-                      if (result == null) {
-                        print('error signing up');
-                      } else {
-                        print('signed up');
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => formStart()));
-                      }
-                    },
-                    child: Text('Create User'),
-                    style: ElevatedButton.styleFrom(
-                      primary: Color(0xFF500000),
-                      textStyle: TextStyle(color: Colors.white, fontSize: 25),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(
+                    height: 50,
+                    width: 250,
+                    decoration: BoxDecoration(
+                        color: Color(0xFF500000),
+                        borderRadius: BorderRadius.circular(20)),
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        dynamic result = await context
+                            .read<AuthenticationService>()
+                            .signUp(
+                                email: emailController.text.trim(),
+                                password: passwordController.text.trim());
+                        if (result == null) {
+                          print('error signing up');
+                        } else {
+                          print('signed up');
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => formStart()));
+                        }
+                      },
+                      child: Text('Create User'),
+                      style: ElevatedButton.styleFrom(
+                        primary: Color(0xFF500000),
+                        textStyle: TextStyle(color: Colors.white, fontSize: 25),
+                      ),
                     ),
                   ),
                 ),
