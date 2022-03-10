@@ -90,17 +90,8 @@ class schoolForm extends StatefulWidget {
 class _schoolFormState extends State<schoolForm> {
   Widget _buildList(BuildContext context, DocumentSnapshot document) {
     bool isSelect = true;
-    return InkWell(
-      onTap: () {
-        setState(() {
-          isSelect = !isSelect;
-        });
-        print(isSelect);
-      },
-      child: Card(
-        color: isSelect ? Colors.white : Colors.yellow,
-        child: Text(document['GroupName'], style: TextStyle(fontSize: 18.0)),
-      ),
+    return  Card(
+        child: _buildItem(title: document['GroupName']),
     );
   }
 
@@ -140,7 +131,7 @@ class _clubFormState extends State<clubForm> {
   @override
   Widget _buildList(BuildContext context, DocumentSnapshot document) {
     return Card(
-      child: Text(document['GroupName'], style: TextStyle(fontSize: 18.0)),
+     child: _buildItem(title: document['GroupName']),
     );
   }
 
@@ -183,7 +174,7 @@ class _interestFormState extends State<interestForm> {
   bool _boolCheck = false;
   Widget _buildList(BuildContext context, DocumentSnapshot document) {
     return Card(
-      child: Text(document['GroupName'], style: TextStyle(fontSize: 18.0)),
+      child: _buildItem(title: document['GroupName']),
     );
   }
 
@@ -256,7 +247,7 @@ class __buildItemState extends State<_buildItem> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      child: 
+      child: Container (color: ? ,)
     )
   }
 }
