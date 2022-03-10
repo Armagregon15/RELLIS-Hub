@@ -247,7 +247,10 @@ class __buildItemState extends State<_buildItem> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      child: Container (color: ? ,)
-    )
+      child: Container (),
+      onTap: () { 
+        print("Tapped on container"); 
+    },
+    ),
   }
 }
