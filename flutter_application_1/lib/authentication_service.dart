@@ -29,7 +29,7 @@ class AuthenticationService {
           email: email, password: password);
       return "Signed up";
     } on FirebaseAuthException catch (e) {
-      return e.message;
+      return null;
     }
   }
 }
