@@ -29,8 +29,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  sqflite:
-  moor_flutter: ^4.0.0
+
   path:
   #this is the stream feed library from https://pub.dev/packages/stream_feed/install
   stream_feed: ^0.4.0
@@ -44,6 +43,8 @@ dependencies:
 
   firebase_core: ^1.13.0
   cloud_firestore: ^3.1.10
+  firebase_auth: ^3.3.9
+  # firebase_auth: ^0.18.0+1
 
 dependencies_overrides:
   cloud_firestore_web: ^2.6.5
