@@ -171,7 +171,6 @@ class interestForm extends StatefulWidget {
 }
 
 class _interestFormState extends State<interestForm> {
-  bool _boolCheck = false;
   Widget _buildList(BuildContext context, DocumentSnapshot document) {
     return Card(
       child: _buildItem(title: document['GroupName']),
@@ -242,14 +241,18 @@ class _buildItem extends StatefulWidget {
 }
 
 class __buildItemState extends State<_buildItem> {
-  bool selected = false;
+  bool selected = true;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      child: Container(),
+      child: Container(
+          child: Text(widget.title, style: TextStyle(fontSize: 18.0)),
+          color: selected ? Colors.white : Colors.yellow),
       onTap: () {
-        print("Tapped on container");
+        setState(() {
+          selected = !selected;
+        });
       },
     );
   }
