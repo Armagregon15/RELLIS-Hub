@@ -91,39 +91,36 @@ class schoolForm extends StatefulWidget {
 
 class _schoolFormState extends State<schoolForm> {
   Widget _buildList(BuildContext context, DocumentSnapshot document) {
-    return Card(
-      child: _buildItem(title: document['GroupName']),
+    return GestureDetector(
+      //onTap:
+      child: Card(
+        child: Center(child: _buildItem(title: document['GroupName'])),
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: StreamBuilder<QuerySnapshot>(
-            stream: FirebaseFirestore.instance
-                .collection('Groups')
-                //.where(FieldPath.documentId, isEqualTo: "School")
-                .where('GroupType', isEqualTo: 'School')
-                .snapshots(),
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return Text("Loading");
-              } else {
-                return ListView.builder(
-                  itemExtent: 80.0,
-                  itemCount: snapshot.data?.docs.length,
-                  itemBuilder: (context, index) =>
-                      _buildList(context, snapshot.data!.docs[index]),
-                );
-              }
-            }),
-        floatingActionButton: FloatingActionButton.extended(
-          label: const Text("Save"),
-          onPressed: () {
-            Navigator.push(
-                context, MaterialPageRoute(builder: (context) => MainPage()));
-          },
-        ));
+      body: StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance
+              .collection('Groups')
+              //.where(FieldPath.documentId, isEqualTo: "School")
+              .where('GroupType', isEqualTo: 'School')
+              .snapshots(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return Text("Loading");
+            } else {
+              return ListView.builder(
+                itemExtent: 80.0,
+                itemCount: snapshot.data?.docs.length,
+                itemBuilder: (context, index) =>
+                    _buildList(context, snapshot.data!.docs[index]),
+              );
+            }
+          }),
+    );
   }
 }
 
@@ -139,35 +136,31 @@ class _clubFormState extends State<clubForm> {
   @override
   Widget _buildList(BuildContext context, DocumentSnapshot document) {
     return Card(
-      child: _buildItem(title: document['GroupName']),
+      child: Center(child: _buildItem(title: document['GroupName'])),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: StreamBuilder<QuerySnapshot>(
-            stream: FirebaseFirestore.instance
-                .collection('Groups')
-                .where('GroupType', isEqualTo: 'Club')
-                .snapshots(),
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return Text("Loading");
-              } else {
-                return ListView.builder(
-                  itemExtent: 80.0,
-                  itemCount: snapshot.data?.docs.length,
-                  itemBuilder: (context, index) =>
-                      _buildList(context, snapshot.data!.docs[index]),
-                );
-              }
-            }),
-        floatingActionButton: FloatingActionButton.extended(
-            label: const Text("Save"),
-            onPressed: () {
-              // Implementation for saving selection goes here
-            }));
+      body: StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance
+              .collection('Groups')
+              .where('GroupType', isEqualTo: 'Club')
+              .snapshots(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return Center(child: Text("Loading"));
+            } else {
+              return ListView.builder(
+                itemExtent: 80.0,
+                itemCount: snapshot.data?.docs.length,
+                itemBuilder: (context, index) =>
+                    _buildList(context, snapshot.data!.docs[index]),
+              );
+            }
+          }),
+    );
   }
 }
 
@@ -183,7 +176,7 @@ class _interestFormState extends State<interestForm> {
   bool _boolCheck = false;
   Widget _buildList(BuildContext context, DocumentSnapshot document) {
     return Card(
-      child: _buildItem(title: document['GroupName']),
+      child: Center(child: _buildItem(title: document['GroupName'])),
     );
   }
 
@@ -210,7 +203,8 @@ class _interestFormState extends State<interestForm> {
         floatingActionButton: FloatingActionButton.extended(
           label: const Text("Submit"),
           onPressed: () {
-            // Implementation for saving selection goes here
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => MainPage()));
           },
         ));
   }
@@ -219,7 +213,6 @@ class _interestFormState extends State<interestForm> {
 // Builds Items //
 class _buildItem extends StatefulWidget {
   final title;
-
   _buildItem({required this.title});
 
   @override
@@ -232,7 +225,6 @@ class __buildItemState extends State<_buildItem> {
   @override
   Widget build(BuildContext context) {
     return CheckboxListTile(
-        //key: ValueKey(record.name),
         title: Text(widget.title, style: TextStyle(fontSize: 18.0)),
         value: selected,
         onChanged: (bool? val) {
@@ -242,22 +234,3 @@ class __buildItemState extends State<_buildItem> {
         });
   }
 }
-
-/*
-class Record {
-    final String refGroupName;
-    final DocumentReference refGroupID;
-
-    Record(this.refGroupName, this.refGroupID);
-
-    Record.fromMap(Map<String, dynamic> map, {required this.refGroupID})
-      : assert(map['GroupName'] != null),
-        refGroupName = map['GroupName'];
-
-   Record.fromCollection(DocumentSnapshot snapshot)
-      : this.fromMap(snapshot.data(), reference: snapshot.reference);
-
-    @override
-    String toString() => "Record<$refGroupName:>";
-    }
-    */

@@ -92,189 +92,194 @@ class HomePage extends State<MainPage> {
         debugShowCheckedModeBanner: false,
         title: 'Welcome to Flutter',
         home: Scaffold(
-          //appBar: AppBar(
-          //centerTitle: true,
-          //backgroundColor: const Color(0xFF500000),
-          //title: const Text('The Hub @ Rellis'),
-          //  ),
-          body: Column(
-            children: [
-              Container(
-                color: Colors.white10,
-                height: MediaQuery.of(context).size.height / 4.5,
-                child: ListView.builder(
-                  padding: const EdgeInsets.all(8),
-                  itemCount: 1,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Center(
-                      child: Card(
-                        child: Column(
-                          children: [
-                            Container(
-                              height: 165,
-                              child: Column(
-                                children: [
-                                  IconButton(
-                                    icon: const Icon(
-                                      Icons.menu_book,
-                                      color: Colors.black,
+            //appBar: AppBar(
+            //centerTitle: true,
+            //backgroundColor: const Color(0xFF500000),
+            //title: const Text('The Hub @ Rellis'),
+            //  ),
+            body: Column(
+              children: [
+                Container(
+                  color: Colors.white10,
+                  height: MediaQuery.of(context).size.height / 4.5,
+                  child: ListView.builder(
+                    padding: const EdgeInsets.all(8),
+                    itemCount: 1,
+                    itemBuilder: (BuildContext context, int index) {
+                      return Center(
+                        child: Card(
+                          child: Column(
+                            children: [
+                              Container(
+                                height: 165,
+                                child: Column(
+                                  children: [
+                                    IconButton(
+                                      icon: const Icon(
+                                        Icons.menu_book,
+                                        color: Colors.black,
+                                      ),
+                                      alignment: Alignment.topCenter,
+                                      padding: new EdgeInsets.all(10.0),
+                                      onPressed: () {},
                                     ),
-                                    alignment: Alignment.topCenter,
-                                    padding: new EdgeInsets.all(10.0),
-                                    onPressed: () {},
-                                  ),
-                                  Container(
-                                      padding: const EdgeInsets.all(8),
-                                      child: Center(child: Text("butt"[0]))),
-                                  Container(
-                                      padding: const EdgeInsets.all(8),
-                                      child: Center(child: Text("butt"[1]))),
-                                  Container(
-                                      padding: const EdgeInsets.all(8),
-                                      child: Center(child: Text("butt"[2]))),
-                                ],
+                                    Container(
+                                        padding: const EdgeInsets.all(8),
+                                        child: Center(child: Text("butt"[0]))),
+                                    Container(
+                                        padding: const EdgeInsets.all(8),
+                                        child: Center(child: Text("butt"[1]))),
+                                    Container(
+                                        padding: const EdgeInsets.all(8),
+                                        child: Center(child: Text("butt"[2]))),
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
+                          elevation: 6,
                         ),
-                        elevation: 6,
-                      ),
-                    );
-                  },
+                      );
+                    },
+                  ),
                 ),
-              ),
-              Container(
-                color: Colors.white10,
-                height: MediaQuery.of(context).size.height / 4.5,
-                child: ListView.builder(
-                  padding: const EdgeInsets.all(8),
-                  itemCount: 1,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Center(
-                      child: Card(
-                        child: Column(
-                          children: [
-                            SizedBox(
-                              height: 165,
-                              child: Column(
-                                children: [
-                                  IconButton(
-                                    icon: const Icon(
-                                      Icons.school,
-                                      color: Colors.black,
+                Container(
+                  color: Colors.white10,
+                  height: MediaQuery.of(context).size.height / 4.5,
+                  child: ListView.builder(
+                    padding: const EdgeInsets.all(8),
+                    itemCount: 1,
+                    itemBuilder: (BuildContext context, int index) {
+                      return Center(
+                        child: Card(
+                          child: Column(
+                            children: [
+                              SizedBox(
+                                height: 165,
+                                child: Column(
+                                  children: [
+                                    IconButton(
+                                      icon: const Icon(
+                                        Icons.school,
+                                        color: Colors.black,
+                                      ),
+                                      alignment: Alignment.topCenter,
+                                      padding: new EdgeInsets.all(10.0),
+                                      onPressed: () {},
                                     ),
-                                    alignment: Alignment.topCenter,
-                                    padding: new EdgeInsets.all(10.0),
-                                    onPressed: () {},
-                                  ),
-                                  Container(
-                                      padding: const EdgeInsets.all(8),
-                                      child: Center(child: Text("butt"[0]))),
-                                  Container(
-                                      padding: const EdgeInsets.all(8),
-                                      child: Center(
-                                          child: Text(
-                                              "butt" //school1[SetUpState.answers[1]]
-                                                  [1]))),
-                                  Container(
-                                      padding: const EdgeInsets.all(8),
-                                      child: Center(child: Text("butt"[2]))),
-                                ],
+                                    Container(
+                                        padding: const EdgeInsets.all(8),
+                                        child: Center(child: Text("butt"[0]))),
+                                    Container(
+                                        padding: const EdgeInsets.all(8),
+                                        child: Center(
+                                            child: Text(
+                                                "butt" //school1[SetUpState.answers[1]]
+                                                    [1]))),
+                                    Container(
+                                        padding: const EdgeInsets.all(8),
+                                        child: Center(child: Text("butt"[2]))),
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
+                          elevation: 5,
                         ),
-                        elevation: 5,
-                      ),
-                    );
-                  },
+                      );
+                    },
+                  ),
                 ),
-              ),
-              Container(
-                color: Colors.white10,
-                height: MediaQuery.of(context).size.height / 4.5,
-                child: ListView.builder(
-                  padding: const EdgeInsets.all(8),
-                  itemCount: 1,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Center(
-                      child: Card(
-                        child: Column(
-                          children: [
-                            SizedBox(
-                              height: 165,
-                              child: Column(
-                                children: [
-                                  IconButton(
-                                    icon: const Icon(
-                                      Icons.computer,
-                                      color: Colors.black,
+                Container(
+                  color: Colors.white10,
+                  height: MediaQuery.of(context).size.height / 4.5,
+                  child: ListView.builder(
+                    padding: const EdgeInsets.all(8),
+                    itemCount: 1,
+                    itemBuilder: (BuildContext context, int index) {
+                      return Center(
+                        child: Card(
+                          child: Column(
+                            children: [
+                              SizedBox(
+                                height: 165,
+                                child: Column(
+                                  children: [
+                                    IconButton(
+                                      icon: const Icon(
+                                        Icons.computer,
+                                        color: Colors.black,
+                                      ),
+                                      alignment: Alignment.topCenter,
+                                      padding: new EdgeInsets.all(10.0),
+                                      onPressed: () {},
                                     ),
-                                    alignment: Alignment.topCenter,
-                                    padding: new EdgeInsets.all(10.0),
-                                    onPressed: () {},
-                                  ),
-                                  Container(
-                                      padding: const EdgeInsets.all(8),
-                                      child: Center(child: Text("butt"[0]))),
-                                  Container(
-                                      padding: const EdgeInsets.all(8),
-                                      child: Center(child: Text("butt"[1]))),
-                                  Container(
-                                      padding: const EdgeInsets.all(8),
-                                      child: Center(child: Text("butt"[2]))),
-                                ],
+                                    Container(
+                                        padding: const EdgeInsets.all(8),
+                                        child: Center(child: Text("butt"[0]))),
+                                    Container(
+                                        padding: const EdgeInsets.all(8),
+                                        child: Center(child: Text("butt"[1]))),
+                                    Container(
+                                        padding: const EdgeInsets.all(8),
+                                        child: Center(child: Text("butt"[2]))),
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
+                          elevation: 6,
                         ),
-                        elevation: 6,
-                      ),
-                    );
-                  },
+                      );
+                    },
+                  ),
                 ),
-              ),
-            ],
-          ),
-          bottomNavigationBar: BottomNavigationBar(
-            selectedFontSize: 15,
-            // ignore: prefer_const_constructors
-            selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
-            // ignore: prefer_const_constructors
-            selectedIconTheme: IconThemeData(
-              color: Colors.white,
-              size: 35,
+              ],
             ),
-            unselectedItemColor: Colors.white,
-            selectedItemColor: Colors.white,
-            currentIndex: _selectedIndex,
-            onTap: _onItemTapped,
-            backgroundColor: const Color(0xFF500000),
-            elevation: 90,
-            items: const <BottomNavigationBarItem>[
-              BottomNavigationBarItem(
-                icon: Icon(
-                  Icons.person,
-                  color: Colors.white,
-                ),
-                label: 'Profile',
+            bottomNavigationBar: BottomNavigationBar(
+              selectedFontSize: 15,
+              // ignore: prefer_const_constructors
+              selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
+              // ignore: prefer_const_constructors
+              selectedIconTheme: IconThemeData(
+                color: Colors.white,
+                size: 35,
               ),
-              BottomNavigationBarItem(
-                icon: Icon(
-                  Icons.refresh,
-                  color: Colors.white,
+              unselectedItemColor: Colors.white,
+              selectedItemColor: Colors.white,
+              currentIndex: _selectedIndex,
+              onTap: _onItemTapped,
+              backgroundColor: const Color(0xFF500000),
+              elevation: 90,
+              items: const <BottomNavigationBarItem>[
+                BottomNavigationBarItem(
+                  icon: Icon(
+                    Icons.person,
+                    color: Colors.white,
+                  ),
+                  label: 'Profile',
                 ),
-                label: 'Refresh',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(
-                  Icons.event,
-                  color: Colors.white,
+                BottomNavigationBarItem(
+                  icon: Icon(
+                    Icons.refresh,
+                    color: Colors.white,
+                  ),
+                  label: 'Refresh',
                 ),
-                label: 'Calendar',
-              ),
-            ],
-          ),
-        ));
+                BottomNavigationBarItem(
+                  icon: Icon(
+                    Icons.event,
+                    color: Colors.white,
+                  ),
+                  label: 'Calendar',
+                ),
+              ],
+            ),
+            floatingActionButton: FloatingActionButton.extended(
+              label: const Text("Submit"),
+              onPressed: () {
+                // Implementation for saving selection goes here
+              },
+            )));
   }
 }
