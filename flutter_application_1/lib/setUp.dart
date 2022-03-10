@@ -25,8 +25,6 @@ class _formStartState extends State<formStart> {
     interestForm(),
   ];
 
-  // Variables for Checkboxes //
-
 // Parent Page //
   @override
   Widget build(BuildContext context) {
@@ -91,10 +89,17 @@ class schoolForm extends StatefulWidget {
 
 class _schoolFormState extends State<schoolForm> {
   Widget _buildList(BuildContext context, DocumentSnapshot document) {
-    return GestureDetector(
-      //onTap:
+    bool isSelect = true;
+    return InkWell(
+      onTap: () {
+        setState(() {
+          isSelect = !isSelect;
+        });
+        print(isSelect);
+      },
       child: Card(
-        child: Center(child: _buildItem(title: document['GroupName'])),
+        color: isSelect ? Colors.white : Colors.yellow,
+        child: Text(document['GroupName'], style: TextStyle(fontSize: 18.0)),
       ),
     );
   }
@@ -105,7 +110,6 @@ class _schoolFormState extends State<schoolForm> {
       body: StreamBuilder<QuerySnapshot>(
           stream: FirebaseFirestore.instance
               .collection('Groups')
-              //.where(FieldPath.documentId, isEqualTo: "School")
               .where('GroupType', isEqualTo: 'School')
               .snapshots(),
           builder: (context, snapshot) {
@@ -136,7 +140,7 @@ class _clubFormState extends State<clubForm> {
   @override
   Widget _buildList(BuildContext context, DocumentSnapshot document) {
     return Card(
-      child: Center(child: _buildItem(title: document['GroupName'])),
+      child: Text(document['GroupName'], style: TextStyle(fontSize: 18.0)),
     );
   }
 
@@ -150,7 +154,10 @@ class _clubFormState extends State<clubForm> {
               .snapshots(),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
-              return Center(child: Text("Loading"));
+              return Center(
+                  child: Text(
+                "Loading",
+              ));
             } else {
               return ListView.builder(
                 itemExtent: 80.0,
@@ -176,7 +183,7 @@ class _interestFormState extends State<interestForm> {
   bool _boolCheck = false;
   Widget _buildList(BuildContext context, DocumentSnapshot document) {
     return Card(
-      child: Center(child: _buildItem(title: document['GroupName'])),
+      child: Text(document['GroupName'], style: TextStyle(fontSize: 18.0)),
     );
   }
 
@@ -211,7 +218,7 @@ class _interestFormState extends State<interestForm> {
 }
 
 // Builds Items //
-class _buildItem extends StatefulWidget {
+/*class _buildItem extends StatefulWidget {
   final title;
   _buildItem({required this.title});
 
@@ -234,3 +241,4 @@ class __buildItemState extends State<_buildItem> {
         });
   }
 }
+*/
