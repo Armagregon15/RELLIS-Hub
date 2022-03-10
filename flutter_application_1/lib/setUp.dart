@@ -1,7 +1,13 @@
 // ignore_for_file: prefer_const_constructors, avoid_print, file_names
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_application_1/loginPage.dart';
+import 'package:provider/provider.dart';
 import './result.dart';
+import 'authentication_service.dart';
+import 'firebase_options.dart';
+
 
 class formStart extends StatefulWidget {
   @override
@@ -159,15 +165,23 @@ class _clubFormState extends State<clubForm> {
                   itemExtent: 80.0,
                   itemCount: snapshot.data?.docs.length,
                   itemBuilder: (context, index) =>
+
                       _buildList(context, snapshot.data!.docs[index]),
+
                 );
               }
             }),
         floatingActionButton: FloatingActionButton.extended(
-            label: const Text("Save"),
-            onPressed: () {
-              // Implementation for saving selection goes here
-            }));
+
+          label: const Text("Sign Out"),
+          onPressed: () async {
+            context.read<AuthenticationService>().signOut();
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => LoginHub()));
+            // Implementation for saving selection goes here
+          },
+        ));
+
   }
 }
 
