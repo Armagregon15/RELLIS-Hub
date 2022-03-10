@@ -1,10 +1,22 @@
+// ignore: file_names
 // ignore_for_file: prefer_const_constructors, avoid_print, file_names
-import 'dart:html';
+
+import 'dart:async';
+
 
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
+import 'package:flutter/widgets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+
 List<int> indexdb = [18];
+
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_application_1/loginPage.dart';
+import 'package:provider/provider.dart';
+import 'authentication_service.dart';
+import 'firebase_options.dart';
 
 class formStart extends StatefulWidget {
   @override
@@ -27,6 +39,7 @@ class _formStartState extends State<formStart> {
     clubForm(),
     interestForm(),
   ];
+
 
 // Parent Page //
   @override
@@ -91,11 +104,13 @@ class schoolForm extends StatefulWidget {
 }
 
 class _schoolFormState extends State<schoolForm> {
+
   Widget _buildList(BuildContext context, DocumentSnapshot document) {
     bool isSelect = true;
     return Card(
       child:
           _buildItem(title: document['GroupName'], value: document['GroupID']),
+
     );
   }
 
@@ -105,6 +120,7 @@ class _schoolFormState extends State<schoolForm> {
       body: StreamBuilder<QuerySnapshot>(
           stream: FirebaseFirestore.instance
               .collection('Groups')
+              .where(FieldPath.documentId, isEqualTo: "School")
               .where('GroupType', isEqualTo: 'School')
               .snapshots(),
           builder: (context, snapshot) {
@@ -116,6 +132,7 @@ class _schoolFormState extends State<schoolForm> {
                 itemCount: snapshot.data?.docs.length,
                 itemBuilder: (context, index) =>
                     _buildList(context, snapshot.data!.docs[index]),
+
               );
             }
           }),
@@ -133,16 +150,24 @@ class clubForm extends StatefulWidget {
 
 class _clubFormState extends State<clubForm> {
   @override
-  Widget _buildList(BuildContext context, DocumentSnapshot document) {
+  bool click = true;
+
+  bool boolCheck = false;
+
+  bool newValue = false;
+
+  Widget _buildListItem(BuildContext context, DocumentSnapshot document) {
     return Card(
-      child:
+
           _buildItem(title: document['GroupName'], value: document['GroupID']),
+
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
       body: StreamBuilder<QuerySnapshot>(
           stream: FirebaseFirestore.instance
               .collection('Groups')
@@ -164,6 +189,16 @@ class _clubFormState extends State<clubForm> {
             }
           }),
     );
+        floatingActionButton: FloatingActionButton.extended(
+
+          label: const Text("Sign Out"),
+          onPressed: () async {
+            context.read<AuthenticationService>().signOut();
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => LoginHub()));
+            // Implementation for saving selection goes here
+          },
+        ));
   }
 }
 
@@ -191,6 +226,7 @@ class _interestFormState extends State<interestForm> {
         body: StreamBuilder<QuerySnapshot>(
             stream: FirebaseFirestore.instance
                 .collection('Groups')
+                //.where(FieldPath.documentId, isEqualTo: "School")
                 .where('GroupType', isEqualTo: 'Interest')
                 .snapshots(),
             builder: (context, snapshot) {
@@ -201,7 +237,7 @@ class _interestFormState extends State<interestForm> {
                   itemExtent: 80.0,
                   itemCount: snapshot.data?.docs.length,
                   itemBuilder: (context, index) =>
-                      _buildList(context, snapshot.data!.docs[index]),
+                      _buildListItem(context, snapshot.data!.docs[index]),
                 );
               }
             }),
@@ -409,3 +445,4 @@ class HomePage extends State<MainPage> {
             )));
   }
 }
+
