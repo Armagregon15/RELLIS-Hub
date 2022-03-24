@@ -1,8 +1,9 @@
 // ignore_for_file: prefer_const_constructors, use_key_in_widget_constructors, file_names
 
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/main.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_application_1/auth_stuff.dart';
+import 'package:flutter_application_1/authentication_service.dart';
 import 'package:flutter_application_1/setUp.dart';
 //import 'HomePage.dart';
 import 'setUp.dart';
@@ -93,12 +94,21 @@ class LoginHub extends StatelessWidget {
                       color: Color(0xFF500000),
                       borderRadius: BorderRadius.circular(20)),
                   child: ElevatedButton(
-                    onPressed: () {
-                      context.read<AuthenticationService>().signIn(
-                          email: emailController.text.trim(),
-                          password: passwordController.text.trim());
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => formStart()));
+                    onPressed: () async {
+                      dynamic result = await context
+                          .read<AuthenticationService>()
+                          .signIn(
+                              email: emailController.text.trim(),
+                              password: passwordController.text.trim());
+                      if (result == null) {
+                        print('error signing in');
+                      } else {
+                        print('signed in');
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => formStart()));
+                      }
                     },
                     child: Text('Login'),
                     style: ElevatedButton.styleFrom(
@@ -107,10 +117,40 @@ class LoginHub extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(
-                  height: 130,
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(
+                    height: 50,
+                    width: 250,
+                    decoration: BoxDecoration(
+                        color: Color(0xFF500000),
+                        borderRadius: BorderRadius.circular(20)),
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        dynamic result = await context
+                            .read<AuthenticationService>()
+                            .signUp(
+                                email: emailController.text.trim(),
+                                password: passwordController.text.trim());
+                        if (result == null) {
+                          print('error signing up');
+                        } else {
+                          print('signed up');
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => formStart()));
+                        }
+                      },
+                      child: Text('Create User'),
+                      style: ElevatedButton.styleFrom(
+                        primary: Color(0xFF500000),
+                        textStyle: TextStyle(color: Colors.white, fontSize: 25),
+                      ),
+                    ),
+                  ),
                 ),
-                Text('New User? Create Account')
+
               ],
             ),
           ),

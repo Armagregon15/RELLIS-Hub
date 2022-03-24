@@ -29,8 +29,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  sqflite:
-  moor_flutter: ^4.0.0
+
   path:
   #this is the stream feed library from https://pub.dev/packages/stream_feed/install
   stream_feed: ^0.4.0
