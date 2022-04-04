@@ -30,6 +30,8 @@ dependencies:
   flutter:
     sdk: flutter
 
+  table_calendar: ^3.0.5
+
   path:
   #this is the stream feed library from https://pub.dev/packages/stream_feed/install
   stream_feed: ^0.4.0
