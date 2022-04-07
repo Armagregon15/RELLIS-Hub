@@ -1,5 +1,5 @@
 // ignore: file_names
-// ignore_for_file: prefer_const_constructors, avoid_print, file_names
+// ignore_for_file: prefer_const_constructors, avoid_print, file_names, unused_element
 
 import 'dart:async';
 
@@ -142,6 +142,12 @@ class clubForm extends StatefulWidget {
 
 class _clubFormState extends State<clubForm> {
   @override
+  bool click = true;
+
+  bool boolCheck = false;
+
+  bool newValue = false;
+
   Widget _buildList(BuildContext context, DocumentSnapshot document) {
     bool isSelect = true;
     return Card(
@@ -153,27 +159,35 @@ class _clubFormState extends State<clubForm> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: StreamBuilder<QuerySnapshot>(
-          stream: FirebaseFirestore.instance
-              .collection('Groups')
-              .where('GroupType', isEqualTo: 'Club')
-              .snapshots(),
-          builder: (context, snapshot) {
-            if (!snapshot.hasData) {
-              return Center(
-                  child: Text(
-                "Loading",
-              ));
-            } else {
-              return ListView.builder(
-                itemExtent: 80.0,
-                itemCount: snapshot.data?.docs.length,
-                itemBuilder: (context, index) =>
-                    _buildList(context, snapshot.data!.docs[index]),
-              );
-            }
-          }),
-    );
+        body: StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance
+                .collection('Groups')
+                .where('GroupType', isEqualTo: 'Club')
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return Center(
+                    child: Text(
+                  "Loading",
+                ));
+              } else {
+                return ListView.builder(
+                  itemExtent: 80.0,
+                  itemCount: snapshot.data?.docs.length,
+                  itemBuilder: (context, index) =>
+                      _buildList(context, snapshot.data!.docs[index]),
+                );
+              }
+            }),
+        floatingActionButton: FloatingActionButton.extended(
+          label: const Text("Sign Out"),
+          onPressed: () async {
+            context.read<AuthenticationService>().signOut();
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => LoginHub()));
+            // Implementation for saving selection goes here
+          },
+        ));
   }
 }
 
@@ -201,6 +215,7 @@ class _interestFormState extends State<interestForm> {
         body: StreamBuilder<QuerySnapshot>(
             stream: FirebaseFirestore.instance
                 .collection('Groups')
+                //.where(FieldPath.documentId, isEqualTo: "School")
                 .where('GroupType', isEqualTo: 'Interest')
                 .snapshots(),
             builder: (context, snapshot) {
@@ -286,6 +301,8 @@ class __buildItemState extends State<_buildItem> {
   }
 }
 
+// Joe work on this //
+
 class MainPage extends StatefulWidget {
   @override
   List<int> indexFeed = [];
@@ -303,6 +320,7 @@ class HomePage extends State<MainPage> {
     });
   }
 
+/*
   Widget _buildContainer(
       BuildContext context, DocumentSnapshot document, int index) {
     int currentIndex = 0;
@@ -351,6 +369,28 @@ class HomePage extends State<MainPage> {
     }
     return Container(height: .001);
   }
+*/
+  Widget _bigBooty(BuildContext context, DocumentSnapshot document) {
+    return Scaffold(
+      body: StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance
+              .collection('Events')
+              .where('GroupType', isEqualTo: 'Interest')
+              .snapshots(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return Text("Loading");
+            } else {
+              return ListView.builder(
+                itemExtent: 80.0,
+                itemCount: snapshot.data?.docs.length,
+                itemBuilder: (context, index) =>
+                    _buildList(context, snapshot.data!.docs[index]),
+              );
+            }
+          }),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -358,18 +398,19 @@ class HomePage extends State<MainPage> {
         debugShowCheckedModeBanner: false,
         title: 'The HUB at RELLIS Home',
         home: Scaffold(
-            body: StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
-                stream: FirebaseFirestore.instance
-                    .collection("Users")
-                    .doc('vOqSU2ltapRKm6sAH4sN31U18vE3')
-                    .snapshots(),
-                builder: (context, snapshot) {
+            body: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                stream:
+                    FirebaseFirestore.instance.collection('Users').snapshots(),
+                builder: (BuildContext context,
+                    AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>>
+                        snapshot) {
                   if (!snapshot.hasData) {
                     return Text("Loading");
                   } else {
-                    return ListView.builder(
-                      itemCount: 3, // size of array "GroupIDs"
-                      itemBuilder: (context, index) => sdf,
+                    return ListView(
+                      children: snapshot.data!.docs.map((document) {
+                        return Text(document['GroupIDs'].toString());
+                      }).toList(),
                     );
                   }
                 }),
@@ -413,11 +454,8 @@ class HomePage extends State<MainPage> {
               ],
             ),
             floatingActionButton: FloatingActionButton.extended(
-              label: const Text("Sign Out"),
-              onPressed: () async {
-                context.read<AuthenticationService>().signOut();
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => LoginHub()));
+              label: const Text("Submit"),
+              onPressed: () {
                 // Implementation for saving selection goes here
               },
             )));
