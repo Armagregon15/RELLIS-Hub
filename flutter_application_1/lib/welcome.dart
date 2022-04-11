@@ -1,7 +1,9 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
+
 import 'package:flutter_application_1/loginPage.dart';
+import 'package:flutter_application_1/setUp.dart';
 //import './main.dart';
 
 // ignore: use_key_in_widget_constructors
@@ -82,7 +84,7 @@ class WelcomeState extends StatelessWidget {
                   child: ElevatedButton(
                     onPressed: () {
                       Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => LoginHub()));
+                          MaterialPageRoute(builder: (context) => MainPage()));
                     },
                     child: Text('Login'),
                     style: ElevatedButton.styleFrom(
