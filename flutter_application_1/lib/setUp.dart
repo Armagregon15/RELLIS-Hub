@@ -323,7 +323,7 @@ class HomePage extends State<MainPage> {
       // indexdb.remove(i);
       return Container(
           color: Colors.white10,
-          height: MediaQuery.of(context).size.height / 4.5,
+          height: MediaQuery.of(context).size.height / 4,
           child: Center(
             child: Card(
               child: Column(
