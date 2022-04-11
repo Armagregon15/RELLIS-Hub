@@ -6,6 +6,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_application_1/authenticate.dart';
+import 'package:flutter_application_1/authmain.dart';
 import 'calendar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -15,6 +17,8 @@ import 'authentication_service.dart';
 import 'firebase_options.dart';
 
 List<int> indexdb = [18];
+
+final AuthService _auth = AuthService();
 
 class formStart extends StatefulWidget {
   @override
@@ -298,6 +302,7 @@ class MainPage extends StatefulWidget {
 
 class HomePage extends State<MainPage> {
   int _selectedIndex = 0;
+  //final AuthService _auth = AuthService();
 //temporary fix for calendar navigation
   _onItemTapped(int index) {
     Navigator.push(
@@ -426,9 +431,9 @@ class HomePage extends State<MainPage> {
               label: const Text("Sign Out"),
               backgroundColor: const Color(0xFF500000),
               onPressed: () async {
-                context.read<AuthenticationService>().signOut();
+                await _auth.signOut();
                 Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => LoginHub()));
+                    MaterialPageRoute(builder: (context) => Authenticate()));
                 // Implementation for saving selection goes here
               },
             )));
