@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-
-import 'package:flutter_application_1/authentication_service.dart';
-import 'package:flutter_application_1/setUp.dart';
+import 'package:flutter_application_1/wrapper.dart';
+import 'authmain.dart';
+import 'user.dart';
+//import 'package:flutter_application_1/authentication_service.dart';
+//import 'package:flutter_application_1/setUp.dart';
 import 'package:provider/provider.dart';
-import './loginPage.dart';
+//import './loginPage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'firebase_options.dart';
@@ -15,9 +17,29 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
+  // This widget is the root of your application.
+  @override
+  Widget build(BuildContext context) {
+    return StreamProvider<MyUser?>.value(
+      initialData: null,
+      value: AuthService().user,
+      child: MaterialApp(
+        title: 'The Hub @ RELLIS',
+        theme: ThemeData(
+          primaryColor: const Color(0xFF500000),
+        ),
+        home: Wrapper(),
+      ),
+    );
+  }
+}
+/*
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
@@ -26,6 +48,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         Provider<AuthenticationService>(
+          //create: (_) => AuthenticationService(FirebaseAuth.instance),
           create: (_) => AuthenticationService(FirebaseAuth.instance),
           // builder: (context) ={
           //   return Text(context.watch<AuthenticationService(_firebaseAuth))
@@ -34,7 +57,7 @@ class MyApp extends StatelessWidget {
         StreamProvider(
           create: (context) =>
               context.read<AuthenticationService>().authStateChanges,
-          initialData: [],
+          initialData: const [],
         )
       ],
       child: MaterialApp(
@@ -42,9 +65,8 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primaryColor: const Color(0xFF500000),
         ),
-        home: AuthenticationWrapper(),
+        home: const AuthenticationWrapper(),
       ),
-
     );
   }
 }
@@ -57,9 +79,12 @@ class AuthenticationWrapper extends StatelessWidget {
     final firebaseUser = context.watch<User?>();
 
     if (firebaseUser != null) {
+      print(firebaseUser);
       return formStart();
     }
+    print(firebaseUser);
     return LoginHub();
   }
 }
+*/
 // val db = Firebase.firestore

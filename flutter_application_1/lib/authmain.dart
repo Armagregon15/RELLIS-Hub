@@ -1,55 +1,80 @@
-/* import 'dart:html';
-import 'package:flutter/material.dart';
-import 'package:flutter_application_1/auth_stuff.dart';
+// ignore_for_file: unnecessary_null_comparison
+
 import 'package:flutter_application_1/setUp.dart';
-import 'package:provider/provider.dart';
-import './loginPage.dart';
-import './welcome.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'firebase_options.dart';
-import 'package:firebase_core/firebase_core.dart';
+
+import 'database_service.dart';
+import 'user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import 'package:flutter/cupertino.dart';
+class AuthService {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
-Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        Provider<AuthenticationService>(
-          create: (_) => AuthenticationService(FirebaseAuth.instance),
-        ),
-        StreamProvider(
-          create: (context) =>
-              context.read<AuthenticationService>().authStateChanges,
-        ),
-      ],
-      child: MaterialApp(
-        title: 'The Hub @ RELLIS',
-        theme: ThemeData(
-          primaryColor: const Color(0xFF500000),
-        ),
-        home: AuthenticationWrapper(),
-      ),
-    );
+  // create user obj based on firebase user
+  MyUser? _userFromFirebaseUser(User user) {
+    return user != null ? MyUser(uid: user.uid) : null;
   }
-}
 
-class AuthenticationWrapper extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final firebaseUser = context.watch<User>();
-    if (firebaseUser != null) {
-      return formStart();
+  // auth change user stream
+  Stream<MyUser?> get user {
+    print('here');
+    return _auth
+        .authStateChanges()
+        .map((User? user) => _userFromFirebaseUser(user!));
+  }
+
+  // sign in anon
+  Future signInAnon() async {
+    try {
+      UserCredential result = await _auth.signInAnonymously();
+      User user = result.user!;
+      return _userFromFirebaseUser(user);
+    } catch (e) {
+      print(e.toString());
+      return null;
     }
-    return LoginHub();
+  }
+
+  // sign in with email and password
+  Future signInWithEmailAndPassword(String email, String password) async {
+    try {
+      print('here fool');
+      UserCredential result = await _auth.signInWithEmailAndPassword(
+          email: email, password: password);
+      User user = result.user!;
+      return user;
+    } catch (error) {
+      print('here');
+      print(error.toString());
+      return null;
+    }
+  }
+
+  // register with email and password
+  Future registerWithEmailAndPassword(String email, String password) async {
+    try {
+      UserCredential result = await _auth.createUserWithEmailAndPassword(
+          email: email, password: password);
+      User user = result.user!;
+      await DatabaseService(uid: user.uid).updateUserData(indexdb);
+      return _userFromFirebaseUser(user);
+    } catch (error) {
+      print(error.toString());
+      return null;
+    }
+  }
+
+  Future getUID() async {
+    User? result = await _auth.currentUser;
+    return result?.uid;
+  }
+
+  // sign out
+  Future signOut() async {
+    try {
+      return await _auth.signOut();
+    } catch (error) {
+      print(error.toString());
+      return null;
+    }
   }
 }
-*/
