@@ -1,29 +1,17 @@
 // ignore: file_names
 // ignore_for_file: prefer_const_constructors, avoid_print, file_names, unused_element
 
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_application_1/authenticate.dart';
 import 'package:flutter_application_1/authmain.dart';
 import 'calendar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter_application_1/loginPage.dart';
-import 'package:provider/provider.dart';
-import 'authentication_service.dart';
-import 'firebase_options.dart';
-import 'user.dart';
 import 'database_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 List<int> indexdb = [18];
 
 final AuthService _auth = AuthService();
-
-List<int> indexdb = [18];
 
 class formStart extends StatefulWidget {
   @override
@@ -167,7 +155,6 @@ class _clubFormState extends State<clubForm> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       body: StreamBuilder<QuerySnapshot>(
           stream: FirebaseFirestore.instance
               .collection('Groups')
@@ -302,7 +289,7 @@ class HomePage extends State<MainPage> {
         context, MaterialPageRoute(builder: (context) => Calendar()));
     setState(() {
       Calendar();
-      // _selectedIndex = index;
+      _selectedIndex = index;
     });
   }
 
@@ -325,7 +312,6 @@ class HomePage extends State<MainPage> {
                         icon: const Icon(
                           Icons.menu_book,
                           color: Colors.black,
-
                         ),
                         alignment: Alignment.topCenter,
                         padding: new EdgeInsets.all(10.0),
@@ -352,7 +338,7 @@ class HomePage extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
-    print(userEvents);
+    print(newIndex);
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'The HUB at RELLIS Home',
@@ -360,9 +346,7 @@ class HomePage extends State<MainPage> {
             body: StreamBuilder<QuerySnapshot>(
                 stream: FirebaseFirestore.instance
                     .collection('Events')
-                    .where('GroupID', whereIn: indexdb)
-                    .orderBy('Date')
-                    .snapshots(),
+                    .where('GroupID', whereIn: ['GroupIDs']).snapshots(),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
                     return Text("Loading");
@@ -388,7 +372,7 @@ class HomePage extends State<MainPage> {
               unselectedItemColor: Colors.white,
               selectedItemColor: Colors.white,
               currentIndex: _selectedIndex,
-              //onTap: _onItemTapped,
+              onTap: _onItemTapped,
               backgroundColor: const Color(0xFF500000),
               elevation: 90,
               items: const <BottomNavigationBarItem>[
@@ -399,7 +383,6 @@ class HomePage extends State<MainPage> {
                     //onPressed: formStart(),
                   ),
                   label: 'Profile',
-                  
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(
@@ -427,5 +410,12 @@ class HomePage extends State<MainPage> {
                 // Implementation for saving selection goes here
               },
             )));
+  }
+
+  List<int> newIndex = [];
+  String uid = FirebaseAuth.instance.currentUser!.uid;
+  Future getIndexDB(DocumentSnapshot document) async {
+    FirebaseFirestore.instance.collection('Users').doc(uid).get();
+    newIndex = document['GroupIDs'];
   }
 }
