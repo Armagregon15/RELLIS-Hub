@@ -14,7 +14,6 @@ class DatabaseService {
       'GroupIDs': groupIDs,
     });
   }
-
   Stream<QuerySnapshot> get users {
     return brewCollection.snapshots();
   }

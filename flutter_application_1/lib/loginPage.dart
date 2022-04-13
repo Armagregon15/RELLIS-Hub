@@ -92,13 +92,17 @@ class _LoginHub extends State<LoginHub> {
                             setState(() => loading = true);
                             dynamic result = await _auth
                                 .signInWithEmailAndPassword(email, password);
-                            MainPage();
+                            //Navigator.push(context,
+                            //MaterialPageRoute(builder: (context)=>MainPage()));
                             if (result == null) {
                               setState(() {
                                 loading = false;
                                 error =
                                     'Could not sign in with those credentials';
                               });
+                            } else {
+                              Navigator.push(context,
+                            MaterialPageRoute(builder: (context)=>MainPage()));
                             }
                           }
                         }),

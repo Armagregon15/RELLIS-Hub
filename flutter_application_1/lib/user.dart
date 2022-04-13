@@ -1,6 +1,6 @@
 class MyUser {
   final String? uid;
-  final dynamic groupIDs;
+  //final List<int>? groupIDs;
 
-  MyUser({this.uid, this.groupIDs});
+  MyUser({this.uid});
 }
