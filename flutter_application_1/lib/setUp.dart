@@ -143,9 +143,7 @@ class clubForm extends StatefulWidget {
 class _clubFormState extends State<clubForm> {
   @override
   bool click = true;
-
   bool boolCheck = false;
-
   bool newValue = false;
 
   Widget _buildList(BuildContext context, DocumentSnapshot document) {
@@ -215,7 +213,6 @@ class _interestFormState extends State<interestForm> {
         body: StreamBuilder<QuerySnapshot>(
             stream: FirebaseFirestore.instance
                 .collection('Groups')
-                //.where(FieldPath.documentId, isEqualTo: "School")
                 .where('GroupType', isEqualTo: 'Interest')
                 .snapshots(),
             builder: (context, snapshot) {
@@ -239,34 +236,6 @@ class _interestFormState extends State<interestForm> {
         ));
   }
 }
-
-// Builds Items //
-/*class _buildItem extends StatefulWidget {
-  final title;
-   final value;
-  _buildItem({required this.title, required this.value});
-
-  @override
-  __buildItemState createState() => __buildItemState();
-}
-
-class __buildItemState extends State<_buildItem> {
-  bool selected = false;
-  int index = 0;
-
-  @override
-  Widget build(BuildContext context) {
-    return CheckboxListTile(
-        title: Text(widget.title, style: TextStyle(fontSize: 18.0)),
-        value: selected,
-        onChanged: (bool? val) {
-          setState(() {
-            selected = val!;
-          });
-        });
-  }
-}
-*/
 
 class _buildItem extends StatefulWidget {
   final title;
@@ -313,104 +282,79 @@ class MainPage extends StatefulWidget {
 
 class HomePage extends State<MainPage> {
   int _selectedIndex = 0;
-
+  final FirebaseFirestore _db = FirebaseFirestore.instance;
+  static List? userEvents = [];
   _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
   }
 
-/*
-  Widget _buildContainer(
-      BuildContext context, DocumentSnapshot document, int index) {
-    int currentIndex = 0;
+  // Builds container for each event displayed //
+  Widget _buildHomeItem(BuildContext context, DocumentSnapshot document) {
     Timestamp t = document['EventDate'];
     DateTime d = t.toDate();
-
-    if (indexdb.contains(index)) {
-      // indexdb.remove(i);
-      return Container(
-          color: Colors.white10,
-          height: MediaQuery.of(context).size.height / 4.5,
-          child: Center(
-            child: Card(
-              child: Column(
-                children: [
-                  Container(
-                    height: 190,
-                    child: Column(
-                      children: [
-                        IconButton(
-                          icon: const Icon(
-                            Icons.menu_book,
-                            color: Colors.black,
-                          ),
-                          alignment: Alignment.topCenter,
-                          padding: new EdgeInsets.all(10.0),
-                          onPressed: () {},
+    return Container(
+        color: Colors.white10,
+        height: MediaQuery.of(context).size.height / 4.5,
+        child: Center(
+          child: Card(
+            child: Column(
+              children: [
+                Container(
+                  height: 190,
+                  child: Column(
+                    children: [
+                      IconButton(
+                        icon: const Icon(
+                          Icons.menu_book,
+                          color: Colors.black,
                         ),
-                        Container(
-                            padding: const EdgeInsets.all(8),
-                            child: Center(child: Text(document['GroupName']))),
-                        Container(
-                            padding: const EdgeInsets.all(8),
-                            child: Center(child: Text(document['EventName']))),
-                        Container(
-                            padding: const EdgeInsets.all(8),
-                            child: Center(child: Text(d.toString()))),
-                      ],
-                    ),
+                        alignment: Alignment.topCenter,
+                        padding: new EdgeInsets.all(10.0),
+                        onPressed: () {},
+                      ),
+                      Container(
+                          padding: const EdgeInsets.all(8),
+                          child: Center(child: Text(document['GroupName']))),
+                      Container(
+                          padding: const EdgeInsets.all(8),
+                          child: Center(child: Text(document['EventName']))),
+                      Container(
+                          padding: const EdgeInsets.all(8),
+                          child: Center(child: Text(d.toString()))),
+                    ],
                   ),
-                ],
-              ),
-              elevation: 6,
+                ),
+              ],
             ),
-          ));
-    }
-    return Container(height: .001);
-  }
-*/
-  Widget _bigBooty(BuildContext context, DocumentSnapshot document) {
-    return Scaffold(
-      body: StreamBuilder<QuerySnapshot>(
-          stream: FirebaseFirestore.instance
-              .collection('Events')
-              .where('GroupType', isEqualTo: 'Interest')
-              .snapshots(),
-          builder: (context, snapshot) {
-            if (!snapshot.hasData) {
-              return Text("Loading");
-            } else {
-              return ListView.builder(
-                itemExtent: 80.0,
-                itemCount: snapshot.data?.docs.length,
-                itemBuilder: (context, index) =>
-                    _buildList(context, snapshot.data!.docs[index]),
-              );
-            }
-          }),
-    );
+            elevation: 6,
+          ),
+        ));
   }
 
   @override
   Widget build(BuildContext context) {
+    print(userEvents);
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'The HUB at RELLIS Home',
         home: Scaffold(
-            body: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-                stream:
-                    FirebaseFirestore.instance.collection('Users').snapshots(),
-                builder: (BuildContext context,
-                    AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>>
-                        snapshot) {
+            body: StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection('Events')
+                    .where('GroupID', whereIn: indexdb)
+                    .orderBy('Date')
+                    .snapshots(),
+                builder: (context, snapshot) {
                   if (!snapshot.hasData) {
                     return Text("Loading");
                   } else {
-                    return ListView(
-                      children: snapshot.data!.docs.map((document) {
-                        return Text(document['GroupIDs'].toString());
-                      }).toList(),
+                    return ListView.builder(
+                      itemExtent: MediaQuery.of(context).size.height / 4,
+                      itemCount: snapshot.data?.docs.length,
+                      itemBuilder: (context, index) =>
+                          _buildHomeItem(context, snapshot.data!.docs[index]),
                     );
                   }
                 }),
