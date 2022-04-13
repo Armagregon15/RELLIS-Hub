@@ -15,6 +15,9 @@ import 'package:flutter_application_1/loginPage.dart';
 import 'package:provider/provider.dart';
 import 'authentication_service.dart';
 import 'firebase_options.dart';
+import 'user.dart';
+import 'database_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 List<int> indexdb = [18];
 
@@ -223,7 +226,15 @@ class _interestFormState extends State<interestForm> {
         floatingActionButton: FloatingActionButton.extended(
           label: const Text("Submit"),
           backgroundColor: const Color(0xFF500000),
-          onPressed: () {
+          onPressed: () async {
+            try {
+              var uid = await _auth.getUID();
+              //MyUser _auth.user.uid;
+              DatabaseService(uid: uid).updateUserData(indexdb);
+            } catch (error) {
+              print(error.toString());
+              return null;
+            }
             Navigator.push(
                 context, MaterialPageRoute(builder: (context) => MainPage()));
           },
@@ -400,7 +411,7 @@ class HomePage extends State<MainPage> {
               unselectedItemColor: Colors.white,
               selectedItemColor: Colors.white,
               currentIndex: _selectedIndex,
-              onTap: _onItemTapped,
+              //onTap: _onItemTapped,
               backgroundColor: const Color(0xFF500000),
               elevation: 90,
               items: const <BottomNavigationBarItem>[
@@ -408,8 +419,10 @@ class HomePage extends State<MainPage> {
                   icon: Icon(
                     Icons.person,
                     color: Colors.white,
+                    //onPressed: formStart(),
                   ),
                   label: 'Profile',
+                  
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(

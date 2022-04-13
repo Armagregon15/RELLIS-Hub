@@ -60,6 +60,11 @@ class AuthService {
     }
   }
 
+  Future getUID() async {
+    User? result = await _auth.currentUser;
+    return result?.uid;
+  }
+
   // sign out
   Future signOut() async {
     try {
