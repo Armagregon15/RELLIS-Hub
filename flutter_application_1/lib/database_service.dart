@@ -11,7 +11,7 @@ class DatabaseService {
 
   Future<void> updateUserData(groupIDs) async {
     return await brewCollection.doc(uid).set({
-      'GroupIDs': groupIDs,
+      'GroupIDs': groupIDs, 'UserID' : uid
     });
   }
 
