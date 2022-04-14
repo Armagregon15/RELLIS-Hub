@@ -1,14 +1,20 @@
 // ignore_for_file: prefer_const_constructors, use_key_in_widget_constructors, file_names, deprecated_member_use
+//import 'package:flutter_application_1/home.dart';
+
+import 'package:flutter_application_1/home.dart';
+
 import 'constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/main.dart';
 import 'package:provider/provider.dart';
 //import 'package:flutter_application_1/authentication_service.dart';
-import 'package:flutter_application_1/setUp.dart';
+//import 'package:flutter_application_1/setUp.dart';
 import 'authmain.dart';
 import 'loading.dart';
 import 'user.dart';
 import 'authenticate.dart';
+
+//import 'home.dart';
 //import 'HomePage.dart';
 //import 'setUp.dart';
 //import 'calendar.dart';
@@ -101,8 +107,10 @@ class _LoginHub extends State<LoginHub> {
                                     'Could not sign in with those credentials';
                               });
                             } else {
-                              Navigator.push(context,
-                            MaterialPageRoute(builder: (context)=>MainPage()));
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => Home()));
                             }
                           }
                         }),

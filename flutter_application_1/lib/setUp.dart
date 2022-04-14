@@ -8,13 +8,17 @@ import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_application_1/authenticate.dart';
 import 'package:flutter_application_1/authmain.dart';
+import 'package:flutter_application_1/event_list.dart';
+//import 'package:flutter_application_1/home.dart';
 import 'calendar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_application_1/loginPage.dart';
 import 'package:provider/provider.dart';
 import 'authentication_service.dart';
+import 'events.dart';
 import 'firebase_options.dart';
+import 'home.dart';
 import 'user.dart';
 import 'database_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -22,82 +26,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 List<int> indexdb = [18];
 
 final AuthService _auth = AuthService();
-
-class formStart extends StatefulWidget {
-  @override
-  State<formStart> createState() => _formStartState();
-}
-
-class _formStartState extends State<formStart> {
-  @override
-  int _selectedIndex = 0;
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
-  // List of Widgets index //
-  static const List<Widget> _widgetOptions = <Widget>[
-    schoolForm(),
-    clubForm(),
-    interestForm(),
-  ];
-
-// Parent Page //
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        backgroundColor: const Color(0xFF500000),
-        title: const Text('The Hub @ Rellis'),
-      ),
-      body: Center(
-        child: _widgetOptions.elementAt(_selectedIndex),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        selectedFontSize: 15,
-        selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
-        selectedIconTheme: IconThemeData(
-          color: Colors.white,
-          size: 35,
-        ),
-        unselectedItemColor: Colors.white,
-        selectedItemColor: Colors.white,
-        backgroundColor: const Color(0xFF500000),
-        elevation: 90,
-        type: BottomNavigationBarType.fixed,
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.school,
-              color: Colors.white,
-            ),
-            label: 'Schools',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.person,
-              color: Colors.white,
-            ),
-            label: 'Clubs',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.favorite,
-              color: Colors.white,
-            ),
-            label: 'Interests',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-      ),
-    );
-  }
-}
 
 // Schools Form //
 class schoolForm extends StatefulWidget {
@@ -236,7 +164,7 @@ class _interestFormState extends State<interestForm> {
               return null;
             }
             Navigator.push(
-                context, MaterialPageRoute(builder: (context) => MainPage()));
+                context, MaterialPageRoute(builder: (context) => Home()));
           },
         ));
   }
@@ -294,11 +222,63 @@ class __buildItemState extends State<_buildItem> {
           print(widget.value);
           if (selected == false) {
             indexdb.add(widget.value);
-          } else
+          } else {
             indexdb.remove(widget.value);
+          }
           print(indexdb);
         });
       },
+    );
+  }
+}
+
+/*
+class Home extends StatelessWidget {
+  final AuthService _auth = AuthService();
+
+  @override
+  Widget build(BuildContext context) {
+    void _showSettingsPanel() {
+      showModalBottomSheet(
+          context: context,
+          builder: (context) {
+            return Container(
+              padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 60.0),
+              //child: SettingsForm(),
+            );
+          });
+    }
+
+    return StreamProvider<List<Events>>.value(
+      value: DatabaseService(uid: '').events,
+      initialData: [],
+      child: Scaffold(
+        backgroundColor: Colors.brown[50],
+        appBar: AppBar(
+          title: Text('The Hub @ RELLIS'),
+          backgroundColor: const Color(0xFF500000),
+          elevation: 0.0,
+          actions: <Widget>[
+            FlatButton.icon(
+              icon: Icon(Icons.person),
+              label: Text('logout'),
+              textColor: Colors.white,
+              onPressed: () async {
+                await _auth.signOut();
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => Authenticate()));
+              },
+            ),
+            FlatButton.icon(
+              icon: Icon(Icons.settings),
+              label: Text('settings'),
+              textColor: Colors.white,
+              onPressed: () => _showSettingsPanel(),
+            )
+          ],
+        ),
+        body: EventList(),
+      ),
     );
   }
 }
@@ -316,6 +296,7 @@ class HomePage extends State<MainPage> {
   //final AuthService _auth = AuthService();
 //temporary fix for calendar navigation
   _onItemTapped(int index) {
+    indexdb = [18];
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => Calendar()));
     setState(() {
@@ -334,13 +315,12 @@ class HomePage extends State<MainPage> {
     int currentIndex = 0;
     Timestamp t = document['EventDate'];
     DateTime d = t.toDate();
-
+    //indexdb = DatabaseService.userData;
     if (indexdb.contains(index)) {
       // indexdb.remove(i);
       return Container(
           color: Colors.white10,
           height: MediaQuery.of(context).size.height / 3,
-
           child: Center(
             child: Card(
               child: Column(
@@ -381,24 +361,19 @@ class HomePage extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
+    User user = Provider.of<User>(context);
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'The HUB at RELLIS Home',
         home: Scaffold(
-            body: StreamBuilder<QuerySnapshot>(
-                stream:
-                    FirebaseFirestore.instance.collection('Groups').snapshots(),
+            body: StreamBuilder<QueryDocumentSnapshot>(
                 builder: (context, snapshot) {
-                  if (!snapshot.hasData) {
-                    return Text("Loading");
-                  } else {
-                    return ListView.builder(
-                      itemCount: 19,
-                      itemBuilder: (context, index) => _buildContainer(
-                          context, snapshot.data!.docs[index], index),
-                    );
-                  }
-                }),
+              if (!snapshot.hasData) {
+                return Text("Loading");
+              } else {
+                return EventList();
+              }
+            }),
             bottomNavigationBar: BottomNavigationBar(
               selectedFontSize: 15,
               // ignore: prefer_const_constructors
@@ -423,7 +398,6 @@ class HomePage extends State<MainPage> {
                     //onPressed: formStart(),
                   ),
                   label: 'Profile',
-                  
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(
@@ -453,3 +427,4 @@ class HomePage extends State<MainPage> {
             )));
   }
 }
+*/

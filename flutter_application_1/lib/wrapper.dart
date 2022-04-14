@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/home.dart';
 import 'package:flutter_application_1/setUp.dart';
 import 'package:provider/provider.dart';
 import 'authenticate.dart';
@@ -15,11 +16,11 @@ class Wrapper extends StatelessWidget {
       if (user == null) {
         return const Authenticate();
       } else {
-        return MainPage();
+        return Home();
       }
     } catch (e) {
       print(e.toString());
-      return MainPage();
+      return Home();
     }
     // return either the Home or Authenticate widget
   }
