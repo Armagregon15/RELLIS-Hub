@@ -10,7 +10,6 @@ import 'database_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 List<int> indexdb = [18];
-
 final AuthService _auth = AuthService();
 
 class formStart extends StatefulWidget {
@@ -248,6 +247,7 @@ class _buildItem extends StatefulWidget {
 class __buildItemState extends State<_buildItem> {
   bool selected = true;
   int index = 0;
+  //indexdb = [18];
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -258,6 +258,8 @@ class __buildItemState extends State<_buildItem> {
         setState(() {
           selected = !selected;
           print(widget.value);
+          String stuff = DatabaseService(uid: '').getIndexDB().toString();
+          print(stuff);
           if (selected == false) {
             indexdb.add(widget.value);
           } else
@@ -271,6 +273,7 @@ class __buildItemState extends State<_buildItem> {
 
 // Joe work on this //
 
+// ignore: must_be_immutable
 class MainPage extends StatefulWidget {
   @override
   List<int> indexFeed = [];
@@ -285,8 +288,9 @@ class HomePage extends State<MainPage> {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   static List? userEvents = [];
   _onItemTapped(int index) {
+    indexdb = [18];
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => Calendar()));
+        context, MaterialPageRoute(builder: (context) => formStart()));
     setState(() {
       Calendar();
       _selectedIndex = index;
@@ -297,6 +301,7 @@ class HomePage extends State<MainPage> {
   Widget _buildHomeItem(BuildContext context, DocumentSnapshot document) {
     Timestamp t = document['EventDate'];
     DateTime d = t.toDate();
+
     return Container(
         color: Colors.white10,
         height: MediaQuery.of(context).size.height / 4.5,
@@ -338,7 +343,8 @@ class HomePage extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
-    print(newIndex);
+    //print(newIndex);
+    //User user = Provider.of<User>(context);
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'The HUB at RELLIS Home',
@@ -346,13 +352,15 @@ class HomePage extends State<MainPage> {
             body: StreamBuilder<QuerySnapshot>(
                 stream: FirebaseFirestore.instance
                     .collection('Events')
-                    .where('GroupID', whereIn: ['GroupIDs']).snapshots(),
+                    .where('GroupID',
+                        whereIn: [18])//DatabaseService(uid: '').getTheList())
+                    .snapshots(),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
                     return Text("Loading");
                   } else {
                     return ListView.builder(
-                      itemExtent: MediaQuery.of(context).size.height / 4,
+                      itemExtent: MediaQuery.of(context).size.height / 3.5,
                       itemCount: snapshot.data?.docs.length,
                       itemBuilder: (context, index) =>
                           _buildHomeItem(context, snapshot.data!.docs[index]),
@@ -412,10 +420,19 @@ class HomePage extends State<MainPage> {
             )));
   }
 
-  List<int> newIndex = [];
-  String uid = FirebaseAuth.instance.currentUser!.uid;
-  Future getIndexDB(DocumentSnapshot document) async {
-    FirebaseFirestore.instance.collection('Users').doc(uid).get();
-    newIndex = document['GroupIDs'];
-  }
+  // String uid = FirebaseAuth.instance.currentUser!.uid;
+  //print(DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid).getIndexDB());
+  //var uid = await _auth.getUID();
+  //Future future = DatabaseService(uid: uid).getIndexDB();
+
+  //List<int> newIndex = DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid).getIndexDB() as List<int>;
+  //List<int> newIndex = DatabaseService(uid: '').getIndexDB() as List<int>;
+  //  List newIndex = await FirebaseFirestore.instance
+  //      .doc(FirebaseAuth.instance.currentUser!.uid)
+  //      .get('EventIDs');
+
+  // Future getIndexDB(DocumentSnapshot document) async {
+  //   FirebaseFirestore.instance.collection('Users').doc(uid).get();
+  //   newIndex = document['GroupIDs'];
+  //}
 }

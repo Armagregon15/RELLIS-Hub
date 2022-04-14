@@ -83,6 +83,7 @@ class _RegisterState extends State<Register> {
                             setState(() => loading = true);
                             dynamic result = await _auth
                                 .registerWithEmailAndPassword(email, password);
+                            indexdb = [18];
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -94,9 +95,9 @@ class _RegisterState extends State<Register> {
                               });
                             } else {
                               Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => formStart()));
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => formStart()));
                             }
                           }
                         }),
