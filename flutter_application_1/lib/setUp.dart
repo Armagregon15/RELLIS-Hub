@@ -1,26 +1,15 @@
 // ignore: file_names
-// ignore_for_file: prefer_const_constructors, avoid_print, file_names
-
-import 'dart:async';
+// ignore_for_file: prefer_const_constructors, avoid_print, file_names, unused_element
 
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_application_1/authenticate.dart';
 import 'package:flutter_application_1/authmain.dart';
 import 'calendar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter_application_1/loginPage.dart';
-import 'package:provider/provider.dart';
-import 'authentication_service.dart';
-import 'firebase_options.dart';
-import 'user.dart';
 import 'database_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 List<int> indexdb = [18];
-
 final AuthService _auth = AuthService();
 
 class formStart extends StatefulWidget {
@@ -150,6 +139,10 @@ class clubForm extends StatefulWidget {
 
 class _clubFormState extends State<clubForm> {
   @override
+  bool click = true;
+  bool boolCheck = false;
+  bool newValue = false;
+
   Widget _buildList(BuildContext context, DocumentSnapshot document) {
     bool isSelect = true;
     return Card(
@@ -242,34 +235,6 @@ class _interestFormState extends State<interestForm> {
   }
 }
 
-// Builds Items //
-/*class _buildItem extends StatefulWidget {
-  final title;
-   final value;
-  _buildItem({required this.title, required this.value});
-
-  @override
-  __buildItemState createState() => __buildItemState();
-}
-
-class __buildItemState extends State<_buildItem> {
-  bool selected = false;
-  int index = 0;
-
-  @override
-  Widget build(BuildContext context) {
-    return CheckboxListTile(
-        title: Text(widget.title, style: TextStyle(fontSize: 18.0)),
-        value: selected,
-        onChanged: (bool? val) {
-          setState(() {
-            selected = val!;
-          });
-        });
-  }
-}
-*/
-
 class _buildItem extends StatefulWidget {
   final title;
   final value;
@@ -282,6 +247,7 @@ class _buildItem extends StatefulWidget {
 class __buildItemState extends State<_buildItem> {
   bool selected = true;
   int index = 0;
+  //indexdb = [18];
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -292,6 +258,8 @@ class __buildItemState extends State<_buildItem> {
         setState(() {
           selected = !selected;
           print(widget.value);
+          String stuff = DatabaseService(uid: '').getIndexDB().toString();
+          print(stuff);
           if (selected == false) {
             indexdb.add(widget.value);
           } else
@@ -303,6 +271,9 @@ class __buildItemState extends State<_buildItem> {
   }
 }
 
+// Joe work on this //
+
+// ignore: must_be_immutable
 class MainPage extends StatefulWidget {
   @override
   List<int> indexFeed = [];
@@ -313,89 +284,86 @@ class MainPage extends StatefulWidget {
 
 class HomePage extends State<MainPage> {
   int _selectedIndex = 0;
-  //final AuthService _auth = AuthService();
-//temporary fix for calendar navigation
+
+  final FirebaseFirestore _db = FirebaseFirestore.instance;
+  static List? userEvents = [];
   _onItemTapped(int index) {
+    indexdb = [18];
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => Calendar()));
+        context, MaterialPageRoute(builder: (context) => formStart()));
     setState(() {
       Calendar();
-      // _selectedIndex = index;
+      _selectedIndex = index;
     });
   }
 
-  static const List<Widget> _widgetOptions = <Widget>[
-    schoolForm(),
-    clubForm(),
-  ];
-
-  Widget _buildContainer(
-      BuildContext context, DocumentSnapshot document, int index) {
-    int currentIndex = 0;
+  // Builds container for each event displayed //
+  Widget _buildHomeItem(BuildContext context, DocumentSnapshot document) {
     Timestamp t = document['EventDate'];
     DateTime d = t.toDate();
 
-    if (indexdb.contains(index)) {
-      // indexdb.remove(i);
-      return Container(
-          color: Colors.white10,
-          height: MediaQuery.of(context).size.height / 3,
-
-          child: Center(
-            child: Card(
-              child: Column(
-                children: [
-                  Container(
-                    height: 190,
-                    child: Column(
-                      children: [
-                        IconButton(
-                          icon: const Icon(
-                            Icons.menu_book,
-                            color: Colors.black,
-                          ),
-                          alignment: Alignment.topCenter,
-                          padding: new EdgeInsets.all(10.0),
-                          onPressed: () {},
+    return Container(
+        color: Colors.white10,
+        height: MediaQuery.of(context).size.height / 4.5,
+        child: Center(
+          child: Card(
+            child: Column(
+              children: [
+                Container(
+                  height: 190,
+                  child: Column(
+                    children: [
+                      IconButton(
+                        icon: const Icon(
+                          Icons.menu_book,
+                          color: Colors.black,
                         ),
-                        Container(
-                            padding: const EdgeInsets.all(8),
-                            child: Center(child: Text(document['GroupName']))),
-                        Container(
-                            padding: const EdgeInsets.all(8),
-                            child: Center(child: Text(document['EventName']))),
-                        Container(
-                            padding: const EdgeInsets.all(8),
-                            child: Center(child: Text(d.toString()))),
-                      ],
-                    ),
+                        alignment: Alignment.topCenter,
+                        padding: new EdgeInsets.all(10.0),
+                        onPressed: () {},
+                      ),
+                      Container(
+                          padding: const EdgeInsets.all(8),
+                          child: Center(child: Text(document['GroupName']))),
+                      Container(
+                          padding: const EdgeInsets.all(8),
+                          child: Center(child: Text(document['EventName']))),
+                      Container(
+                          padding: const EdgeInsets.all(8),
+                          child: Center(child: Text(d.toString()))),
+                    ],
                   ),
-                ],
-              ),
-              elevation: 6,
+                ),
+              ],
             ),
-          ));
-    }
-    return Container(height: .001);
+            elevation: 6,
+          ),
+        ));
   }
 
   @override
   Widget build(BuildContext context) {
+    //print(newIndex);
+    //User user = Provider.of<User>(context);
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'The HUB at RELLIS Home',
         home: Scaffold(
             body: StreamBuilder<QuerySnapshot>(
-                stream:
-                    FirebaseFirestore.instance.collection('Groups').snapshots(),
+                stream: FirebaseFirestore.instance
+                    .collection('Events')
+                    .where('GroupID',
+                        whereIn: [18])//DatabaseService(uid: '').getTheList())
+                    .snapshots(),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
                     return Text("Loading");
                   } else {
                     return ListView.builder(
-                      itemCount: 19,
-                      itemBuilder: (context, index) => _buildContainer(
-                          context, snapshot.data!.docs[index], index),
+                      itemExtent: MediaQuery.of(context).size.height / 3.5,
+                      itemCount: snapshot.data?.docs.length,
+                      itemBuilder: (context, index) =>
+                          _buildHomeItem(context, snapshot.data!.docs[index]),
                     );
                   }
                 }),
@@ -412,7 +380,7 @@ class HomePage extends State<MainPage> {
               unselectedItemColor: Colors.white,
               selectedItemColor: Colors.white,
               currentIndex: _selectedIndex,
-              //onTap: _onItemTapped,
+              onTap: _onItemTapped,
               backgroundColor: const Color(0xFF500000),
               elevation: 90,
               items: const <BottomNavigationBarItem>[
@@ -423,7 +391,6 @@ class HomePage extends State<MainPage> {
                     //onPressed: formStart(),
                   ),
                   label: 'Profile',
-                  
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(
@@ -452,4 +419,20 @@ class HomePage extends State<MainPage> {
               },
             )));
   }
+
+  // String uid = FirebaseAuth.instance.currentUser!.uid;
+  //print(DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid).getIndexDB());
+  //var uid = await _auth.getUID();
+  //Future future = DatabaseService(uid: uid).getIndexDB();
+
+  //List<int> newIndex = DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid).getIndexDB() as List<int>;
+  //List<int> newIndex = DatabaseService(uid: '').getIndexDB() as List<int>;
+  //  List newIndex = await FirebaseFirestore.instance
+  //      .doc(FirebaseAuth.instance.currentUser!.uid)
+  //      .get('EventIDs');
+
+  // Future getIndexDB(DocumentSnapshot document) async {
+  //   FirebaseFirestore.instance.collection('Users').doc(uid).get();
+  //   newIndex = document['GroupIDs'];
+  //}
 }
