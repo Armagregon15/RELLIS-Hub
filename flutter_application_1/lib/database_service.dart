@@ -6,7 +6,7 @@ import 'authmain.dart';
 
 class DatabaseService {
   final String uid;
-  static List<dynamic> thelist = [];
+  static List<int> thelist = [];
   DatabaseService({required this.uid});
   final AuthService _auth = AuthService();
   //collection reference
@@ -28,7 +28,7 @@ class DatabaseService {
   Future<Stream<QuerySnapshot<Object?>>> getSnaps() async {
     Future<List> newIndex =
         DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid)
-            .getIndexDB() as Future<List>;
+            .getIndexDB();
     return FirebaseFirestore.instance
         .collection('Events')
         .where('GroupID', whereIn: await newIndex)

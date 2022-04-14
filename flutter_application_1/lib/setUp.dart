@@ -1,6 +1,8 @@
 // ignore: file_names
 // ignore_for_file: prefer_const_constructors, avoid_print, file_names, unused_element
 
+import 'dart:html';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/authenticate.dart';
 import 'package:flutter_application_1/authmain.dart';
@@ -10,6 +12,7 @@ import 'database_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 List<int> indexdb = [18];
+
 final AuthService _auth = AuthService();
 
 class formStart extends StatefulWidget {
@@ -247,7 +250,6 @@ class _buildItem extends StatefulWidget {
 class __buildItemState extends State<_buildItem> {
   bool selected = true;
   int index = 0;
-  //indexdb = [18];
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -258,8 +260,6 @@ class __buildItemState extends State<_buildItem> {
         setState(() {
           selected = !selected;
           print(widget.value);
-          String stuff = DatabaseService(uid: '').getIndexDB().toString();
-          print(stuff);
           if (selected == false) {
             indexdb.add(widget.value);
           } else
@@ -271,9 +271,6 @@ class __buildItemState extends State<_buildItem> {
   }
 }
 
-// Joe work on this //
-
-// ignore: must_be_immutable
 class MainPage extends StatefulWidget {
   @override
   List<int> indexFeed = [];
@@ -285,12 +282,9 @@ class MainPage extends StatefulWidget {
 class HomePage extends State<MainPage> {
   int _selectedIndex = 0;
 
-  final FirebaseFirestore _db = FirebaseFirestore.instance;
-  static List? userEvents = [];
   _onItemTapped(int index) {
-    indexdb = [18];
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => formStart()));
+        context, MaterialPageRoute(builder: (context) => Calendar()));
     setState(() {
       Calendar();
       _selectedIndex = index;
@@ -301,7 +295,6 @@ class HomePage extends State<MainPage> {
   Widget _buildHomeItem(BuildContext context, DocumentSnapshot document) {
     Timestamp t = document['EventDate'];
     DateTime d = t.toDate();
-
     return Container(
         color: Colors.white10,
         height: MediaQuery.of(context).size.height / 4.5,
@@ -343,8 +336,6 @@ class HomePage extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
-    //print(newIndex);
-    //User user = Provider.of<User>(context);
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'The HUB at RELLIS Home',
@@ -353,14 +344,14 @@ class HomePage extends State<MainPage> {
                 stream: FirebaseFirestore.instance
                     .collection('Events')
                     .where('GroupID',
-                        whereIn: [18])//DatabaseService(uid: '').getTheList())
+                        whereIn: DatabaseService(uid: '').getTheList())
                     .snapshots(),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
                     return Text("Loading");
                   } else {
                     return ListView.builder(
-                      itemExtent: MediaQuery.of(context).size.height / 3.5,
+                      itemExtent: MediaQuery.of(context).size.height / 4,
                       itemCount: snapshot.data?.docs.length,
                       itemBuilder: (context, index) =>
                           _buildHomeItem(context, snapshot.data!.docs[index]),
@@ -419,20 +410,16 @@ class HomePage extends State<MainPage> {
               },
             )));
   }
+}
 
-  // String uid = FirebaseAuth.instance.currentUser!.uid;
-  //print(DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid).getIndexDB());
-  //var uid = await _auth.getUID();
-  //Future future = DatabaseService(uid: uid).getIndexDB();
-
-  //List<int> newIndex = DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid).getIndexDB() as List<int>;
-  //List<int> newIndex = DatabaseService(uid: '').getIndexDB() as List<int>;
-  //  List newIndex = await FirebaseFirestore.instance
-  //      .doc(FirebaseAuth.instance.currentUser!.uid)
-  //      .get('EventIDs');
-
-  // Future getIndexDB(DocumentSnapshot document) async {
-  //   FirebaseFirestore.instance.collection('Users').doc(uid).get();
-  //   newIndex = document['GroupIDs'];
-  //}
+class makingIndex {
+  String uid = FirebaseAuth.instance.currentUser!.uid;
+  static List<dynamic>? newIndex = [];
+  final FirebaseFirestore _db = FirebaseFirestore.instance;
+  Future<void> getdata() async {
+    return _db.collection('Users').doc(uid).get().then((value) {
+      newIndex = List<dynamic>.from(value.get("GroupIDs")).toList();
+      print(newIndex);
+    });
+  }
 }
