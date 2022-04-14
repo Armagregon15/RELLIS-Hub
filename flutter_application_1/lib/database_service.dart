@@ -6,7 +6,13 @@ import 'authmain.dart';
 
 class DatabaseService {
   final String uid;
-  static List<dynamic> thelist = [];
+  int test = 0;
+  
+  void getTest () {
+    print(test);
+
+  }
+  List<int> thelist = [];
   DatabaseService({required this.uid});
   final AuthService _auth = AuthService();
   //collection reference
@@ -16,7 +22,19 @@ class DatabaseService {
   final CollectionReference eventCollection =
       FirebaseFirestore.instance.collection('Events');
   List<int> getTheList() {
-    return thelist as List<int>;
+    List<int> thereallist = [];
+    print('why');
+    print(thelist);
+    print('why');
+    if (thelist.isNotEmpty) {
+      for (int i = 0; i < thelist.length; i++) {
+        thereallist[i] = thelist[i] as int;
+      }
+
+      return thereallist;
+    } else {
+      return [18];
+    }
   }
 
   Future<void> updateUserData(groupIDs) async {
@@ -49,14 +67,25 @@ class DatabaseService {
     var thisguy = await userCollection.doc(uid.toString()).get();
 
     Map<String, dynamic> data = thisguy.data() as Map<String, dynamic>;
+    print('groupids');
+    print(data['GroupIDs'].length);
+    print('groupids');
+    for (int i = 0; i <= data['GroupIDs'].length - 1; i++) {
+      if (!thelist.contains(data['GroupIDs'][i])) {
+        thelist.add(data['GroupIDs'][i]);
+        test = thelist[i];
+      }
+      print('look here');
+      print(thelist);
+      print(test);
+      print('look here');
+    }
 
-    print(data['GroupIDs']);
-    thelist = data['GroupIDs'];
-    print('look here');
-    print(thelist);
-    print('look here');
+    //thelist = data['GroupIDs'] as List<int>;
+
     print(thisguy.toString());
     print(thisguy);
+
     //var docs = thisguy.docs.map(json.decode(json.encode(doc.data())));
     // for (var snapshot in thisguy.docs) {
     //   Map<String, dynamic> data = snapshot.get(1);
@@ -72,7 +101,7 @@ class DatabaseService {
     //   }
     //   return newIndex;
     // }
-    return data['GroupIDs'];
+    return thelist as List<int>;
   }
   // Future getIndexDB() async {
   //   var uid = await _auth.getUID();

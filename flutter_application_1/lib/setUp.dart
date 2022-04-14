@@ -11,6 +11,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 List<int> indexdb = [18];
 final AuthService _auth = AuthService();
+DatabaseService _dbs = DatabaseService(uid: '');
+
 
 class formStart extends StatefulWidget {
   @override
@@ -223,7 +225,7 @@ class _interestFormState extends State<interestForm> {
             try {
               var uid = await _auth.getUID();
               //MyUser _auth.user.uid;
-              DatabaseService(uid: uid).updateUserData(indexdb);
+              DatabaseService(uid:uid).updateUserData(indexdb);
             } catch (error) {
               print(error.toString());
               return null;
@@ -258,8 +260,8 @@ class __buildItemState extends State<_buildItem> {
         setState(() {
           selected = !selected;
           print(widget.value);
-          String stuff = DatabaseService(uid: '').getIndexDB().toString();
-          print(stuff);
+          String stuff = _dbs.getIndexDB().toString();
+          //print(stuff);
           if (selected == false) {
             indexdb.add(widget.value);
           } else
@@ -353,7 +355,7 @@ class HomePage extends State<MainPage> {
                 stream: FirebaseFirestore.instance
                     .collection('Events')
                     .where('GroupID',
-                        whereIn: [18])//DatabaseService(uid: '').getTheList())
+                        whereIn: indexdb)
                     .snapshots(),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
