@@ -13,7 +13,6 @@ List<int> indexdb = [18];
 final AuthService _auth = AuthService();
 DatabaseService _dbs = DatabaseService(uid: '');
 
-
 class formStart extends StatefulWidget {
   @override
   State<formStart> createState() => _formStartState();
@@ -225,11 +224,24 @@ class _interestFormState extends State<interestForm> {
             try {
               var uid = await _auth.getUID();
               //MyUser _auth.user.uid;
-              DatabaseService(uid:uid).updateUserData(indexdb);
+              indexdb = _dbs.getTheList();
+              print('to user ->');
+              print(indexdb);
+
+              DatabaseService(uid: uid).updateUserData(indexdb);
+              //DatabaseService(uid: uid).getIndexDB();
+
+              print('new test');
+              print(indexdb);
+              print('new test');
             } catch (error) {
               print(error.toString());
               return null;
             }
+            //print(_dbs.getTheList());
+            //indexdb = _dbs.getTheList();
+            //print('new test');
+            //print(indexdb);
             Navigator.push(
                 context, MaterialPageRoute(builder: (context) => MainPage()));
           },
@@ -345,6 +357,13 @@ class HomePage extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
+    _dbs.getIndexDB();
+    indexdb = _dbs.getTheList();
+
+    print('first time');
+    print(indexdb);
+    
+
     //print(newIndex);
     //User user = Provider.of<User>(context);
     return MaterialApp(
@@ -354,8 +373,7 @@ class HomePage extends State<MainPage> {
             body: StreamBuilder<QuerySnapshot>(
                 stream: FirebaseFirestore.instance
                     .collection('Events')
-                    .where('GroupID',
-                        whereIn: indexdb)
+                    .where('GroupID', whereIn: indexdb)
                     .snapshots(),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {

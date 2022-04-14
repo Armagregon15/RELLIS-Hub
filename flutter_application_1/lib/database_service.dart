@@ -7,11 +7,11 @@ import 'authmain.dart';
 class DatabaseService {
   final String uid;
   int test = 0;
-  
-  void getTest () {
-    print(test);
 
+  void getTest() {
+    print(test);
   }
+
   List<int> thelist = [];
   DatabaseService({required this.uid});
   final AuthService _auth = AuthService();
@@ -27,11 +27,13 @@ class DatabaseService {
     print(thelist);
     print('why');
     if (thelist.isNotEmpty) {
-      for (int i = 0; i < thelist.length; i++) {
-        thereallist[i] = thelist[i] as int;
-      }
+      //   for (int i = 0; i < thelist.length; i++) {
+      //     thereallist[i] = thelist[i] as int;
+      //   }
 
-      return thereallist;
+      //   return thereallist;
+      // } else {
+      return thelist;
     } else {
       return [18];
     }
@@ -75,16 +77,16 @@ class DatabaseService {
         thelist.add(data['GroupIDs'][i]);
         test = thelist[i];
       }
-      print('look here');
+      print('look here top');
       print(thelist);
       print(test);
-      print('look here');
+      print('look here bot');
     }
 
     //thelist = data['GroupIDs'] as List<int>;
 
-    print(thisguy.toString());
-    print(thisguy);
+    //print(thisguy.toString());
+    //print(thisguy);
 
     //var docs = thisguy.docs.map(json.decode(json.encode(doc.data())));
     // for (var snapshot in thisguy.docs) {
@@ -101,7 +103,7 @@ class DatabaseService {
     //   }
     //   return newIndex;
     // }
-    return thelist as List<int>;
+    return thelist;
   }
   // Future getIndexDB() async {
   //   var uid = await _auth.getUID();

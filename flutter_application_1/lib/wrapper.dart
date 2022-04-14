@@ -19,6 +19,7 @@ class Wrapper extends StatelessWidget {
       }
     } catch (e) {
       print(e.toString());
+      
       return MainPage();
     }
     // return either the Home or Authenticate widget
