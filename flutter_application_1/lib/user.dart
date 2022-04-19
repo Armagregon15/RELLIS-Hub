@@ -14,3 +14,13 @@ class UserData {
     required this.groupIDs,
   });
 }
+
+class UserData {
+  final String? uid;
+  final List<int>? groupIDs;
+
+  UserData({this.uid, this.groupIDs});
+
+
+  
+}
