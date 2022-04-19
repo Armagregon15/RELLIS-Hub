@@ -8,6 +8,7 @@ import 'calendar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'database_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'loading.dart';
 
 List<int> indexdb = [18];
 final AuthService _auth = AuthService();
@@ -275,10 +276,13 @@ class __buildItemState extends State<_buildItem> {
           String stuff = _dbs.getIndexDB().toString();
           //print(stuff);
           if (selected == false) {
-            indexdb.add(widget.value);
-          } else
+            if (!indexdb.contains(widget.value)) {
+              indexdb.add(widget.value);
+            }
+          } else {
             indexdb.remove(widget.value);
-          print(indexdb);
+            print(indexdb);
+          }
         });
       },
     );
@@ -357,15 +361,16 @@ class HomePage extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
+    //return loading ? Loading() :
     _dbs.getIndexDB();
     indexdb = _dbs.getTheList();
+    int i = 0;
 
     print('first time');
     print(indexdb);
-    
-
     //print(newIndex);
     //User user = Provider.of<User>(context);
+    bool loading = false;
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'The HUB at RELLIS Home',

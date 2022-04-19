@@ -22,7 +22,7 @@ class DatabaseService {
   final CollectionReference eventCollection =
       FirebaseFirestore.instance.collection('Events');
   List<int> getTheList() {
-    List<int> thereallist = [];
+    //List<int> thereallist = [];
     print('why');
     print(thelist);
     print('why');
@@ -69,18 +69,18 @@ class DatabaseService {
     var thisguy = await userCollection.doc(uid.toString()).get();
 
     Map<String, dynamic> data = thisguy.data() as Map<String, dynamic>;
-    print('groupids');
-    print(data['GroupIDs'].length);
-    print('groupids');
+    //print('groupids');
+    //print(data['GroupIDs'].length);
+    //print('groupids');
     for (int i = 0; i <= data['GroupIDs'].length - 1; i++) {
       if (!thelist.contains(data['GroupIDs'][i])) {
         thelist.add(data['GroupIDs'][i]);
         test = thelist[i];
       }
-      print('look here top');
-      print(thelist);
-      print(test);
-      print('look here bot');
+      //print('look here top');
+      //print(thelist);
+      //print(test);
+      //print('look here bot');
     }
 
     //thelist = data['GroupIDs'] as List<int>;
