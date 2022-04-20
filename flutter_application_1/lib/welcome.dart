@@ -85,7 +85,7 @@ class WelcomeState extends StatelessWidget {
                   child: ElevatedButton(
                     onPressed: () {
                       Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => Home()));
+                          MaterialPageRoute(builder: (context) => MainPage()));
                     },
                     child: Text('Login'),
                     style: ElevatedButton.styleFrom(

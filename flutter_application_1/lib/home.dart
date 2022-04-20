@@ -1,7 +1,7 @@
 // ignore_for_file: deprecated_member_use
 
 //import 'package:flutter_application_1/user.dart';
-
+/*
 import 'package:flutter_application_1/setUp.dart';
 import 'package:stream_feed/stream_feed.dart';
 
@@ -67,3 +67,4 @@ class Home extends StatelessWidget {
     );
   }
 }
+*/

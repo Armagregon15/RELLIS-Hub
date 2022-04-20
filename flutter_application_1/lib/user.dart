@@ -5,6 +5,7 @@ class MyUser {
   MyUser({required this.uid});
 }
 
+/*
 class UserData {
   final String uid;
   final List<int> groupIDs;
@@ -14,13 +15,10 @@ class UserData {
     required this.groupIDs,
   });
 }
-
+*/
 class UserData {
   final String? uid;
   final List<int>? groupIDs;
 
   UserData({this.uid, this.groupIDs});
-
-
-  
 }

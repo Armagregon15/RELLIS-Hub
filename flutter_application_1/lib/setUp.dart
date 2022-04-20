@@ -301,16 +301,25 @@ class MainPage extends StatefulWidget {
 }
 
 class HomePage extends State<MainPage> {
+  @override
   int _selectedIndex = 0;
-
+  static final List<Widget> _widgetOptionss = <Widget>[
+    formStart(),
+    MainPage(),
+    calendar(),
+  ];
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   static List? userEvents = [];
   _onItemTapped(int index) {
-    indexdb = [18];
+    //indexdb = [18];
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => formStart()));
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => MainPage()));
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => calendar()));
     setState(() {
-      Calendar();
+      //Calendar();
       _selectedIndex = index;
     });
   }
@@ -371,6 +380,16 @@ class HomePage extends State<MainPage> {
     //print(newIndex);
     //User user = Provider.of<User>(context);
     bool loading = false;
+
+    Scaffold(
+        appBar: AppBar(
+          centerTitle: true,
+          backgroundColor: const Color(0xFF500000),
+          title: const Text('The Hub @ Rellis'),
+        ),
+        body: Center(
+          child: _widgetOptionss.elementAt(_selectedIndex),
+        ));
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'The HUB at RELLIS Home',
