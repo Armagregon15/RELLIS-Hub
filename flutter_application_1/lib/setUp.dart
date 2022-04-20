@@ -312,15 +312,24 @@ class HomePage extends State<MainPage> {
   static List? userEvents = [];
   _onItemTapped(int index) {
     //indexdb = [18];
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => formStart()));
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => MainPage()));
+    _selectedIndex = index;
+    print(_selectedIndex);
+    print(index);
+    if (_selectedIndex == 0) {
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => formStart()));
+    }
+    if (_selectedIndex == 1) {
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => MainPage()));
+    }
+    if (_selectedIndex == 2) {
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => calendar()));
+    }
     setState(() {
+    
       //Calendar();
-      _selectedIndex = index;
     });
   }
 
@@ -330,7 +339,7 @@ class HomePage extends State<MainPage> {
     DateTime d = t.toDate();
 
     return Container(
-        color: Colors.white10,
+        color: Color.fromARGB(26, 128, 15, 15),
         height: MediaQuery.of(context).size.height / 4.5,
         child: Center(
           child: Card(
