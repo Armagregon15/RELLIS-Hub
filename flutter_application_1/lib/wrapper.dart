@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/database_service.dart';
 import 'package:flutter_application_1/setUp.dart';
 import 'package:provider/provider.dart';
 import 'authenticate.dart';
@@ -15,10 +16,15 @@ class Wrapper extends StatelessWidget {
       if (user == null) {
         return const Authenticate();
       } else {
+        // DatabaseService _dbs = DatabaseService(uid: '');
+        // _dbs.getIndexDB();
+        // indexdb = _dbs.getTheList();
+
         return MainPage();
       }
     } catch (e) {
       print(e.toString());
+
       return MainPage();
     }
     // return either the Home or Authenticate widget

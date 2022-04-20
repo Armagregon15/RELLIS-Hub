@@ -1,10 +1,12 @@
 // ignore_for_file: deprecated_member_use
-import 'package:flutter_application_1/setUp.dart';
+//import 'package:flutter_application_1/setUp.dart';
 
 import 'constants.dart';
 import 'package:flutter/material.dart';
 import 'loading.dart';
+import 'setUp.dart';
 import "authmain.dart";
+//import 'form_start.dart';
 
 class Register extends StatefulWidget {
   final Function toggleView;
@@ -83,6 +85,7 @@ class _RegisterState extends State<Register> {
                             setState(() => loading = true);
                             dynamic result = await _auth
                                 .registerWithEmailAndPassword(email, password);
+                            indexdb = [18];
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -94,9 +97,9 @@ class _RegisterState extends State<Register> {
                               });
                             } else {
                               Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => formStart()));
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => formStart()));
                             }
                           }
                         }),

@@ -1,5 +1,8 @@
 // ignore_for_file: unnecessary_null_comparison
 
+import 'dart:math';
+
+import 'package:flutter_application_1/authenticate.dart';
 import 'package:flutter_application_1/setUp.dart';
 
 import 'database_service.dart';
@@ -15,11 +18,16 @@ class AuthService {
   }
 
   // auth change user stream
-  Stream<MyUser?> get user {
+  Stream<MyUser?>? get user {
     print('here');
-    return _auth
-        .authStateChanges()
-        .map((User? user) => _userFromFirebaseUser(user!));
+    try {
+      return _auth
+          .authStateChanges()
+          .map((User? user) => _userFromFirebaseUser(user!));
+    } catch (error) {
+      print(error.toString());
+      return null;
+    }
   }
 
   // sign in anon
@@ -44,7 +52,7 @@ class AuthService {
       return user;
     } catch (error) {
       print('here');
-      print(error.toString());
+      // print(error.toString());
       return null;
     }
   }
@@ -58,7 +66,7 @@ class AuthService {
       await DatabaseService(uid: user.uid).updateUserData(indexdb);
       return _userFromFirebaseUser(user);
     } catch (error) {
-      print(error.toString());
+      //print(error.toString());
       return null;
     }
   }
@@ -67,6 +75,8 @@ class AuthService {
     User? result = await _auth.currentUser;
     return result?.uid;
   }
+
+  Future getUserDate() async {}
 
   // sign out
   Future signOut() async {
