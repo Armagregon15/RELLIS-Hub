@@ -362,7 +362,8 @@ class HomePage extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     //return loading ? Loading() :
-    _dbs.getIndexDB();
+    _dbs.getIndexDB().then((value) => null);
+
     indexdb = _dbs.getTheList();
     int i = 0;
 

@@ -35,6 +35,7 @@ class DatabaseService {
       // } else {
       return thelist;
     } else {
+      print('i did a thing that was bad');
       return [18];
     }
   }
@@ -77,10 +78,10 @@ class DatabaseService {
         thelist.add(data['GroupIDs'][i]);
         test = thelist[i];
       }
-      //print('look here top');
-      //print(thelist);
-      //print(test);
-      //print('look here bot');
+      print('look here top');
+      print(thelist);
+      print(test);
+      print('look here bot');
     }
 
     //thelist = data['GroupIDs'] as List<int>;
