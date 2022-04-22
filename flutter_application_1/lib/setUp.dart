@@ -9,6 +9,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'database_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'loading.dart';
+import 'dart:async';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 List<int> indexdb = [18];
 final AuthService _auth = AuthService();
@@ -292,6 +294,37 @@ class __buildItemState extends State<_buildItem> {
 
 // Joe work on this //
 
+class LoadPage extends StatelessWidget {
+  @override
+  
+  Widget build(BuildContext context) {
+    _dbs.getIndexDB().then((value) {
+      // Future.delayed(
+      // const Duration(seconds: 2));
+
+      indexdb = _dbs.getTheList(value);
+      print('first time');
+      print(indexdb);
+    });
+    Timer(Duration(seconds:1),(){
+      print('after timer');
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => MainPage()));
+    
+    });
+    return Container(
+      color: Colors.white,
+      child: const Center(
+        child: SpinKitChasingDots(
+          color: Color(0xFF500000),
+          size: 50.0,
+        ),
+      ),
+    );
+  }
+}
+
+
 // ignore: must_be_immutable
 class MainPage extends StatefulWidget {
   @override
@@ -396,7 +429,11 @@ class HomePage extends State<MainPage> {
       print('first time');
       print(indexdb);
     });
-
+    Future.delayed(const Duration(seconds: 2));
+    print('after delay');
+    Timer(Duration(seconds:1),(){
+      print('after timer');
+    });
     // if (indexdb.length == 1) {
     //   print('the index is 18');
     //   Navigator.push(
@@ -408,8 +445,8 @@ class HomePage extends State<MainPage> {
     //        context, MaterialPageRoute(builder: (context) => MainPage()));
     // }
     // _dbs.getHomeList(context);
-    print('second time');
-    print(indexdb);
+    // print('second time');
+    // print(indexdb);
     //print(newIndex);
     //User user = Provider.of<User>(context);
 
@@ -485,6 +522,7 @@ class HomePage extends State<MainPage> {
                 // Implementation for saving selection goes here
               },
             )));
+    //}); return MainPage();
   }
 
   // String uid = FirebaseAuth.instance.currentUser!.uid;
