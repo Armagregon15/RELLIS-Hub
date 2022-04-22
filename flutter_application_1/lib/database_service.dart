@@ -49,7 +49,7 @@ class DatabaseService {
   Future<Stream<QuerySnapshot<Object?>>> getSnaps() async {
     Future<List> newIndex =
         DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid)
-            .getIndexDB() as Future<List>;
+            .getIndexDB();
     return FirebaseFirestore.instance
         .collection('Events')
         .where('GroupID', whereIn: await newIndex)

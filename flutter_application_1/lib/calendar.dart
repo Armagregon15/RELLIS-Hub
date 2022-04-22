@@ -2,6 +2,7 @@
 
 import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/setUp.dart';
 //import 'package:table_calendar/table_calendar.dart';
@@ -40,6 +41,7 @@ class _CalendarState extends State<calendar> {
           view: CalendarView.month,
           todayHighlightColor: const Color(0xFF500000),
           showDatePickerButton: true,
+          //backgroundColor: const Color(0xFF500000),
           monthViewSettings: MonthViewSettings(
               appointmentDisplayMode: MonthAppointmentDisplayMode.appointment,
               showAgenda: true,
@@ -68,12 +70,33 @@ class _CalendarState extends State<calendar> {
 //appointments is a collection that is given in sync
 //need to get user and event collections
   Map<DateTime, List<Appointment>> getAppointments() {
-    final List<int> _subjectCollection = indexdb;
+    final List<int> _subjectCollection = [];
+    var _dummy;
     _dbs.getIndexDB();
     indexdb = _dbs.getTheList();
-    //final List<String> _subjectCollection = indexdb as List<String>;
+
+    //final List<String> _subjectCollection = <String>[];
+    for (int i = 0; i < indexdb.length; i++) {
+      _subjectCollection.add(indexdb[i]);
+      //var _subCollection = FirebaseFirestore.instance
+      // .collection("Events")
+      // .where("GroupID", whereIn: indexdb)
+      //.snapshots() as List<String>;
+      print("add");
+      print(indexdb[i]);
+      //print(_subCollection);
+      print("add");
+    }
+    Stream<QuerySnapshot<Map<String, dynamic>>> _subCollection() {
+      _dummy = FirebaseFirestore.instance
+          .collection("Events")
+          .where("GroupID", whereIn: indexdb)
+          .snapshots();
+      //.toList();
+      return _dummy;
+    }
+
     /*
-    _subjectCollection.add('General Meeting');
     _subjectCollection.add('Plan Execution');
     _subjectCollection.add('Project Plan');
     _subjectCollection.add('Consulting');
@@ -115,7 +138,10 @@ class _CalendarState extends State<calendar> {
         final int duration = random.nextInt(3);
         final Appointment meeting = Appointment(
             //this is what shows the array in each calendar box
-            subject: indexdb.toString(),
+            //subject: _dummy.toString(),
+            subject:
+                _subjectCollection[random.nextInt(indexdb.length)].toString(),
+            //subject: indexdb.toString(),
             startTime: startDate,
             endTime:
                 startDate.add(Duration(hours: duration == 0 ? 1 : duration)),
