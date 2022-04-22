@@ -12,7 +12,7 @@ import 'loading.dart';
 
 List<int> indexdb = [18];
 final AuthService _auth = AuthService();
-DatabaseService _dbs = DatabaseService(uid: '');
+DatabaseService _dbs = DatabaseService(uid: '123');
 
 class formStart extends StatefulWidget {
   @override
@@ -223,13 +223,13 @@ class _interestFormState extends State<interestForm> {
           backgroundColor: const Color(0xFF500000),
           onPressed: () async {
             try {
-              var uid = await _auth.getUID();
+              //var uid = await _auth.getUID();
               //MyUser _auth.user.uid;
-              indexdb = _dbs.getTheList();
-              print('to user ->');
-              print(indexdb);
+              // indexdb = _dbs.getTheList();
+              // print('to user ->');
+              // print(indexdb);
 
-              DatabaseService(uid: uid).updateUserData(indexdb);
+              _dbs.updateUserData(indexdb);
               //DatabaseService(uid: uid).getIndexDB();
 
               print('new test');
@@ -262,6 +262,7 @@ class _buildItem extends StatefulWidget {
 class __buildItemState extends State<_buildItem> {
   bool selected = true;
   int index = 0;
+  List<int> tempIndex = [18];
   //indexdb = [18];
   @override
   Widget build(BuildContext context) {
@@ -273,7 +274,7 @@ class __buildItemState extends State<_buildItem> {
         setState(() {
           selected = !selected;
           print(widget.value);
-          String stuff = _dbs.getIndexDB().toString();
+          //String stuff = _dbs.getIndexDB().toString();
           //print(stuff);
           if (selected == false) {
             if (!indexdb.contains(widget.value)) {
@@ -305,13 +306,29 @@ class HomePage extends State<MainPage> {
 
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   static List? userEvents = [];
-  _onItemTapped(int index) {
-    indexdb = [18];
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => formStart()));
+  _onItemTapped(int index) async {
+    //indexdb = [18];
+    _selectedIndex = index;
+    print(_selectedIndex);
+    print(index);
+    if (_selectedIndex == 0) {
+      print('I went there');
+      indexdb = [18];
+      await _dbs.updateUserData(indexdb);
+      _dbs.setTheList(indexdb);
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => formStart()));
+    }
+    if (_selectedIndex == 1) {
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => MainPage()));
+    }
+    if (_selectedIndex == 2) {
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => Calendar()));
+    }
     setState(() {
-      Calendar();
-      _selectedIndex = index;
+      //Calendar();
     });
   }
 
@@ -362,16 +379,40 @@ class HomePage extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     //return loading ? Loading() :
-    _dbs.getIndexDB().then((value) => null);
 
-    indexdb = _dbs.getTheList();
-    int i = 0;
+    //Navigator.push(
+    //  context, MaterialPageRoute(builder:(context) => Loading()));
 
-    print('first time');
+    // _dbs.getIndexDB();
+    // indexdb = _dbs.getTheList();
+    // print('first time');
+    // print(indexdb);
+
+    _dbs.getIndexDB().then((value) {
+      // Future.delayed(
+      // const Duration(seconds: 2));
+
+      indexdb = _dbs.getTheList(value);
+      print('first time');
+      print(indexdb);
+    });
+
+    // if (indexdb.length == 1) {
+    //   print('the index is 18');
+    //   Navigator.push(
+    //       context, MaterialPageRoute(builder: (context) => MainPage()));
+    // }
+    // int semaphore = _dbs.getSemaphore();
+    // if (semaphore == 1) {
+    //   Navigator.push(
+    //        context, MaterialPageRoute(builder: (context) => MainPage()));
+    // }
+    // _dbs.getHomeList(context);
+    print('second time');
     print(indexdb);
     //print(newIndex);
     //User user = Provider.of<User>(context);
-    bool loading = false;
+
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'The HUB at RELLIS Home',

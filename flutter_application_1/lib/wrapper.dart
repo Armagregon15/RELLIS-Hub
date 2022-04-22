@@ -19,7 +19,8 @@ class Wrapper extends StatelessWidget {
         // DatabaseService _dbs = DatabaseService(uid: '');
         // _dbs.getIndexDB();
         // indexdb = _dbs.getTheList();
-
+        // print('auth index');
+        // print(indexdb);
         return MainPage();
       }
     } catch (e) {
