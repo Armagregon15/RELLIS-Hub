@@ -48,6 +48,7 @@ dependencies:
   firebase_auth: ^3.3.9
   flutter_spinkit: ^5.1.0
   syncfusion_flutter_calendar: ^20.1.50
+  firebase_database: ^9.0.12
   # firebase_auth: ^0.18.0+1
 
 dependencies_overrides:

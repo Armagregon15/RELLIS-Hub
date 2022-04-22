@@ -1,34 +1,144 @@
+//import 'dart:html';
+//import 'dart:html';
 import 'dart:math';
+//import 'package:flutter_application_1/events.dart';
 
+import 'package:flutter/scheduler.dart';
+//import 'package:flutter_application_1/events.dart';
+//import 'package:flutter_application_1/events.dart';
+//import 'dart:collection';
+import 'authmain.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/setUp.dart';
 //import 'package:table_calendar/table_calendar.dart';
 import 'database_service.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
+import 'package:intl/intl.dart';
+//import 'package:firebase_database/firebase_database.dart';
 
 DatabaseService _dbs = DatabaseService(uid: '');
+final AuthService _auth = AuthService();
 
+//go back until list<color> is final
 // ignore: use_key_in_widget_constructors
 class Calendar extends StatefulWidget {
   @override
-  _CalendarState createState() => _CalendarState();
+  CalendarState createState() => CalendarState();
 }
 
-late Map<DateTime, List<Appointment>> _dataCollection;
+//late Map<DateTime, List<Appointment>> _dataCollection;
+//Map<DateTime, List<_Meeting>> _dataCollection = <DateTime, List<_Meeting>>{};
 
-class _CalendarState extends State<Calendar> {
-  late var _calendarDataSource;
-
+class CalendarState extends State<Calendar> {
+  List<Color> _colorCollection = <Color>[];
+  final fireStoreReference = FirebaseFirestore.instance;
+  MeetingDataSource? events;
+  final List<String> options = <String>['Add', 'Delete', 'Update'];
+  bool isInitialLoaded = false;
   @override
   void initState() {
-    _dataCollection = getAppointments();
-    _calendarDataSource = MeetingDataSource(<Appointment>[]);
+    _initializeEventColor();
+    getDataFromFireStore().then((results) {
+      SchedulerBinding.instance!.addPostFrameCallback((timeStamp) {
+        setState(() {});
+      });
+    });
+    fireStoreReference
+        .collection("Events")
+        //.where("GroupID", whereIn: indexdb)
+        .snapshots()
+        .listen((event) {
+      for (var element in event.docChanges) {
+        print('element printed');
+        print(element);
+        if (element.type == DocumentChangeType.added) {
+          if (!isInitialLoaded) {
+            return;
+          }
+          final Random random = Random();
+          Events app = Events.fromFireBaseSnapShotData(
+              element, _colorCollection[random.nextInt(9)]);
+          setState(() {
+            events!.appointments!.add(app);
+            events!.notifyListeners(CalendarDataSourceAction.add, [app]);
+          });
+        } else if (element.type == DocumentChangeType.modified) {
+          if (!isInitialLoaded) {
+            return;
+          }
+          final Random random = Random();
+          Events app = Events.fromFireBaseSnapShotData(
+              element, _colorCollection[random.nextInt(9)]);
+          setState(() {
+            int index = events!.appointments!
+                .indexWhere((app) => app.key == element.doc.id);
+
+            Events meeting = events!.appointments![index];
+
+            events!.appointments!.remove(meeting);
+            events!.notifyListeners(CalendarDataSourceAction.remove, [meeting]);
+            events!.appointments!.add(app);
+            events!.notifyListeners(CalendarDataSourceAction.add, [app]);
+          });
+        } else if (element.type == DocumentChangeType.removed) {
+          if (!isInitialLoaded) {
+            return;
+          }
+
+          setState(() {
+            int index = events!.appointments!
+                .indexWhere((app) => app.key == element.doc.id);
+
+            Events meeting = events!.appointments![index];
+            events!.appointments!.remove(meeting);
+            events!.notifyListeners(CalendarDataSourceAction.remove, [meeting]);
+          });
+        }
+      }
+    });
+
     super.initState();
+  }
+
+  Future<void> getDataFromFireStore() async {
+    var snapShotsValue = await fireStoreReference
+        .collection("Events")
+        //.where("GroupsID", whereIn: indexdb)
+        .get();
+    print("Get data from fire store");
+    print(indexdb);
+    print('snap shots value');
+    print(snapShotsValue);
+    print('snap shots value');
+    final Random random = Random();
+    List<Events> list = snapShotsValue.docs
+        .map((e) => Events(
+              eventName: e.data()['EventName'],
+              /*
+              from: DateFormat('yyyy-mm-dd HH:mm:ss')
+                  .parse(e.data()['EventDate']),
+              to: DateFormat('yyyy-mm-dd HH:mm:ss')
+                  .parse(e.data()['EventDate']),
+                  */
+              eventDate: e.data()['EventDate'],
+              background: _colorCollection[random.nextInt(9)],
+              isAllDay: false,
+              groupID: e.data()['GroupID'],
+              groupName: e.data()['GroupName'],
+            ))
+        .toList();
+    setState(() {
+      events = MeetingDataSource(list);
+      print('List in get data');
+      print(list);
+      print('List in get data');
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    isInitialLoaded = true;
     return Scaffold(
         appBar: AppBar(
           // ignore: prefer_const_constructors
@@ -47,10 +157,12 @@ class _CalendarState extends State<Calendar> {
                   backgroundColor: Color(0xFF500000),
                   dateTextStyle: TextStyle(color: Colors.white),
                   dayTextStyle: TextStyle(color: Colors.white))),
-          dataSource: _calendarDataSource,
+          dataSource: events,
+          /*
           loadMoreWidgetBuilder:
               (BuildContext context, LoadMoreCallback loadMoreAppointments) {
-            return FutureBuilder(
+            return FutureBuilder<void>(
+              //initialData: 'loading',
               future: loadMoreAppointments(),
               builder: (context, snapShot) {
                 return Container(
@@ -62,58 +174,13 @@ class _CalendarState extends State<Calendar> {
               },
             );
           },
+          */
         ));
   }
 
-//appointments is a collection that is given in sync
-//need to get user and event collections
-  Map<DateTime, List<Appointment>> getAppointments() {
-    final List<int> _subjectCollection = [];
-    var _dummy;
-    _dbs.getIndexDB().then((value) {
-      // Future.delayed(
-      // const Duration(seconds: 2));
-
-      indexdb = _dbs.getTheList(value);
-      print('first time');
-      print(indexdb);
-    });
-    //dbs.getIndexDB();
-    //indexdb = _dbs.getTheList();
-
-    //final List<String> _subjectCollection = <String>[];
-    for (int i = 0; i < indexdb.length; i++) {
-      _subjectCollection.add(indexdb[i]);
-      //var _subCollection = FirebaseFirestore.instance
-      // .collection("Events")
-      // .where("GroupID", whereIn: indexdb)
-      //.snapshots() as List<String>;
-      print("add");
-      print(indexdb[i]);
-      //print(_subCollection);
-      print("add");
-    }
-    Stream<QuerySnapshot<Map<String, dynamic>>> _subCollection() {
-      _dummy = FirebaseFirestore.instance
-          .collection("Events")
-          .where("GroupID", whereIn: indexdb)
-          .snapshots();
-      //.toList();
-      return _dummy;
-    }
-
-    /*
-    _subjectCollection.add('Plan Execution');
-    _subjectCollection.add('Project Plan');
-    _subjectCollection.add('Consulting');
-    _subjectCollection.add('Support');
-    _subjectCollection.add('Development Meeting');
-    _subjectCollection.add('Scrum');
-    _subjectCollection.add('Project Completion');
-    _subjectCollection.add('Release updates');
-    _subjectCollection.add('Performance Check');
-*/
-    final List<Color> _colorCollection = <Color>[];
+  void _initializeEventColor() {
+    // ignore: deprecated_member_use
+    //this._colorCollection = <Color>[];
     _colorCollection.add(const Color(0xFF0F8644));
     _colorCollection.add(const Color(0xFF8B1FA9));
     _colorCollection.add(const Color(0xFFD20100));
@@ -124,215 +191,89 @@ class _CalendarState extends State<Calendar> {
     _colorCollection.add(const Color(0xFFE47C73));
     _colorCollection.add(const Color(0xFF636363));
     _colorCollection.add(const Color(0xFF0A8043));
-
-//just list the array of events randomly.
-    final Random random = Random();
-    var _dataCollection = <DateTime, List<Appointment>>{};
-    final DateTime today = DateTime.now();
-    final DateTime rangeStartDate = DateTime(today.year, today.month, today.day)
-        .add(const Duration(days: -1000));
-    final DateTime rangeEndDate = DateTime(today.year, today.month, today.day)
-        .add(const Duration(days: 1000));
-    for (DateTime i = rangeStartDate;
-        i.isBefore(rangeEndDate);
-        i = i.add(Duration(days: 1 + random.nextInt(2)))) {
-      final DateTime date = i;
-      final int count = 1 + random.nextInt(3);
-      for (int j = 0; j < count; j++) {
-        final DateTime startDate = DateTime(
-            date.year, date.month, date.day, 8 + random.nextInt(8), 0, 0);
-        final int duration = random.nextInt(3);
-        final Appointment meeting = Appointment(
-            //this is what shows the array in each calendar box
-            //subject: _dummy.toString(),
-            subject:
-                _subjectCollection[random.nextInt(indexdb.length)].toString(),
-            //subject: indexdb.toString(),
-            startTime: startDate,
-            endTime:
-                startDate.add(Duration(hours: duration == 0 ? 1 : duration)),
-            color: _colorCollection[random.nextInt(9)],
-            isAllDay: false);
-
-        if (_dataCollection.containsKey(date)) {
-          final List<Appointment> meetings = _dataCollection[date]!;
-          meetings.add(meeting);
-          _dataCollection[date] = meetings;
-        } else {
-          _dataCollection[date] = [meeting];
-        }
-      }
-    }
-    return _dataCollection;
   }
 }
 
 class MeetingDataSource extends CalendarDataSource {
-  MeetingDataSource(List<Appointment> source) {
+  MeetingDataSource(List<Events> source) {
     appointments = source;
   }
-
-  @override
-  Future<void> handleLoadMore(DateTime startDate, DateTime endDate) async {
-    await Future.delayed(Duration(seconds: 1));
-    final List<Appointment> meetings = <Appointment>[];
-    DateTime appStartDate = startDate;
-    DateTime appEndDate = endDate;
-
-    while (appStartDate.isBefore(appEndDate)) {
-      final List<Appointment>? data = _dataCollection[appStartDate];
-      if (data == null) {
-        appStartDate = appStartDate.add(Duration(days: 1));
-        continue;
-      }
-      for (final Appointment meeting in data) {
-        if (appointments!.contains(meeting)) {
-          continue;
-        }
-        meetings.add(meeting);
-      }
-      appStartDate = appStartDate.add(const Duration(days: 1));
-    }
-    appointments!.addAll(meetings);
-    notifyListeners(CalendarDataSourceAction.add, meetings);
-  }
-}
 /*
-class _CalendarState extends State<Calendar> {
-  late Map<DateTime, List<Event>> selectedEvents;
-  CalendarFormat format = CalendarFormat.month;
-  DateTime selectedDay = DateTime.now();
-  DateTime focusedDay = DateTime.now();
-
-  TextEditingController _eventController = TextEditingController();
-
   @override
-  void initState() {
-    // TODO: implement initState
-    selectedEvents = {};
-    super.initState();
-  }
-
-  List<Event> _getEventsfromDay(DateTime date) {
-    return selectedEvents[date] ?? [];
-  }
-
-  void dispose() {
-    _eventController.dispose();
-    super.dispose();
+  DateTime getStartTime(int index) {
+    return appointments![index].from;
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        // ignore: prefer_const_constructors
-        title: Text("The Hub @ RELLIS"),
-        backgroundColor: const Color(0xFF500000),
-      ),
-      body: Column(children: [
-        TableCalendar(
-          focusedDay: DateTime.now(),
-          firstDay: DateTime(1999),
-          lastDay: DateTime(2050),
-          calendarFormat: format,
-          onFormatChanged: (CalendarFormat _format) {
-            setState(() {
-              format = _format;
-            });
-          },
-          startingDayOfWeek: StartingDayOfWeek.sunday,
-          daysOfWeekVisible: true,
-          //Day Changed
-          onDaySelected: (DateTime selectDay, DateTime focusDay) {
-            setState(() {
-              selectedDay = selectDay;
-              focusedDay = focusDay;
-            });
-          },
-          selectedDayPredicate: (DateTime date) {
-            return isSameDay(selectedDay, date);
-          },
-
-          eventLoader: _getEventsfromDay,
-
-          //To style Calendar
-          calendarStyle: CalendarStyle(
-            isTodayHighlighted: true,
-            selectedDecoration: BoxDecoration(
-              color: const Color(0xFF500000),
-              shape: BoxShape.circle,
-            ),
-            selectedTextStyle: TextStyle(color: Colors.white),
-            todayDecoration: BoxDecoration(
-              color: Color.fromARGB(186, 80, 0, 0),
-              shape: BoxShape.circle,
-            ),
-          ),
-          headerStyle: HeaderStyle(
-            formatButtonVisible: false,
-            titleCentered: true,
-          ),
-        ),
-        ..._getEventsfromDay(selectedDay)
-            .map((Event event) => ListTile(title: Text(event.title))),
-      ]),
-      floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: const Color(0xFF500000),
-        onPressed: () => showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-                  title: Text("Add Event"),
-                  backgroundColor: Color.fromARGB(171, 80, 0, 0),
-                  titleTextStyle: TextStyle(color: Colors.white),
-                  content: TextFormField(
-                    style: TextStyle(color: Colors.white),
-                    cursorColor: Colors.white,
-                    controller: _eventController,
-                  ),
-                  actions: [
-                    TextButton(
-                      child: Text(
-                        "Cancel",
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                    TextButton(
-                      child:
-                          Text("Submit", style: TextStyle(color: Colors.white)),
-                      onPressed: () {
-                        if (_eventController.text.isEmpty) {
-                        } else {
-                          if (selectedEvents[selectedDay] != null) {
-                            selectedEvents[selectedDay]!.add(
-                              Event(title: _eventController.text),
-                            );
-                          } else {
-                            selectedEvents[selectedDay] = [
-                              Event(title: _eventController.text)
-                            ];
-                          }
-                          Navigator.pop(context);
-                          _eventController.clear();
-                          setState(() {});
-                          return;
-                        }
-                      },
-                    ),
-                  ],
-                )),
-        label: Text("Add Event"),
-        icon: Icon(Icons.add),
-      ),
-    );
+  DateTime getEndTime(int index) {
+    return appointments![index].to;
   }
-}
-
-class Event {
-  final String title;
-  Event({required this.title});
-
-  String toString() => this.title;
-}
 */
+  @override
+  bool isAllDay(int index) {
+    return appointments![index].isAllDay;
+  }
+
+  @override
+  String getSubject(int index) {
+    return appointments![index].eventName;
+  }
+
+  @override
+  Color getColor(int index) {
+    return appointments![index].background;
+  }
+
+  int getGroupID(int index) {
+    return appointments![index].groupID;
+  }
+
+  String getGroupName(int index) {
+    return appointments![index].groupName;
+  }
+
+  Timestamp getEventDate(int index) {
+    return appointments![index].eventDate;
+  }
+}
+
+class Events {
+  String? eventName;
+  int? groupID;
+  Timestamp? eventDate;
+  String? groupName;
+  DateTime? from;
+  DateTime? to;
+  Color? background;
+  bool? isAllDay;
+  Events({
+    //required this.eventDate,
+    //required this.eventName,
+    //required this.groupName,
+    this.eventName,
+    this.groupID,
+    this.eventDate,
+    this.groupName,
+    //this.from,
+    //this.to,
+    this.background,
+    this.isAllDay,
+  });
+  static Events fromFireBaseSnapShotData(dynamic element, Color color) {
+    return Events(
+      eventName: element.doc.data()!['EventName'],
+      /*
+      from: DateFormat('yyyy-mm-dd HH:mm:ss')
+          .parse(element.doc.data()!['EventDate']),
+      to: DateFormat('yyyy-mm-dd HH:mm:ss')
+          .parse(element.doc.data()!['EventDate']),
+          */
+      eventDate: element.doc.data()!['EventDate'],
+      background: color,
+      isAllDay: false,
+      groupID: element.doc.data()!['GroupID'],
+      groupName: element.doc.data()!['GroupName'],
+    );
+    //key: element.doc.id);
+  }
+}
