@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_const_constructors
-
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -12,14 +10,14 @@ import 'package:syncfusion_flutter_calendar/calendar.dart';
 DatabaseService _dbs = DatabaseService(uid: '');
 
 // ignore: use_key_in_widget_constructors
-class calendar extends StatefulWidget {
+class Calendar extends StatefulWidget {
   @override
   _CalendarState createState() => _CalendarState();
 }
 
 late Map<DateTime, List<Appointment>> _dataCollection;
 
-class _CalendarState extends State<calendar> {
+class _CalendarState extends State<Calendar> {
   late var _calendarDataSource;
 
   @override
@@ -42,11 +40,11 @@ class _CalendarState extends State<calendar> {
           todayHighlightColor: const Color(0xFF500000),
           showDatePickerButton: true,
           //backgroundColor: const Color(0xFF500000),
-          monthViewSettings: MonthViewSettings(
+          monthViewSettings: const MonthViewSettings(
               appointmentDisplayMode: MonthAppointmentDisplayMode.appointment,
               showAgenda: true,
               agendaStyle: AgendaStyle(
-                  backgroundColor: const Color(0xFF500000),
+                  backgroundColor: Color(0xFF500000),
                   dateTextStyle: TextStyle(color: Colors.white),
                   dayTextStyle: TextStyle(color: Colors.white))),
           dataSource: _calendarDataSource,
@@ -72,8 +70,16 @@ class _CalendarState extends State<calendar> {
   Map<DateTime, List<Appointment>> getAppointments() {
     final List<int> _subjectCollection = [];
     var _dummy;
-    _dbs.getIndexDB();
-    indexdb = _dbs.getTheList();
+    _dbs.getIndexDB().then((value) {
+      // Future.delayed(
+      // const Duration(seconds: 2));
+
+      indexdb = _dbs.getTheList(value);
+      print('first time');
+      print(indexdb);
+    });
+    //dbs.getIndexDB();
+    //indexdb = _dbs.getTheList();
 
     //final List<String> _subjectCollection = <String>[];
     for (int i = 0; i < indexdb.length; i++) {
@@ -185,7 +191,7 @@ class MeetingDataSource extends CalendarDataSource {
         }
         meetings.add(meeting);
       }
-      appStartDate = appStartDate.add(Duration(days: 1));
+      appStartDate = appStartDate.add(const Duration(days: 1));
     }
     appointments!.addAll(meetings);
     notifyListeners(CalendarDataSourceAction.add, meetings);
