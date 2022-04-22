@@ -296,7 +296,6 @@ class __buildItemState extends State<_buildItem> {
 
 class LoadPage extends StatelessWidget {
   @override
-  
   Widget build(BuildContext context) {
     _dbs.getIndexDB().then((value) {
       // Future.delayed(
@@ -306,11 +305,10 @@ class LoadPage extends StatelessWidget {
       print('first time');
       print(indexdb);
     });
-    Timer(Duration(seconds:1),(){
+    Timer(Duration(seconds: 1), () {
       print('after timer');
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => MainPage()));
-    
     });
     return Container(
       color: Colors.white,
@@ -323,7 +321,6 @@ class LoadPage extends StatelessWidget {
     );
   }
 }
-
 
 // ignore: must_be_immutable
 class MainPage extends StatefulWidget {
@@ -431,7 +428,7 @@ class HomePage extends State<MainPage> {
     });
     Future.delayed(const Duration(seconds: 2));
     print('after delay');
-    Timer(Duration(seconds:1),(){
+    Timer(Duration(seconds: 1), () {
       print('after timer');
     });
     // if (indexdb.length == 1) {
