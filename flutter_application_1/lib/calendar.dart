@@ -15,6 +15,8 @@ import 'package:flutter_application_1/setUp.dart';
 import 'database_service.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:intl/intl.dart';
+
+import 'loading.dart';
 //import 'package:firebase_database/firebase_database.dart';
 
 DatabaseService _dbs = DatabaseService(uid: '');
@@ -31,7 +33,7 @@ class Calendar extends StatefulWidget {
 //Map<DateTime, List<_Meeting>> _dataCollection = <DateTime, List<_Meeting>>{};
 
 class CalendarState extends State<Calendar> {
-  List<Color> _colorCollection = <Color>[];
+  final List<Color> _colorCollection = <Color>[];
   final fireStoreReference = FirebaseFirestore.instance;
   MeetingDataSource? events;
   final List<String> options = <String>['Add', 'Delete', 'Update'];
@@ -115,6 +117,8 @@ class CalendarState extends State<Calendar> {
     List<Events> list = snapShotsValue.docs
         .map((e) => Events(
               eventName: e.data()['EventName'],
+              //from: DateTime(e.data()['EventDate']),
+              //to: DateTime(e.data()['EventDate']),
               /*
               from: DateFormat('yyyy-mm-dd HH:mm:ss')
                   .parse(e.data()['EventDate']),
@@ -141,8 +145,19 @@ class CalendarState extends State<Calendar> {
     isInitialLoaded = true;
     return Scaffold(
         appBar: AppBar(
-          // ignore: prefer_const_constructors
-          title: Text("The Hub @ RELLIS"),
+          title: InkWell(
+              onTap: () {
+                //"The Hub @ RELLIS",
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            loading ? Loading() : MainPage()));
+              },
+              child: const Text(
+                "The Hub @ RELLIS",
+                style: TextStyle(fontFamily: "Roboto", fontSize: 30),
+              )),
           backgroundColor: const Color(0xFF500000),
         ),
         body: SfCalendar(
@@ -242,8 +257,8 @@ class Events {
   int? groupID;
   Timestamp? eventDate;
   String? groupName;
-  DateTime? from;
-  DateTime? to;
+  //DateTime? from;
+  //DateTime? to;
   Color? background;
   bool? isAllDay;
   Events({
@@ -262,12 +277,14 @@ class Events {
   static Events fromFireBaseSnapShotData(dynamic element, Color color) {
     return Events(
       eventName: element.doc.data()!['EventName'],
-      /*
-      from: DateFormat('yyyy-mm-dd HH:mm:ss')
-          .parse(element.doc.data()!['EventDate']),
-      to: DateFormat('yyyy-mm-dd HH:mm:ss')
-          .parse(element.doc.data()!['EventDate']),
-          */
+      //from: element.doc.data()!('EventDate'),
+      //to: element.doc.data()!('EventDate'),
+
+      //from: DateFormat('yyyy-mm-dd HH:mm:ss')
+      //.parse(element.doc.data()!['EventDate']),
+      //to: DateFormat('yyyy-mm-dd HH:mm:ss')
+      //.parse(element.doc.data()!['EventDate']),
+
       eventDate: element.doc.data()!['EventDate'],
       background: color,
       isAllDay: false,
