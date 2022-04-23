@@ -15,6 +15,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 List<int> indexdb = [18];
 final AuthService _auth = AuthService();
 DatabaseService _dbs = DatabaseService(uid: '123');
+bool loading = false;
 
 class formStart extends StatefulWidget {
   @override
@@ -41,54 +42,56 @@ class _formStartState extends State<formStart> {
 // Parent Page //
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        backgroundColor: const Color(0xFF500000),
-        title: const Text('The Hub @ Rellis'),
-      ),
-      body: Center(
-        child: _widgetOptions.elementAt(_selectedIndex),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        selectedFontSize: 15,
-        selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
-        selectedIconTheme: IconThemeData(
-          color: Colors.white,
-          size: 35,
-        ),
-        unselectedItemColor: Colors.white,
-        selectedItemColor: Colors.white,
-        backgroundColor: const Color(0xFF500000),
-        elevation: 90,
-        type: BottomNavigationBarType.fixed,
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.school,
-              color: Colors.white,
+    return loading
+        ? Loading()
+        : Scaffold(
+            appBar: AppBar(
+              centerTitle: true,
+              backgroundColor: const Color(0xFF500000),
+              title: const Text('The Hub @ Rellis'),
             ),
-            label: 'Schools',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.person,
-              color: Colors.white,
+            body: Center(
+              child: _widgetOptions.elementAt(_selectedIndex),
             ),
-            label: 'Clubs',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.favorite,
-              color: Colors.white,
+            bottomNavigationBar: BottomNavigationBar(
+              selectedFontSize: 15,
+              selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
+              selectedIconTheme: IconThemeData(
+                color: Colors.white,
+                size: 35,
+              ),
+              unselectedItemColor: Colors.white,
+              selectedItemColor: Colors.white,
+              backgroundColor: const Color(0xFF500000),
+              elevation: 90,
+              type: BottomNavigationBarType.fixed,
+              items: const <BottomNavigationBarItem>[
+                BottomNavigationBarItem(
+                  icon: Icon(
+                    Icons.school,
+                    color: Colors.white,
+                  ),
+                  label: 'Schools',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(
+                    Icons.person,
+                    color: Colors.white,
+                  ),
+                  label: 'Clubs',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(
+                    Icons.favorite,
+                    color: Colors.white,
+                  ),
+                  label: 'Interests',
+                ),
+              ],
+              currentIndex: _selectedIndex,
+              onTap: _onItemTapped,
             ),
-            label: 'Interests',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-      ),
-    );
+          );
   }
 }
 
@@ -103,33 +106,39 @@ class schoolForm extends StatefulWidget {
 class _schoolFormState extends State<schoolForm> {
   Widget _buildList(BuildContext context, DocumentSnapshot document) {
     bool isSelect = true;
-    return Card(
-      child:
-          _buildItem(title: document['GroupName'], value: document['GroupID']),
-    );
+    return loading
+        ? Loading()
+        : Card(
+            child: _buildItem(
+                title: document['GroupName'], value: document['GroupID']),
+          );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: StreamBuilder<QuerySnapshot>(
-          stream: FirebaseFirestore.instance
-              .collection('Groups')
-              .where('GroupType', isEqualTo: 'School')
-              .snapshots(),
-          builder: (context, snapshot) {
-            if (!snapshot.hasData) {
-              return Text("Loading");
-            } else {
-              return ListView.builder(
-                itemExtent: 80.0,
-                itemCount: snapshot.data?.docs.length,
-                itemBuilder: (context, index) =>
-                    _buildList(context, snapshot.data!.docs[index]),
-              );
-            }
-          }),
-    );
+    return loading
+        ? Loading()
+        : Scaffold(
+            body: StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection('Groups')
+                    .where('GroupType', isEqualTo: 'School')
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return Text("Loading");
+                  } else {
+                    return loading
+                        ? Loading()
+                        : ListView.builder(
+                            itemExtent: 80.0,
+                            itemCount: snapshot.data?.docs.length,
+                            itemBuilder: (context, index) =>
+                                _buildList(context, snapshot.data!.docs[index]),
+                          );
+                  }
+                }),
+          );
   }
 }
 
@@ -149,10 +158,12 @@ class _clubFormState extends State<clubForm> {
 
   Widget _buildList(BuildContext context, DocumentSnapshot document) {
     bool isSelect = true;
-    return Card(
-      child:
-          _buildItem(title: document['GroupName'], value: document['GroupID']),
-    );
+    return loading
+        ? Loading()
+        : Card(
+            child: _buildItem(
+                title: document['GroupName'], value: document['GroupID']),
+          );
   }
 
   @override
@@ -165,17 +176,21 @@ class _clubFormState extends State<clubForm> {
               .snapshots(),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
-              return Center(
-                  child: Text(
-                "Loading",
-              ));
+              return loading
+                  ? Loading()
+                  : Center(
+                      child: Text(
+                      "Loading",
+                    ));
             } else {
-              return ListView.builder(
-                itemExtent: 80.0,
-                itemCount: snapshot.data?.docs.length,
-                itemBuilder: (context, index) =>
-                    _buildList(context, snapshot.data!.docs[index]),
-              );
+              return loading
+                  ? Loading()
+                  : ListView.builder(
+                      itemExtent: 80.0,
+                      itemCount: snapshot.data?.docs.length,
+                      itemBuilder: (context, index) =>
+                          _buildList(context, snapshot.data!.docs[index]),
+                    );
             }
           }),
     );
@@ -230,23 +245,25 @@ class _interestFormState extends State<interestForm> {
               // indexdb = _dbs.getTheList();
               // print('to user ->');
               // print(indexdb);
-
-              _dbs.updateUserData(indexdb);
+              loading ? Loading() : _dbs.updateUserData(indexdb);
               //DatabaseService(uid: uid).getIndexDB();
 
               print('new test');
               print(indexdb);
               print('new test');
             } catch (error) {
-              print(error.toString());
+              loading ? Loading() : print(error.toString());
+
               return null;
             }
             //print(_dbs.getTheList());
             //indexdb = _dbs.getTheList();
             //print('new test');
             //print(indexdb);
-            Navigator.push(
-                context, MaterialPageRoute(builder: (context) => MainPage()));
+            loading
+                ? Loading()
+                : Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => MainPage()));
           },
         ));
   }
@@ -293,7 +310,7 @@ class __buildItemState extends State<_buildItem> {
 }
 
 // Joe work on this //
-
+//there is already a loading page
 class LoadPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -336,6 +353,7 @@ class HomePage extends State<MainPage> {
 
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   static List? userEvents = [];
+
   _onItemTapped(int index) async {
     //indexdb = [18];
     _selectedIndex = index;
@@ -346,20 +364,28 @@ class HomePage extends State<MainPage> {
       indexdb = [18];
       await _dbs.updateUserData(indexdb);
       _dbs.setTheList(indexdb);
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => formStart()));
+      return loading
+          ? Loading()
+          : Navigator.push(
+              context, MaterialPageRoute(builder: (context) => formStart()));
     }
     if (_selectedIndex == 1) {
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => MainPage()));
+      return loading
+          ? Loading()
+          : Navigator.push(
+              context, MaterialPageRoute(builder: (context) => MainPage()));
     }
     if (_selectedIndex == 2) {
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => Calendar()));
+      return loading
+          ? Loading()
+          : Navigator.push(
+              context, MaterialPageRoute(builder: (context) => Calendar()));
     }
-    setState(() {
-      //Calendar();
-    });
+    return loading
+        ? Loading()
+        : setState(() {
+            //Calendar();
+          });
   }
 
   // Builds container for each event displayed //
@@ -367,43 +393,58 @@ class HomePage extends State<MainPage> {
     Timestamp t = document['EventDate'];
     DateTime d = t.toDate();
 
-    return Container(
-        color: Colors.white10,
-        height: MediaQuery.of(context).size.height / 4.5,
-        child: Center(
-          child: Card(
-            child: Column(
-              children: [
-                Container(
-                  height: 190,
-                  child: Column(
-                    children: [
-                      IconButton(
-                        icon: const Icon(
-                          Icons.menu_book,
-                          color: Colors.black,
-                        ),
-                        alignment: Alignment.topCenter,
-                        padding: new EdgeInsets.all(10.0),
-                        onPressed: () {},
+    return loading
+        ? Loading()
+        : Container(
+            //color: Colors.white10,
+            decoration: BoxDecoration(
+                color: Color.fromARGB(255, 0, 0, 0),
+                backgroundBlendMode: BlendMode.srcOver,
+                border: Border.all(
+                    color: Color.fromARGB(255, 180, 179, 175),
+                    width: 10,
+                    style: BorderStyle.solid)),
+            height: MediaQuery.of(context).size.height / 4.5,
+            child: Center(
+              child: Card(
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 190,
+                      child: Column(
+                        children: [
+                          Container(
+                              padding: const EdgeInsets.all(8),
+                              child: Center(
+                                  child: Text(
+                                document['GroupName'],
+                                style: TextStyle(fontSize: 20),
+                              ))),
+                          Container(
+                              padding: const EdgeInsets.all(8),
+                              child:
+                                  Center(child: Text(document['EventName']))),
+                          Container(
+                              padding: const EdgeInsets.all(8),
+                              child: Center(child: Text(d.toString()))),
+                          IconButton(
+                            color: Color.fromARGB(255, 234, 195, 18),
+                            icon: const Icon(
+                              Icons.menu_book,
+                              color: Color.fromARGB(255, 255, 174, 1),
+                            ),
+                            alignment: Alignment.bottomCenter,
+                            padding: new EdgeInsets.all(10.0),
+                            onPressed: () {},
+                          ),
+                        ],
                       ),
-                      Container(
-                          padding: const EdgeInsets.all(8),
-                          child: Center(child: Text(document['GroupName']))),
-                      Container(
-                          padding: const EdgeInsets.all(8),
-                          child: Center(child: Text(document['EventName']))),
-                      Container(
-                          padding: const EdgeInsets.all(8),
-                          child: Center(child: Text(d.toString()))),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-            elevation: 6,
-          ),
-        ));
+                elevation: 6,
+              ),
+            ));
   }
 
   @override
@@ -451,6 +492,23 @@ class HomePage extends State<MainPage> {
         debugShowCheckedModeBanner: false,
         title: 'The HUB at RELLIS Home',
         home: Scaffold(
+            appBar: AppBar(
+              // ignore: prefer_const_constructors
+              title: InkWell(
+                  onTap: () {
+                    //"The Hub @ RELLIS",
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                loading ? Loading() : MainPage()));
+                  },
+                  child: Text(
+                    "The Hub @ RELLIS",
+                    style: TextStyle(fontFamily: "Roboto", fontSize: 30),
+                  )),
+              backgroundColor: const Color(0xFF500000),
+            ),
             body: StreamBuilder<QuerySnapshot>(
                 stream: FirebaseFirestore.instance
                     .collection('Events')

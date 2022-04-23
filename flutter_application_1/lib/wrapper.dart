@@ -3,7 +3,10 @@ import 'package:flutter_application_1/database_service.dart';
 import 'package:flutter_application_1/setUp.dart';
 import 'package:provider/provider.dart';
 import 'authenticate.dart';
+import 'loading.dart';
 import 'user.dart';
+
+bool loading = false;
 
 class Wrapper extends StatelessWidget {
   const Wrapper({Key? key}) : super(key: key);
@@ -14,7 +17,7 @@ class Wrapper extends StatelessWidget {
       final user = Provider.of<MyUser?>(context);
       print(user);
       if (user == null) {
-        return const Authenticate();
+        return loading ? Loading() : const Authenticate();
       } else {
         // DatabaseService _dbs = DatabaseService(uid: '');
         // _dbs.getIndexDB();
@@ -26,7 +29,7 @@ class Wrapper extends StatelessWidget {
     } catch (e) {
       print(e.toString());
 
-      return MainPage();
+      return loading ? Loading() : MainPage();
     }
     // return either the Home or Authenticate widget
   }
