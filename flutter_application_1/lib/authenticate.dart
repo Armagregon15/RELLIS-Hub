@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'loading.dart';
 import 'loginPage.dart';
 import 'authmain.dart';
 import 'Register.dart';
+
+bool loading = false;
 
 class Authenticate extends StatefulWidget {
   const Authenticate({Key? key}) : super(key: key);
@@ -20,9 +23,9 @@ class _AuthenticateState extends State<Authenticate> {
   @override
   Widget build(BuildContext context) {
     if (showSignIn) {
-      return LoginHub(toggleView: toggleView);
+      return loading ? Loading() : LoginHub(toggleView: toggleView);
     } else {
-      return Register(toggleView: toggleView);
+      return loading ? Loading() : Register(toggleView: toggleView);
     }
   }
 }

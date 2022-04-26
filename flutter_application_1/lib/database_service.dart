@@ -36,8 +36,7 @@ class DatabaseService {
 
   List<int> getTheList(thelist) {
     //List<int> thereallist = [];
-    Future.delayed(
-      const Duration(seconds: 2));
+    Future.delayed(const Duration(seconds: 2));
     print('why');
     print(thelist);
     print('why');
@@ -48,7 +47,7 @@ class DatabaseService {
 
       //   return thereallist;
       // } else {
-      
+
       return thelist;
     } else {
       print('i did a thing that was bad');

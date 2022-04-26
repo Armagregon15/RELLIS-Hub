@@ -4,7 +4,12 @@ import 'loading.dart';
 import 'constants.dart';
 import 'database_service.dart';
 import 'user.dart';
-/*
+import 'loading.dart';
+import 'setUp.dart';
+
+DatabaseService _dbs = DatabaseService(uid: '');
+bool loading = false;
+
 class SettingsForm extends StatefulWidget {
   @override
   _SettingsFormState createState() => _SettingsFormState();
@@ -33,8 +38,8 @@ class _SettingsFormState extends State<SettingsForm> {
               key: _formKey,
               child: Column(
                 children: <Widget>[
-                  Text(
-                    'Update your brew settings.',
+                  const Text(
+                    'Update Feed Settings',
                     style: TextStyle(fontSize: 18.0),
                   ),
                   SizedBox(height: 20.0),
@@ -46,7 +51,7 @@ class _SettingsFormState extends State<SettingsForm> {
                     onChanged: (val) =>
                         setState(() => _currentUser = val as int),
                   ),
-                  SizedBox(height: 10.0),
+                  const SizedBox(width: 10.0),
                   DropdownButtonFormField(
                     value: _currentUser,
                     decoration: textInputDecoration,
@@ -68,9 +73,14 @@ class _SettingsFormState extends State<SettingsForm> {
                       ),
                       onPressed: () async {
                         if (_formKey.currentState!.validate()) {
-                          await DatabaseService(uid: '').updateUserData(
-                              _currentUser.data.groupIDs ?? "0",
-                              Navigator.pop(context));
+                          await _dbs.updateUserData(indexdb);
+                          _dbs.setTheList(indexdb);
+                          loading
+                              ? Loading()
+                              : Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => formStart()));
                         }
                       }),
                 ],
@@ -82,4 +92,3 @@ class _SettingsFormState extends State<SettingsForm> {
         });
   }
 }
-*/
