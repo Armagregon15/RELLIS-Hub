@@ -19,6 +19,9 @@ class Events {
     this.groupName,
   });
 
+  void printDate() {
+    print(eventDate.toString());
+  }
   // Events.fromMap(Map<String, dynamic> data) {
   // uid = data['UserID'];
   //groupID = data['groupIDs'];

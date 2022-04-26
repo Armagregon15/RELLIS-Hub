@@ -296,12 +296,14 @@ class __buildItemState extends State<_buildItem> {
           //String stuff = _dbs.getIndexDB().toString();
           //print(stuff);
           if (selected == false) {
-            if (!indexdb.contains(widget.value)) {
+            if (!indexdb.contains(widget.value) && indexdb.length < 10) {
               indexdb.add(widget.value);
             }
-          } else {
+          } else if (indexdb.contains(widget.value)) {
             indexdb.remove(widget.value);
             print(indexdb);
+          } else {
+            print('cannot select more than 10 options');
           }
         });
       },

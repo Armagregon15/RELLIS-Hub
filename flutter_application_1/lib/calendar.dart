@@ -48,12 +48,13 @@ class CalendarState extends State<Calendar> {
     });
     fireStoreReference
         .collection("Events")
-        //.where("GroupID", whereIn: indexdb)
+        .where("GroupID", whereIn: indexdb)
         .snapshots()
         .listen((event) {
       for (var element in event.docChanges) {
-        print('element printed');
-        print(element);
+        // print('element printed');
+
+        //print(element);
         if (element.type == DocumentChangeType.added) {
           if (!isInitialLoaded) {
             return;
@@ -135,7 +136,11 @@ class CalendarState extends State<Calendar> {
     setState(() {
       events = MeetingDataSource(list);
       print('List in get data');
-      print(list);
+      list[0].printDate();
+      // print(snapShotsValue.docs['EventDate'][0]);
+      // print(list[0]['eventDate']);
+      // print([0]['eventDate']);
+      // print(list.eventDate.toString());
       print('List in get data');
     });
   }
@@ -292,5 +297,8 @@ class Events {
       groupName: element.doc.data()!['GroupName'],
     );
     //key: element.doc.id);
+  }
+  void printDate () {
+    print(this.eventDate.toString());
   }
 }
