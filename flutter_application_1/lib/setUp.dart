@@ -9,7 +9,6 @@ import 'database_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 List<int> indexdb = [18];
-bool compare = false;
 final AuthService _auth = AuthService();
 
 class formStart extends StatefulWidget {
@@ -307,22 +306,6 @@ class HomePage extends State<MainPage> {
   //   return isAdmin2;
   // }
 
-  Future<void> checkUser() async {
-    String adminsID = "";
-    String uid = FirebaseAuth.instance.currentUser!.uid;
-    final FirebaseFirestore _db = FirebaseFirestore.instance;
-    _db.collection('Admins').doc(uid).get().then((DocumentSnapshot) async {
-      adminsID = await DocumentSnapshot.get("UsersID");
-      print("Butt");
-      print(adminsID);
-      if (adminsID == uid) {
-        compare = true;
-      } else {
-        compare = false;
-      }
-    });
-  }
-
 // class makingIndex {
 //   String uid = FirebaseAuth.instance.currentUser!.uid;
 //   List<dynamic>? newIndex = [];
@@ -387,14 +370,22 @@ class HomePage extends State<MainPage> {
         ));
   }
 
+  // bool test() {
+  //   if (DatabaseService(uid: uid).getCompare() = ) {
+
+  //   }
+  //   var attempt = DatabaseService(uid: uid).getCompare();
+  //   return attempt;
+  // }
+
   @override
   Widget build(BuildContext context) {
     Future<String> callAsyncFetch() =>
         Future.delayed(Duration(seconds: 2), () => "hi");
     return FutureBuilder(
-        future: callAsyncFetch(),
-        builder: (context, AsyncSnapshot<String> snapshot) {
-          if (compare = true) {
+        future: DatabaseService(uid: uid).checkUser(),
+        builder: (context, snapshot) {
+          if (DatabaseService(uid: uid).checkUser() == true) {
             return MaterialApp(
                 debugShowCheckedModeBanner: false,
                 title: 'The HUB at RELLIS Home',

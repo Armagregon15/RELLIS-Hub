@@ -6,6 +6,7 @@ import 'authmain.dart';
 
 class DatabaseService {
   final String uid;
+  bool compare = false;
   List<int> thelist = [];
   DatabaseService({required this.uid});
   final AuthService _auth = AuthService();
@@ -90,4 +91,27 @@ class DatabaseService {
   Stream<QuerySnapshot> get users {
     return userCollection.snapshots();
   }
+
+  Future<bool> checkUser() async {
+    String adminsID = "";
+    String uid = FirebaseAuth.instance.currentUser!.uid;
+    final FirebaseFirestore _db = FirebaseFirestore.instance;
+    _db.collection('Admins').doc(uid).get().then((DocumentSnapshot) async {
+      adminsID = await DocumentSnapshot.get("UsersID");
+      if (adminsID == uid) {
+        compare = true;
+      } else {
+        compare = false;
+      }
+    });
+    return compare;
+  }
+
+  Future<bool> getCompare() async {
+    var monkey = await checkUser();
+    bool monkeysee = monkey;
+    return monkeysee;
+  }
+
+  void main() async {}
 }
