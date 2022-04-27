@@ -38,7 +38,9 @@ class AdminCalendarState extends State<AdminCalendar> {
   MeetingDataSource? events;
   final List<String> options = <String>['Add', 'Delete', 'Update'];
   bool isInitialLoaded = false;
-  CollectionReference users = FirebaseFirestore.instance.collection('Events');
+  String date = "";
+  String eventName = "";
+  CollectionReference oEvents = FirebaseFirestore.instance.collection('Events');
 
   @override
   void initState() {
@@ -116,12 +118,13 @@ class AdminCalendarState extends State<AdminCalendar> {
 
   Future<void> addUser() {
     // Call the user's CollectionReference to add a new user
-    return users
-        .add({
-          'EventDate': "Date",
-          'EventName': "fullName",
+    return fireStoreReference
+        .collection("Events")
+        .doc()
+        .set({
+          'EventDate': date,
+          'EventName': eventName,
           'GroupID': "company",
-          'GroupName': "age"
         })
         .then((value) => print("User Added"))
         .catchError((error) => print("Failed to add user: $error"));
@@ -199,22 +202,38 @@ appBar: AppBar(
         )
         */
   Widget _buildPopupDialog(BuildContext context) {
+    final addForm = GlobalKey<FormState>();
     return AlertDialog(
       title: const Text('Add Event'),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          TextFormField(
-              decoration: const InputDecoration(
-            hintText: 'Enter the date...',
-            labelText: 'Date',
-          )),
-          TextFormField(
-              decoration: const InputDecoration(
-            hintText: 'Enter the event name...',
-            labelText: 'Event Name',
-          )),
+          Form(
+              key: addForm,
+              child: Column(children: [
+                TextFormField(
+                    onFieldSubmitted: (value) => date,
+                    decoration: const InputDecoration(
+                      hintText: 'Enter the date...',
+                      labelText: 'Date',
+                    )),
+                TextFormField(
+                    onFieldSubmitted: (value) => eventName,
+                    decoration: const InputDecoration(
+                      hintText: 'Enter the event name...',
+                      labelText: 'Event Name',
+                    )),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if (addForm.currentState!.validate()) {}
+                    },
+                    child: const Text('Submit'),
+                  ),
+                ),
+              ])),
           StreamBuilder<QuerySnapshot>(
               stream:
                   FirebaseFirestore.instance.collection('Events').snapshots(),
@@ -224,9 +243,6 @@ appBar: AppBar(
                     child: CircularProgressIndicator(),
                   );
                 }
-                var length = snapshot.data?.docs.length;
-                DocumentSnapshot ds = snapshot.data!.docs[length! - 1];
-                int dummy = 0;
                 return DropdownButton(
                   onChanged: (dummy) {
                     setState(() {/*dummy = document['GroupID']*/}); //
@@ -294,7 +310,8 @@ appBar: AppBar(
                   //   'GroupID': 18,
                   //   'GroupName': "RELLIS"
                   // });
-                  print("butt");
+                  //addUser();
+                  print(eventName);
                   showDialog(
                     context: context,
                     builder: (BuildContext context) =>
