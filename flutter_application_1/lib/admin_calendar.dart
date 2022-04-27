@@ -214,13 +214,11 @@ appBar: AppBar(
               }).toList(),
               onSelected: (String value) {
                 if (value == 'Add') {
-                  fireStoreReference
-                      .collection("CalendarAppointmentCollection")
-                      .doc("1")
-                      .set({
-                    'Subject': 'Mastering Flutter',
-                    'StartTime': '07/04/2020 08:00:00',
-                    'EndTime': '07/04/2020 09:00:00'
+                  fireStoreReference.collection("Events").doc().set({
+                    'EventDate': 1 - 6 - 2022,
+                    'EventName': 'Hello',
+                    'GroupID': 18,
+                    'GroupName': "RELLIS"
                   });
                 } else if (value == "Delete") {
                   try {
