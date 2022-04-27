@@ -393,9 +393,14 @@ class LoadPage extends StatelessWidget {
       }
     });
     Timer(Duration(seconds: 1), () {
-      print('after timer');
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => MainPage()));
+      if (indexdb.length == 1) {
+        print('after timer');
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => formStart()));
+      } else {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => MainPage()));
+      }
     });
     return Container(
       color: Colors.white,
