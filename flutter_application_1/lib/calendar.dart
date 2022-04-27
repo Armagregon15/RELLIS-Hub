@@ -38,8 +38,17 @@ class CalendarState extends State<Calendar> {
   MeetingDataSource? events;
   final List<String> options = <String>['Add', 'Delete', 'Update'];
   bool isInitialLoaded = false;
+
   @override
   void initState() {
+    _dbs.getIndexDB().then((value) {
+      // Future.delayed(
+      // const Duration(seconds: 2));
+
+      List<int> indexdb = _dbs.getTheList(value);
+      print('first time');
+      print(indexdb);
+    });
     _initializeEventColor();
     getDataFromFireStore().then((results) {
       SchedulerBinding.instance!.addPostFrameCallback((timeStamp) {
@@ -48,12 +57,13 @@ class CalendarState extends State<Calendar> {
     });
     fireStoreReference
         .collection("Events")
-        //.where("GroupID", whereIn: indexdb)
+        .where("GroupID", whereIn: indexdb)
         .snapshots()
         .listen((event) {
       for (var element in event.docChanges) {
-        print('element printed');
-        print(element);
+        // print('element printed');
+
+        //print(element);
         if (element.type == DocumentChangeType.added) {
           if (!isInitialLoaded) {
             return;
@@ -104,9 +114,17 @@ class CalendarState extends State<Calendar> {
   }
 
   Future<void> getDataFromFireStore() async {
+    await _dbs.getIndexDB().then((value) {
+      // Future.delayed(
+      // const Duration(seconds: 2));
+
+      List<int> indexdb = _dbs.getTheList(value);
+      print('first time calendar');
+      print(indexdb);
+    });
     var snapShotsValue = await fireStoreReference
         .collection("Events")
-        //.where("GroupsID", whereIn: indexdb)
+        .where("GroupID", whereIn: indexdb)
         .get();
     print("Get data from fire store");
     print(indexdb);
@@ -117,8 +135,8 @@ class CalendarState extends State<Calendar> {
     List<Events> list = snapShotsValue.docs
         .map((e) => Events(
               eventName: e.data()['EventName'],
-              //from: DateTime(e.data()['EventDate']),
-              //to: DateTime(e.data()['EventDate']),
+              from: e.data()['EventDate'].toDate(),
+              to: e.data()['EventDate'].toDate(),
               /*
               from: DateFormat('yyyy-mm-dd HH:mm:ss')
                   .parse(e.data()['EventDate']),
@@ -126,6 +144,7 @@ class CalendarState extends State<Calendar> {
                   .parse(e.data()['EventDate']),
                   */
               eventDate: e.data()['EventDate'],
+              //eventDateTime: e.data()['EventDate'].toDate(),
               background: _colorCollection[random.nextInt(9)],
               isAllDay: false,
               groupID: e.data()['GroupID'],
@@ -135,7 +154,13 @@ class CalendarState extends State<Calendar> {
     setState(() {
       events = MeetingDataSource(list);
       print('List in get data');
-      print(list);
+      print(indexdb);
+      print(events.toString());
+      //list[0].printDate();
+      // print(snapShotsValue.docs['EventDate'][0]);
+      // print(list[0]['eventDate']);
+      // print([0]['eventDate']);
+      // print(list.eventDate.toString());
       print('List in get data');
     });
   }
@@ -213,7 +238,7 @@ class MeetingDataSource extends CalendarDataSource {
   MeetingDataSource(List<Events> source) {
     appointments = source;
   }
-/*
+
   @override
   DateTime getStartTime(int index) {
     return appointments![index].from;
@@ -223,7 +248,7 @@ class MeetingDataSource extends CalendarDataSource {
   DateTime getEndTime(int index) {
     return appointments![index].to;
   }
-*/
+
   @override
   bool isAllDay(int index) {
     return appointments![index].isAllDay;
@@ -237,6 +262,10 @@ class MeetingDataSource extends CalendarDataSource {
   @override
   Color getColor(int index) {
     return appointments![index].background;
+  }
+
+  DateTime getEventDateTime(int index) {
+    return appointments![index].eventDate.toDate();
   }
 
   int getGroupID(int index) {
@@ -257,8 +286,8 @@ class Events {
   int? groupID;
   Timestamp? eventDate;
   String? groupName;
-  //DateTime? from;
-  //DateTime? to;
+  DateTime? from;
+  DateTime? to;
   Color? background;
   bool? isAllDay;
   Events({
@@ -268,17 +297,18 @@ class Events {
     this.eventName,
     this.groupID,
     this.eventDate,
+    //this.eventDateTime,
     this.groupName,
-    //this.from,
-    //this.to,
+    this.from,
+    this.to,
     this.background,
     this.isAllDay,
   });
   static Events fromFireBaseSnapShotData(dynamic element, Color color) {
     return Events(
       eventName: element.doc.data()!['EventName'],
-      //from: element.doc.data()!('EventDate'),
-      //to: element.doc.data()!('EventDate'),
+      from: element.doc.data()!('EventDate').toDate(),
+      to: element.doc.data()!('EventDate').toDate(),
 
       //from: DateFormat('yyyy-mm-dd HH:mm:ss')
       //.parse(element.doc.data()!['EventDate']),
@@ -286,11 +316,16 @@ class Events {
       //.parse(element.doc.data()!['EventDate']),
 
       eventDate: element.doc.data()!['EventDate'],
+      //eventDateTime: element.doc.data()!['EventDate'].toDate(),
       background: color,
       isAllDay: false,
       groupID: element.doc.data()!['GroupID'],
       groupName: element.doc.data()!['GroupName'],
     );
     //key: element.doc.id);
+  }
+
+  void printDate() {
+    print(this.eventDate.toString());
   }
 }

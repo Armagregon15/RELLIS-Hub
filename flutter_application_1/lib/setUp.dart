@@ -11,6 +11,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'loading.dart';
 import 'dart:async';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'admin_calendar.dart';
 
 List<int> indexdb = [18];
 final AuthService _auth = AuthService();
@@ -138,7 +139,37 @@ class _schoolFormState extends State<schoolForm> {
                           );
                   }
                 }),
-          );
+            floatingActionButton: FloatingActionButton.extended(
+              label: const Text("Submit"),
+              backgroundColor: const Color(0xFF500000),
+              onPressed: () async {
+                try {
+                  //var uid = await _auth.getUID();
+                  //MyUser _auth.user.uid;
+                  // indexdb = _dbs.getTheList();
+                  // print('to user ->');
+                  // print(indexdb);
+                  loading ? Loading() : _dbs.updateUserData(indexdb);
+                  //DatabaseService(uid: uid).getIndexDB();
+
+                  print('new test');
+                  print(indexdb);
+                  print('new test');
+                } catch (error) {
+                  loading ? Loading() : print(error.toString());
+
+                  return null;
+                }
+                //print(_dbs.getTheList());
+                //indexdb = _dbs.getTheList();
+                //print('new test');
+                //print(indexdb);
+                loading
+                    ? Loading()
+                    : Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => MainPage()));
+              },
+            ));
   }
 }
 
@@ -169,31 +200,61 @@ class _clubFormState extends State<clubForm> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: StreamBuilder<QuerySnapshot>(
-          stream: FirebaseFirestore.instance
-              .collection('Groups')
-              .where('GroupType', isEqualTo: 'Club')
-              .snapshots(),
-          builder: (context, snapshot) {
-            if (!snapshot.hasData) {
-              return loading
-                  ? Loading()
-                  : Center(
-                      child: Text(
-                      "Loading",
-                    ));
-            } else {
-              return loading
-                  ? Loading()
-                  : ListView.builder(
-                      itemExtent: 80.0,
-                      itemCount: snapshot.data?.docs.length,
-                      itemBuilder: (context, index) =>
-                          _buildList(context, snapshot.data!.docs[index]),
-                    );
+        body: StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance
+                .collection('Groups')
+                .where('GroupType', isEqualTo: 'Club')
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return loading
+                    ? Loading()
+                    : Center(
+                        child: Text(
+                        "Loading",
+                      ));
+              } else {
+                return loading
+                    ? Loading()
+                    : ListView.builder(
+                        itemExtent: 80.0,
+                        itemCount: snapshot.data?.docs.length,
+                        itemBuilder: (context, index) =>
+                            _buildList(context, snapshot.data!.docs[index]),
+                      );
+              }
+            }),
+        floatingActionButton: FloatingActionButton.extended(
+          label: const Text("Submit"),
+          backgroundColor: const Color(0xFF500000),
+          onPressed: () async {
+            try {
+              //var uid = await _auth.getUID();
+              //MyUser _auth.user.uid;
+              // indexdb = _dbs.getTheList();
+              // print('to user ->');
+              // print(indexdb);
+              loading ? Loading() : _dbs.updateUserData(indexdb);
+              //DatabaseService(uid: uid).getIndexDB();
+
+              print('new test');
+              print(indexdb);
+              print('new test');
+            } catch (error) {
+              loading ? Loading() : print(error.toString());
+
+              return null;
             }
-          }),
-    );
+            //print(_dbs.getTheList());
+            //indexdb = _dbs.getTheList();
+            //print('new test');
+            //print(indexdb);
+            loading
+                ? Loading()
+                : Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => MainPage()));
+          },
+        ));
   }
 }
 
@@ -296,12 +357,14 @@ class __buildItemState extends State<_buildItem> {
           //String stuff = _dbs.getIndexDB().toString();
           //print(stuff);
           if (selected == false) {
-            if (!indexdb.contains(widget.value)) {
+            if (!indexdb.contains(widget.value) && indexdb.length < 10) {
               indexdb.add(widget.value);
             }
-          } else {
+          } else if (indexdb.contains(widget.value)) {
             indexdb.remove(widget.value);
             print(indexdb);
+          } else {
+            print('cannot select more than 10 options');
           }
         });
       },
@@ -314,6 +377,7 @@ class __buildItemState extends State<_buildItem> {
 class LoadPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    _dbs.checkIfAdmin();
     _dbs.getIndexDB().then((value) {
       // Future.delayed(
       // const Duration(seconds: 2));
@@ -321,6 +385,12 @@ class LoadPage extends StatelessWidget {
       indexdb = _dbs.getTheList(value);
       print('first time');
       print(indexdb);
+      print('am i the admin');
+      if (_dbs.getIsAdmin()) {
+        print('yeah, you the boss');
+      } else {
+        print('nope, you are a chump');
+      }
     });
     Timer(Duration(seconds: 1), () {
       print('after timer');
@@ -355,6 +425,7 @@ class HomePage extends State<MainPage> {
   static List? userEvents = [];
 
   _onItemTapped(int index) async {
+    _dbs.checkIfAdmin();
     //indexdb = [18];
     _selectedIndex = index;
     print(_selectedIndex);
@@ -374,6 +445,13 @@ class HomePage extends State<MainPage> {
           ? Loading()
           : Navigator.push(
               context, MaterialPageRoute(builder: (context) => MainPage()));
+    }
+
+    if (_selectedIndex == 2 && _dbs.getIsAdmin()) {
+      return loading
+          ? Loading()
+          : Navigator.push(context,
+              MaterialPageRoute(builder: (context) => AdminCalendar()));
     }
     if (_selectedIndex == 2) {
       return loading
@@ -450,7 +528,7 @@ class HomePage extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     //return loading ? Loading() :
-
+    _dbs.checkIfAdmin();
     //Navigator.push(
     //  context, MaterialPageRoute(builder:(context) => Loading()));
 
@@ -487,97 +565,188 @@ class HomePage extends State<MainPage> {
     // print(indexdb);
     //print(newIndex);
     //User user = Provider.of<User>(context);
-
-    return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'The HUB at RELLIS Home',
-        home: Scaffold(
-            appBar: AppBar(
-              // ignore: prefer_const_constructors
-              title: InkWell(
-                  onTap: () {
-                    //"The Hub @ RELLIS",
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                loading ? Loading() : MainPage()));
-                  },
-                  child: Text(
-                    "The Hub @ RELLIS",
-                    style: TextStyle(fontFamily: "Roboto", fontSize: 30),
-                  )),
-              backgroundColor: const Color(0xFF500000),
-            ),
-            body: StreamBuilder<QuerySnapshot>(
-                stream: FirebaseFirestore.instance
-                    .collection('Events')
-                    .where('GroupID', whereIn: indexdb)
-                    .snapshots(),
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData) {
-                    return Text("Loading");
-                  } else {
-                    return ListView.builder(
-                      itemExtent: MediaQuery.of(context).size.height / 3.5,
-                      itemCount: snapshot.data?.docs.length,
-                      itemBuilder: (context, index) =>
-                          _buildHomeItem(context, snapshot.data!.docs[index]),
-                    );
-                  }
-                }),
-            bottomNavigationBar: BottomNavigationBar(
-              selectedFontSize: 15,
-              // ignore: prefer_const_constructors
-              selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
-              // ignore: prefer_const_constructors
-              selectedIconTheme: IconThemeData(
-                color: Colors.white,
-                size: 35,
+    if (_dbs.getIsAdmin()) {
+      return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'The HUB at RELLIS Home',
+          home: Scaffold(
+              appBar: AppBar(
+                // ignore: prefer_const_constructors
+                title: InkWell(
+                    onTap: () {
+                      //"The Hub @ RELLIS",
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  loading ? Loading() : MainPage()));
+                    },
+                    child: Text(
+                      "The Hub @ RELLIS",
+                      style: TextStyle(fontFamily: "Roboto", fontSize: 30),
+                    )),
+                backgroundColor: const Color(0xFF500000),
               ),
+              body: StreamBuilder<QuerySnapshot>(
+                  stream: FirebaseFirestore.instance
+                      .collection('Events')
+                      //.where('GroupID', whereIn: indexdb)
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) {
+                      return Text("Loading");
+                    } else {
+                      return ListView.builder(
+                        itemExtent: MediaQuery.of(context).size.height / 3.5,
+                        itemCount: snapshot.data?.docs.length,
+                        itemBuilder: (context, index) =>
+                            _buildHomeItem(context, snapshot.data!.docs[index]),
+                      );
+                    }
+                  }),
+              bottomNavigationBar: BottomNavigationBar(
+                selectedFontSize: 15,
+                // ignore: prefer_const_constructors
+                selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
+                // ignore: prefer_const_constructors
+                selectedIconTheme: IconThemeData(
+                  color: Colors.white,
+                  size: 35,
+                ),
 
-              unselectedItemColor: Colors.white,
-              selectedItemColor: Colors.white,
-              currentIndex: _selectedIndex,
-              onTap: _onItemTapped,
-              backgroundColor: const Color(0xFF500000),
-              elevation: 90,
-              items: const <BottomNavigationBarItem>[
-                BottomNavigationBarItem(
-                  icon: Icon(
-                    Icons.person,
-                    color: Colors.white,
-                    //onPressed: formStart(),
+                unselectedItemColor: Colors.white,
+                selectedItemColor: Colors.white,
+                currentIndex: _selectedIndex,
+                onTap: _onItemTapped,
+                backgroundColor: const Color(0xFF500000),
+                elevation: 90,
+                items: const <BottomNavigationBarItem>[
+                  BottomNavigationBarItem(
+                    icon: Icon(
+                      Icons.person,
+                      color: Colors.white,
+                      //onPressed: formStart(),
+                    ),
+                    label: 'Profile',
                   ),
-                  label: 'Profile',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(
-                    Icons.refresh,
-                    color: Colors.white,
+                  BottomNavigationBarItem(
+                    icon: Icon(
+                      Icons.refresh,
+                      color: Colors.white,
+                    ),
+                    label: 'Refresh',
                   ),
-                  label: 'Refresh',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(
-                    Icons.event,
-                    color: Colors.white,
+                  BottomNavigationBarItem(
+                    icon: Icon(
+                      Icons.event,
+                      color: Colors.white,
+                    ),
+                    label: 'Calendar',
                   ),
-                  label: 'Calendar',
+                ],
+              ),
+              floatingActionButton: FloatingActionButton.extended(
+                label: const Text("Sign Out"),
+                backgroundColor: const Color(0xFF500000),
+                onPressed: () async {
+                  await _auth.signOut();
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => Authenticate()));
+                  // Implementation for saving selection goes here
+                },
+              )));
+      //}); return MainPage();
+    } else {
+      return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'The HUB at RELLIS Home',
+          home: Scaffold(
+              appBar: AppBar(
+                // ignore: prefer_const_constructors
+                title: InkWell(
+                    onTap: () {
+                      //"The Hub @ RELLIS",
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  loading ? Loading() : MainPage()));
+                    },
+                    child: Text(
+                      "The Hub @ RELLIS",
+                      style: TextStyle(fontFamily: "Roboto", fontSize: 30),
+                    )),
+                backgroundColor: const Color(0xFF500000),
+              ),
+              body: StreamBuilder<QuerySnapshot>(
+                  stream: FirebaseFirestore.instance
+                      .collection('Events')
+                      .where('GroupID', whereIn: indexdb)
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) {
+                      return Text("Loading");
+                    } else {
+                      return ListView.builder(
+                        itemExtent: MediaQuery.of(context).size.height / 3.5,
+                        itemCount: snapshot.data?.docs.length,
+                        itemBuilder: (context, index) =>
+                            _buildHomeItem(context, snapshot.data!.docs[index]),
+                      );
+                    }
+                  }),
+              bottomNavigationBar: BottomNavigationBar(
+                selectedFontSize: 15,
+                // ignore: prefer_const_constructors
+                selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
+                // ignore: prefer_const_constructors
+                selectedIconTheme: IconThemeData(
+                  color: Colors.white,
+                  size: 35,
                 ),
-              ],
-            ),
-            floatingActionButton: FloatingActionButton.extended(
-              label: const Text("Sign Out"),
-              backgroundColor: const Color(0xFF500000),
-              onPressed: () async {
-                await _auth.signOut();
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => Authenticate()));
-                // Implementation for saving selection goes here
-              },
-            )));
-    //}); return MainPage();
+
+                unselectedItemColor: Colors.white,
+                selectedItemColor: Colors.white,
+                currentIndex: _selectedIndex,
+                onTap: _onItemTapped,
+                backgroundColor: const Color(0xFF500000),
+                elevation: 90,
+                items: const <BottomNavigationBarItem>[
+                  BottomNavigationBarItem(
+                    icon: Icon(
+                      Icons.person,
+                      color: Colors.white,
+                      //onPressed: formStart(),
+                    ),
+                    label: 'Profile',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(
+                      Icons.refresh,
+                      color: Colors.white,
+                    ),
+                    label: 'Refresh',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(
+                      Icons.event,
+                      color: Colors.white,
+                    ),
+                    label: 'Calendar',
+                  ),
+                ],
+              ),
+              floatingActionButton: FloatingActionButton.extended(
+                label: const Text("Sign Out"),
+                backgroundColor: const Color(0xFF500000),
+                onPressed: () async {
+                  await _auth.signOut();
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => Authenticate()));
+                  // Implementation for saving selection goes here
+                },
+              )));
+    }
   }
 
   // String uid = FirebaseAuth.instance.currentUser!.uid;
