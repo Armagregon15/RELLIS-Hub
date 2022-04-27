@@ -38,8 +38,17 @@ class CalendarState extends State<Calendar> {
   MeetingDataSource? events;
   final List<String> options = <String>['Add', 'Delete', 'Update'];
   bool isInitialLoaded = false;
+
   @override
   void initState() {
+    _dbs.getIndexDB().then((value) {
+      // Future.delayed(
+      // const Duration(seconds: 2));
+
+      List<int> indexdb = _dbs.getTheList(value);
+      print('first time');
+      print(indexdb);
+    });
     _initializeEventColor();
     getDataFromFireStore().then((results) {
       SchedulerBinding.instance!.addPostFrameCallback((timeStamp) {
@@ -105,9 +114,17 @@ class CalendarState extends State<Calendar> {
   }
 
   Future<void> getDataFromFireStore() async {
+    await _dbs.getIndexDB().then((value) {
+      // Future.delayed(
+      // const Duration(seconds: 2));
+
+      List<int> indexdb = _dbs.getTheList(value);
+      print('first time calendar');
+      print(indexdb);
+    });
     var snapShotsValue = await fireStoreReference
         .collection("Events")
-        //.where("GroupsID", whereIn: indexdb)
+        .where("GroupID", whereIn: indexdb)
         .get();
     print("Get data from fire store");
     print(indexdb);
@@ -137,7 +154,9 @@ class CalendarState extends State<Calendar> {
     setState(() {
       events = MeetingDataSource(list);
       print('List in get data');
-      list[0].printDate();
+      print(indexdb);
+      print(events.toString());
+      //list[0].printDate();
       // print(snapShotsValue.docs['EventDate'][0]);
       // print(list[0]['eventDate']);
       // print([0]['eventDate']);
@@ -158,7 +177,7 @@ class CalendarState extends State<Calendar> {
                     context,
                     MaterialPageRoute(
                         builder: (context) =>
-                            loading ? Loading() : MainPage()));
+                            loading ? Loading() : Calendar()));
               },
               child: const Text(
                 "The Hub @ RELLIS",
