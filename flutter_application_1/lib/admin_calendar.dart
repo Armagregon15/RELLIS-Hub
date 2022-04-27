@@ -38,6 +38,7 @@ class AdminCalendarState extends State<AdminCalendar> {
   MeetingDataSource? events;
   final List<String> options = <String>['Add', 'Delete', 'Update'];
   bool isInitialLoaded = false;
+  CollectionReference users = FirebaseFirestore.instance.collection('Events');
 
   @override
   void initState() {
@@ -113,6 +114,19 @@ class AdminCalendarState extends State<AdminCalendar> {
     super.initState();
   }
 
+  Future<void> addUser() {
+    // Call the user's CollectionReference to add a new user
+    return users
+        .add({
+          'EventDate': "Date",
+          'EventName': "fullName",
+          'GroupID': "company",
+          'GroupName': "age"
+        })
+        .then((value) => print("User Added"))
+        .catchError((error) => print("Failed to add user: $error"));
+  }
+
   Future<void> getDataFromFireStore() async {
     await _dbs.getIndexDB().then((value) {
       // Future.delayed(
@@ -168,7 +182,7 @@ class AdminCalendarState extends State<AdminCalendar> {
   /*
 appBar: AppBar(
           title: InkWell(
-            
+
               onTap: () {
                 //"The Hub @ RELLIS",
                 Navigator.push(
@@ -184,6 +198,66 @@ appBar: AppBar(
           backgroundColor: const Color(0xFF500000),
         )
         */
+  Widget _buildPopupDialog(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Add Event'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          TextFormField(
+              decoration: const InputDecoration(
+            hintText: 'Enter the date...',
+            labelText: 'Date',
+          )),
+          TextFormField(
+              decoration: const InputDecoration(
+            hintText: 'Enter the event name...',
+            labelText: 'Event Name',
+          )),
+          StreamBuilder<QuerySnapshot>(
+              stream:
+                  FirebaseFirestore.instance.collection('Events').snapshots(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+                var length = snapshot.data?.docs.length;
+                DocumentSnapshot ds = snapshot.data!.docs[length! - 1];
+                int dummy = 0;
+                return DropdownButton(
+                  onChanged: (dummy) {
+                    setState(() {/*dummy = document['GroupID']*/}); //
+                  },
+                  items: snapshot.data?.docs.map((DocumentSnapshot document) {
+                    return DropdownMenuItem(
+                        value: document['GroupID'],
+                        child: Container(
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5.0)),
+                          height: 100.0,
+                          padding:
+                              const EdgeInsets.fromLTRB(10.0, 2.0, 10.0, 0.0),
+                          child: Text(document['GroupName']),
+                        ));
+                  }).toList(),
+                );
+              })
+        ],
+      ),
+      actions: <Widget>[
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: const Text('Close'),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     isInitialLoaded = true;
@@ -214,12 +288,18 @@ appBar: AppBar(
               }).toList(),
               onSelected: (String value) {
                 if (value == 'Add') {
-                  fireStoreReference.collection("Events").doc().set({
-                    //'EventDate': 1  6  2022,
-                    'EventName': 'Hello',
-                    'GroupID': 18,
-                    'GroupName': "RELLIS"
-                  });
+                  // fireStoreReference.collection("Events").doc().set({
+                  //   //'EventDate': 1  6  2022,
+                  //   'EventName': 'Hello',
+                  //   'GroupID': 18,
+                  //   'GroupName': "RELLIS"
+                  // });
+                  print("butt");
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) =>
+                        _buildPopupDialog(context),
+                  );
                 } else if (value == "Delete") {
                   try {
                     fireStoreReference.collection('Events').doc('1').delete();
