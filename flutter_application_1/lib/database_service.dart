@@ -6,7 +6,7 @@ import 'authmain.dart';
 
 class DatabaseService {
   final String uid;
-  static List<int> thelist = [];
+  List<int> thelist = [];
   DatabaseService({required this.uid});
   final AuthService _auth = AuthService();
   //collection reference

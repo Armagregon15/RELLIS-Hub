@@ -1,8 +1,5 @@
 // ignore: file_names
 // ignore_for_file: prefer_const_constructors, avoid_print, file_names, unused_element
-
-import 'dart:html';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/authenticate.dart';
 import 'package:flutter_application_1/authmain.dart';
@@ -12,7 +9,7 @@ import 'database_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 List<int> indexdb = [18];
-
+bool compare = false;
 final AuthService _auth = AuthService();
 
 class formStart extends StatefulWidget {
@@ -281,6 +278,62 @@ class MainPage extends StatefulWidget {
 
 class HomePage extends State<MainPage> {
   int _selectedIndex = 0;
+  String uid = FirebaseAuth.instance.currentUser!.uid;
+  final FirebaseFirestore _db = FirebaseFirestore.instance;
+  final fiveSeconds = Duration(seconds: 5);
+
+  // Future<bool> getadmin() async {
+  //   await FirebaseFirestore.instance
+  //       .collection("Users")
+  //       .doc(uid)
+  //       .get()
+  //       .then((DocumentSnapshot) async => {
+  //             await Future(
+  //                 () async => isAdmin = await DocumentSnapshot.get('admin')),
+  //           });
+  //   return isAdmin;
+  // }
+
+  // Future<bool> adminControl() async {
+  //   bool isAdmin2 = false;
+  //   await FirebaseFirestore.instance
+  //       .collection("Users")
+  //       .doc()
+  //       .get()
+  //       .then((DocumentSnapshot) async => {
+  //             await Future(
+  //                 () async => isAdmin2 = await DocumentSnapshot.get('admin')),
+  //           });
+  //   return isAdmin2;
+  // }
+
+  Future<void> checkUser() async {
+    String adminsID = "";
+    String uid = FirebaseAuth.instance.currentUser!.uid;
+    final FirebaseFirestore _db = FirebaseFirestore.instance;
+    _db.collection('Admins').doc(uid).get().then((DocumentSnapshot) async {
+      adminsID = await DocumentSnapshot.get("UsersID");
+      print("Butt");
+      print(adminsID);
+      if (adminsID == uid) {
+        compare = true;
+      } else {
+        compare = false;
+      }
+    });
+  }
+
+// class makingIndex {
+//   String uid = FirebaseAuth.instance.currentUser!.uid;
+//   List<dynamic>? newIndex = [];
+//   final FirebaseFirestore _db = FirebaseFirestore.instance;
+//   Future<void> getdata() async {
+//     return _db.collection('Users').doc(uid).get().then((value) {
+//       newIndex = List<dynamic>.from(value.get("GroupIDs")).toList();
+//       print(newIndex);
+//     });
+//   }
+// }
 
   _onItemTapped(int index) {
     Navigator.push(
@@ -336,85 +389,165 @@ class HomePage extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'The HUB at RELLIS Home',
-        home: Scaffold(
-            body: StreamBuilder<QuerySnapshot>(
-                stream: FirebaseFirestore.instance
-                    .collection('Events')
-                    .where('GroupID',
-                        whereIn: DatabaseService(uid: '').getTheList())
-                    .snapshots(),
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData) {
-                    return Text("Loading");
-                  } else {
-                    return ListView.builder(
-                      itemExtent: MediaQuery.of(context).size.height / 4,
-                      itemCount: snapshot.data?.docs.length,
-                      itemBuilder: (context, index) =>
-                          _buildHomeItem(context, snapshot.data!.docs[index]),
-                    );
-                  }
-                }),
-            bottomNavigationBar: BottomNavigationBar(
-              selectedFontSize: 15,
-              // ignore: prefer_const_constructors
-              selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
-              // ignore: prefer_const_constructors
-              selectedIconTheme: IconThemeData(
-                color: Colors.white,
-                size: 35,
-              ),
-
-              unselectedItemColor: Colors.white,
-              selectedItemColor: Colors.white,
-              currentIndex: _selectedIndex,
-              onTap: _onItemTapped,
-              backgroundColor: const Color(0xFF500000),
-              elevation: 90,
-              items: const <BottomNavigationBarItem>[
-                BottomNavigationBarItem(
-                  icon: Icon(
-                    Icons.person,
-                    color: Colors.white,
-                    //onPressed: formStart(),
-                  ),
-                  label: 'Profile',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(
-                    Icons.refresh,
-                    color: Colors.white,
-                  ),
-                  label: 'Refresh',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(
-                    Icons.event,
-                    color: Colors.white,
-                  ),
-                  label: 'Calendar',
-                ),
-              ],
-            ),
-            floatingActionButton: FloatingActionButton.extended(
-              label: const Text("Sign Out"),
-              backgroundColor: const Color(0xFF500000),
-              onPressed: () async {
-                await _auth.signOut();
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => Authenticate()));
-                // Implementation for saving selection goes here
-              },
-            )));
+    Future<String> callAsyncFetch() =>
+        Future.delayed(Duration(seconds: 2), () => "hi");
+    return FutureBuilder(
+        future: callAsyncFetch(),
+        builder: (context, AsyncSnapshot<String> snapshot) {
+          if (compare = true) {
+            return MaterialApp(
+                debugShowCheckedModeBanner: false,
+                title: 'The HUB at RELLIS Home',
+                home: Scaffold(
+                    body: StreamBuilder<QuerySnapshot>(
+                        stream: FirebaseFirestore.instance
+                            .collection('Events')
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          if (!snapshot.hasData) {
+                            return Text("Loading");
+                          } else {
+                            return ListView.builder(
+                              itemExtent:
+                                  MediaQuery.of(context).size.height / 4,
+                              itemCount: snapshot.data?.docs.length,
+                              itemBuilder: (context, index) => _buildHomeItem(
+                                  context, snapshot.data!.docs[index]),
+                            );
+                          }
+                        }),
+                    bottomNavigationBar: BottomNavigationBar(
+                      selectedFontSize: 15,
+                      // ignore: prefer_const_constructors
+                      selectedLabelStyle:
+                          TextStyle(fontWeight: FontWeight.bold),
+                      // ignore: prefer_const_constructors
+                      selectedIconTheme: IconThemeData(
+                        color: Colors.white,
+                        size: 35,
+                      ),
+                      unselectedItemColor: Colors.white,
+                      selectedItemColor: Colors.white,
+                      currentIndex: _selectedIndex,
+                      onTap: _onItemTapped,
+                      backgroundColor: const Color(0xFF500000),
+                      elevation: 90,
+                      items: const <BottomNavigationBarItem>[
+                        BottomNavigationBarItem(
+                          icon: Icon(
+                            Icons.arrow_back,
+                            color: Colors.white,
+                            //onPressed: formStart(),
+                          ),
+                          label: 'Add Event',
+                        ),
+                        BottomNavigationBarItem(
+                          icon: Icon(
+                            Icons.refresh,
+                            color: Colors.white,
+                          ),
+                          label: 'Refresh',
+                        ),
+                        BottomNavigationBarItem(
+                          icon: Icon(
+                            Icons.event,
+                            color: Colors.white,
+                          ),
+                          label: 'Calendar',
+                        ),
+                      ],
+                    ),
+                    floatingActionButton: FloatingActionButton.extended(
+                      label: const Text("Sign Out"),
+                      backgroundColor: const Color(0xFF500000),
+                      onPressed: () async {
+                        await _auth.signOut();
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => Authenticate()));
+                        // Implementation for saving selection goes here
+                      },
+                    )));
+          } else {
+            return MaterialApp(
+                debugShowCheckedModeBanner: false,
+                title: 'The HUB at RELLIS Home',
+                home: Scaffold(
+                    body: StreamBuilder<QuerySnapshot>(
+                        stream: FirebaseFirestore.instance
+                            .collection('Events')
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          if (!snapshot.hasData) {
+                            return Text("Loading");
+                          } else {
+                            return ListView.builder(
+                              itemExtent:
+                                  MediaQuery.of(context).size.height / 4,
+                              itemCount: snapshot.data?.docs.length,
+                              itemBuilder: (context, index) => _buildHomeItem(
+                                  context, snapshot.data!.docs[index]),
+                            );
+                          }
+                        }),
+                    bottomNavigationBar: BottomNavigationBar(
+                      selectedFontSize: 15,
+                      selectedLabelStyle:
+                          TextStyle(fontWeight: FontWeight.bold),
+                      selectedIconTheme: IconThemeData(
+                        color: Colors.white,
+                        size: 35,
+                      ),
+                      unselectedItemColor: Colors.white,
+                      selectedItemColor: Colors.white,
+                      currentIndex: _selectedIndex,
+                      onTap: _onItemTapped,
+                      backgroundColor: const Color(0xFF500000),
+                      elevation: 90,
+                      items: const <BottomNavigationBarItem>[
+                        BottomNavigationBarItem(
+                          icon: Icon(
+                            Icons.person,
+                            color: Colors.white,
+                          ),
+                          label: 'Profile',
+                        ),
+                        BottomNavigationBarItem(
+                          icon: Icon(
+                            Icons.refresh,
+                            color: Colors.white,
+                          ),
+                          label: 'Refresh',
+                        ),
+                        BottomNavigationBarItem(
+                          icon: Icon(
+                            Icons.event,
+                            color: Colors.white,
+                          ),
+                          label: 'Calendar',
+                        ),
+                      ],
+                    ),
+                    floatingActionButton: FloatingActionButton.extended(
+                      label: const Text("Sign Out"),
+                      backgroundColor: const Color(0xFF500000),
+                      onPressed: () async {
+                        await _auth.signOut();
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => Authenticate()));
+                      },
+                    )));
+          }
+        });
   }
 }
 
 class makingIndex {
   String uid = FirebaseAuth.instance.currentUser!.uid;
-  static List<dynamic>? newIndex = [];
+  List<dynamic>? newIndex = [];
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   Future<void> getdata() async {
     return _db.collection('Users').doc(uid).get().then((value) {
