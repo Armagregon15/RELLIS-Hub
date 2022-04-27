@@ -103,7 +103,7 @@ class _LoginHub extends State<LoginHub> {
                             } else {
                               
                               Navigator.push(context,
-                            MaterialPageRoute(builder: (context)=>MainPage()));
+                            MaterialPageRoute(builder: (context)=>LoadPage()));
                             }
                           }
                         }),
