@@ -24,7 +24,7 @@ class Wrapper extends StatelessWidget {
         // indexdb = _dbs.getTheList();
         // print('auth index');
         // print(indexdb);
-        return LoadPage();
+        return const Authenticate();
       }
     } catch (e) {
       print(e.toString());

@@ -215,22 +215,19 @@ appBar: AppBar(
               onSelected: (String value) {
                 if (value == 'Add') {
                   fireStoreReference.collection("Events").doc().set({
-                    'EventDate': 1 - 6 - 2022,
+                    //'EventDate': 1  6  2022,
                     'EventName': 'Hello',
                     'GroupID': 18,
                     'GroupName': "RELLIS"
                   });
                 } else if (value == "Delete") {
                   try {
-                    fireStoreReference
-                        .collection('CalendarAppointmentCollection')
-                        .doc('1')
-                        .delete();
+                    fireStoreReference.collection('Events').doc('1').delete();
                   } catch (e) {}
                 } else if (value == "Update") {
                   try {
                     fireStoreReference
-                        .collection('CalendarAppointmentCollection')
+                        .collection('Events')
                         .doc('1')
                         .update({'Subject': 'Meeting'});
                   } catch (e) {}
