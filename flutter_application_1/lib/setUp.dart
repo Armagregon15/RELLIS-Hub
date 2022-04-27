@@ -316,6 +316,7 @@ class __buildItemState extends State<_buildItem> {
 class LoadPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    _dbs.checkIfAdmin();
     _dbs.getIndexDB().then((value) {
       // Future.delayed(
       // const Duration(seconds: 2));
@@ -323,6 +324,12 @@ class LoadPage extends StatelessWidget {
       indexdb = _dbs.getTheList(value);
       print('first time');
       print(indexdb);
+      print('am i the admin');
+      if (_dbs.getIsAdmin()) {
+        print('yeah, you the boss');
+      } else {
+        print('nope, you are a chump');
+      }
     });
     Timer(Duration(seconds: 1), () {
       print('after timer');

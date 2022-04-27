@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 
 class DatabaseService {
   final String uid;
+  bool isAdmin = false;
   int semaphore = 0;
   List<int> thelist = [];
   DatabaseService({required this.uid});
@@ -30,8 +31,16 @@ class DatabaseService {
     }
   }
 
-  int getSemaphore() {
-    return semaphore;
+  bool getIsAdmin() {
+    return isAdmin;
+  }
+
+  Future<void> checkIfAdmin() async {
+    if (_auth.admin == await _auth.getUID()) {
+      isAdmin = true;
+    } else {
+      isAdmin = false;
+    }
   }
 
   List<int> getTheList(thelist) {
