@@ -325,6 +325,7 @@ class LoadPage extends StatelessWidget {
       print('first time');
       print(indexdb);
       print('am i the admin');
+      
       if (_dbs.getIsAdmin()) {
         print('yeah, you the boss');
       } else {
