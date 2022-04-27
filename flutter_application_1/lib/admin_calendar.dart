@@ -24,15 +24,15 @@ final AuthService _auth = AuthService();
 
 //go back until list<color> is final
 // ignore: use_key_in_widget_constructors
-class Calendar extends StatefulWidget {
+class AdminCalendar extends StatefulWidget {
   @override
-  CalendarState createState() => CalendarState();
+  AdminCalendarState createState() => AdminCalendarState();
 }
 
 //late Map<DateTime, List<Appointment>> _dataCollection;
 //Map<DateTime, List<_Meeting>> _dataCollection = <DateTime, List<_Meeting>>{};
 
-class CalendarState extends State<Calendar> {
+class AdminCalendarState extends State<AdminCalendar> {
   final List<Color> _colorCollection = <Color>[];
   final fireStoreReference = FirebaseFirestore.instance;
   MeetingDataSource? events;
@@ -124,7 +124,7 @@ class CalendarState extends State<Calendar> {
     });
     var snapShotsValue = await fireStoreReference
         .collection("Events")
-        .where("GroupID", whereIn: indexdb)
+        //.where("GroupID", whereIn: indexdb)
         .get();
     print("Get data from fire store");
     print(indexdb);
@@ -165,12 +165,10 @@ class CalendarState extends State<Calendar> {
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    isInitialLoaded = true;
-    return Scaffold(
-        appBar: AppBar(
+  /*
+appBar: AppBar(
           title: InkWell(
+            
               onTap: () {
                 //"The Hub @ RELLIS",
                 Navigator.push(
@@ -184,7 +182,63 @@ class CalendarState extends State<Calendar> {
                 style: TextStyle(fontFamily: "Roboto", fontSize: 30),
               )),
           backgroundColor: const Color(0xFF500000),
-        ),
+        )
+        */
+  @override
+  Widget build(BuildContext context) {
+    isInitialLoaded = true;
+    return Scaffold(
+        appBar: AppBar(
+            title: InkWell(
+                onTap: () {
+                  //"The Hub @ RELLIS",
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              loading ? Loading() : MainPage()));
+                },
+                child: const Text(
+                  "The Hub @ RELLIS",
+                  style: TextStyle(fontFamily: "Roboto", fontSize: 30),
+                )),
+            backgroundColor: const Color(0xFF500000),
+            leading: PopupMenuButton<String>(
+              icon: Icon(Icons.settings),
+              itemBuilder: (BuildContext context) =>
+                  options.map((String choice) {
+                return PopupMenuItem<String>(
+                  value: choice,
+                  child: Text(choice),
+                );
+              }).toList(),
+              onSelected: (String value) {
+                if (value == 'Add') {
+                  fireStoreReference
+                      .collection("CalendarAppointmentCollection")
+                      .doc("1")
+                      .set({
+                    'Subject': 'Mastering Flutter',
+                    'StartTime': '07/04/2020 08:00:00',
+                    'EndTime': '07/04/2020 09:00:00'
+                  });
+                } else if (value == "Delete") {
+                  try {
+                    fireStoreReference
+                        .collection('CalendarAppointmentCollection')
+                        .doc('1')
+                        .delete();
+                  } catch (e) {}
+                } else if (value == "Update") {
+                  try {
+                    fireStoreReference
+                        .collection('CalendarAppointmentCollection')
+                        .doc('1')
+                        .update({'Subject': 'Meeting'});
+                  } catch (e) {}
+                }
+              },
+            )),
         body: SfCalendar(
           view: CalendarView.month,
           todayHighlightColor: const Color(0xFF500000),
