@@ -13,7 +13,6 @@ import 'admin_calendar.dart';
 import 'calendar.dart';
 
 Color maroon = const Color(0xFF500000);
-
 List<int> indexdb = [18];
 final AuthService _auth = AuthService();
 DatabaseService _dbs = DatabaseService(uid: '123');
@@ -488,7 +487,7 @@ class HomePage extends State<MainPage> {
                     color: Color.fromARGB(255, 180, 179, 175),
                     width: 10,
                     style: BorderStyle.solid)),
-            height: MediaQuery.of(context).size.height / 4.5,
+            height: MediaQuery.of(context).size.height / 5,
             child: Center(
               child: Card(
                 child: Column(
@@ -500,23 +499,18 @@ class HomePage extends State<MainPage> {
                         child: Column(
                           children: [
                             Container(
-                                padding: const EdgeInsets.all(5),
+                                padding: const EdgeInsets.all(20),
                                 child: Center(
                                     child: Text(
                                   document['GroupName'],
                                   style: TextStyle(fontSize: 20),
                                 ))),
                             Container(
-                                padding: const EdgeInsets.all(5),
+                                padding: const EdgeInsets.all(20),
                                 child:
                                     Center(child: Text(document['EventName']))),
                             Container(
-                                padding: const EdgeInsets.all(5),
-                                child: Center(
-                                    child: Text(document[
-                                        'Location']))), // Add location to database
-                            Container(
-                                padding: const EdgeInsets.all(5),
+                                padding: const EdgeInsets.all(10),
                                 child: Center(child: Text(d.toString()))),
                             Icon(
                               Icons.menu_book,
@@ -636,7 +630,7 @@ class HomePage extends State<MainPage> {
                       color: Colors.white,
                       //onPressed: formStart(),
                     ),
-                    label: 'Selection',
+                    label: 'Profile',
                   ),
                   BottomNavigationBarItem(
                     icon: Icon(
