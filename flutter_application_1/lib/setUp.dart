@@ -4,10 +4,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/authenticate.dart';
 import 'package:flutter_application_1/authmain.dart';
-import 'calendar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'database_service.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'loading.dart';
 import 'dart:async';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -461,8 +459,8 @@ class HomePage extends State<MainPage> {
     if (_selectedIndex == 2) {
       return loading
           ? Loading()
-          : Navigator.push(
-              context, MaterialPageRoute(builder: (context) => Calendar()));
+          : Navigator.push(context,
+              MaterialPageRoute(builder: (context) => AdminCalendar()));
     }
     return loading
         ? Loading()
@@ -488,44 +486,47 @@ class HomePage extends State<MainPage> {
                     width: 10,
                     style: BorderStyle.solid)),
             height: MediaQuery.of(context).size.height / 4.5,
-            child: Center(
-              child: Card(
-                child: Column(
-                  children: [
-                    SizedBox(
-                      height: 190,
-                      child: Column(
-                        children: [
-                          Container(
-                              padding: const EdgeInsets.all(8),
-                              child: Center(
-                                  child: Text(
-                                document['GroupName'],
-                                style: TextStyle(fontSize: 20),
-                              ))),
-                          Container(
-                              padding: const EdgeInsets.all(8),
-                              child:
-                                  Center(child: Text(document['EventName']))),
-                          Container(
-                              padding: const EdgeInsets.all(8),
-                              child: Center(child: Text(d.toString()))),
-                          IconButton(
-                            color: Color.fromARGB(255, 234, 195, 18),
-                            icon: const Icon(
-                              Icons.menu_book,
-                              color: Color.fromARGB(255, 255, 174, 1),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Center(
+                child: Card(
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        height: 190,
+                        child: Column(
+                          children: [
+                            Container(
+                                padding: const EdgeInsets.all(8),
+                                child: Center(
+                                    child: Text(
+                                  document['GroupName'],
+                                  style: TextStyle(fontSize: 20),
+                                ))),
+                            Container(
+                                padding: const EdgeInsets.all(8),
+                                child:
+                                    Center(child: Text(document['EventName']))),
+                            Container(
+                                padding: const EdgeInsets.all(8),
+                                child: Center(child: Text(d.toString()))),
+                            IconButton(
+                              color: Color.fromARGB(255, 234, 195, 18),
+                              icon: const Icon(
+                                Icons.menu_book,
+                                color: Color.fromARGB(255, 255, 174, 1),
+                              ),
+                              alignment: Alignment.bottomCenter,
+                              padding: new EdgeInsets.all(10.0),
+                              onPressed: () {},
                             ),
-                            alignment: Alignment.bottomCenter,
-                            padding: new EdgeInsets.all(10.0),
-                            onPressed: () {},
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
+                  elevation: 6,
                 ),
-                elevation: 6,
               ),
             ));
   }

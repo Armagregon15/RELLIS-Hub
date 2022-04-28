@@ -201,67 +201,68 @@ appBar: AppBar(
           backgroundColor: const Color(0xFF500000),
         )
         */
-  Widget _buildPopupDialog(BuildContext context) {
+  Widget _buildPopupDialog(BuildContext context, DocumentSnapshot document) {
     final addForm = GlobalKey<FormState>();
     return AlertDialog(
       title: const Text('Add Event'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Form(
-              key: addForm,
-              child: Column(children: [
-                TextFormField(
-                    onFieldSubmitted: (value) => date,
-                    decoration: const InputDecoration(
-                      hintText: 'Enter the date...',
-                      labelText: 'Date',
-                    )),
-                TextFormField(
-                    onFieldSubmitted: (value) => eventName,
-                    decoration: const InputDecoration(
-                      hintText: 'Enter the event name...',
-                      labelText: 'Event Name',
-                    )),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16.0),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      if (addForm.currentState!.validate()) {}
+      content: Form(
+        key: addForm,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            TextFormField(
+                onFieldSubmitted: (value) => date,
+                decoration: const InputDecoration(
+                  hintText: 'Enter the date...',
+                  labelText: 'Date',
+                )),
+            TextFormField(
+                onFieldSubmitted: (value) => eventName,
+                decoration: const InputDecoration(
+                  hintText: 'Enter the event name...',
+                  labelText: 'Event Name',
+                )),
+            StreamBuilder<QuerySnapshot>(
+                stream:
+                    FirebaseFirestore.instance.collection('Events').snapshots(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                  return DropdownButton<int>(
+                    items: snapshot.data?.docs.map((DocumentSnapshot document) {
+                      return DropdownMenuItem<int>(
+                          value: document["GroupID"],
+                          child: Container(
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5.0)),
+                            height: 100.0,
+                            padding:
+                                const EdgeInsets.fromLTRB(10.0, 2.0, 10.0, 0.0),
+                            child: Text(document['GroupName']),
+                          ));
+                    }).toList(),
+                    onChanged: (int? value) {
+                      setState(() {
+                        value = document["GroupID"];
+                      });
                     },
-                    child: const Text('Submit'),
-                  ),
-                ),
-              ])),
-          StreamBuilder<QuerySnapshot>(
-              stream:
-                  FirebaseFirestore.instance.collection('Events').snapshots(),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
                   );
-                }
-                return DropdownButton(
-                  onChanged: (dummy) {
-                    setState(() {/*dummy = document['GroupID']*/}); //
-                  },
-                  items: snapshot.data?.docs.map((DocumentSnapshot document) {
-                    return DropdownMenuItem(
-                        value: document['GroupID'],
-                        child: Container(
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(5.0)),
-                          height: 100.0,
-                          padding:
-                              const EdgeInsets.fromLTRB(10.0, 2.0, 10.0, 0.0),
-                          child: Text(document['GroupName']),
-                        ));
-                  }).toList(),
-                );
-              })
-        ],
+                }),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16.0),
+              child: ElevatedButton(
+                onPressed: () {
+                  if (addForm.currentState!.validate()) {}
+                },
+                child: const Text('Submit'),
+              ),
+            ),
+          ],
+        ),
       ),
       actions: <Widget>[
         TextButton(
