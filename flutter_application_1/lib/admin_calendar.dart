@@ -204,7 +204,7 @@ appBar: AppBar(
         */
   Widget _buildPopupDialog(BuildContext context) {
     final addForm = GlobalKey<FormState>();
-    int newValue = 0;
+    int? newValue = 0;
     return AlertDialog(
       title: const Text('Add Event'),
       content: Form(
@@ -214,13 +214,25 @@ appBar: AppBar(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             TextFormField(
-                onFieldSubmitted: (value) => date,
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return "Date is required";
+                  }
+                  return null;
+                },
+                onSaved: (value) => date,
                 decoration: const InputDecoration(
                   hintText: 'Enter the date...',
                   labelText: 'Date',
                 )),
             TextFormField(
-                onFieldSubmitted: (value) => eventName,
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return "Date is required";
+                  }
+                  return null;
+                },
+                onSaved: (value) => eventName,
                 decoration: const InputDecoration(
                   hintText: 'Enter the event name...',
                   labelText: 'Event Name',
@@ -234,34 +246,38 @@ appBar: AppBar(
                       child: CircularProgressIndicator(),
                     );
                   }
-                  return DropdownButton<int>(
+                  return DropdownButtonFormField<int>(
+                    validator: (value) => value == null ? 'No Entry' : null,
+                    onChanged: (value) {
+                      setState(() {
+                        newValue =
+                            value; // This needs to be set to the GroupID I think
+                      });
+                    },
                     items: snapshot.data?.docs.map((DocumentSnapshot document) {
                       return DropdownMenuItem<int>(
                           value: document["GroupID"],
                           child: Container(
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(5.0)),
-                            height: 100.0,
+                            height: 50.0,
                             padding:
                                 const EdgeInsets.fromLTRB(10.0, 2.0, 10.0, 0.0),
                             child: Text(document['GroupName']),
                           ));
                     }).toList(),
-                    onChanged: (int? value) {
-                      setState(() {
-                        value =
-                            newValue; // This needs to be set to the GroupID I think
-                      });
-                    },
                   );
                 }),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 16.0),
               child: ElevatedButton(
                 onPressed: () {
-                  if (addForm.currentState!.validate()) {}
-                  print(date);
-                  print(eventName);
+                  if (addForm.currentState!.validate()) {
+                    print(date);
+                    print(eventName);
+                  }
+                  print("Not Valid");
+
                   // addUser();
                 },
                 child: const Text('Submit'),
