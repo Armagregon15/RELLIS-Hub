@@ -5,6 +5,7 @@ import 'dart:math';
 //import 'package:flutter_application_1/events.dart';
 
 import 'package:flutter/scheduler.dart';
+import 'package:path/path.dart';
 //import 'package:flutter_application_1/events.dart';
 //import 'package:flutter_application_1/events.dart';
 //import 'dart:collection';
@@ -39,8 +40,11 @@ class AdminCalendarState extends State<AdminCalendar> {
   MeetingDataSource? events;
   final List<String> options = <String>['Add', 'Delete', 'Update'];
   bool isInitialLoaded = false;
+  // Timestamp date = DateFormat("yyyy-dd-mm") as Timestamp;
   String date = "";
   String eventName = "";
+  int? groupID = 0;
+  String groupName = "";
   CollectionReference oEvents = FirebaseFirestore.instance.collection('Events');
 
   @override
@@ -101,7 +105,6 @@ class AdminCalendarState extends State<AdminCalendar> {
           if (!isInitialLoaded) {
             return;
           }
-
           setState(() {
             int index = events!.appointments!
                 .indexWhere((app) => app.key == element.doc.id);
@@ -117,18 +120,27 @@ class AdminCalendarState extends State<AdminCalendar> {
     super.initState();
   }
 
-  Future<void> addUser() {
+  Future addUser(String date, String eventName, int? groupID) {
     // Call the user's CollectionReference to add a new user
+    var event = FirebaseFirestore.instance
+        .collection('Events')
+        .where('GroupID', isEqualTo: groupID)
+        .get();
+    DateTime tempDate = DateFormat("yyyy-MM-dd").parse(date);
+    print(tempDate);
+    Timestamp myTimeStamp = Timestamp.fromDate(tempDate);
+    print(myTimeStamp);
     return fireStoreReference
         .collection("Events")
         .doc()
         .set({
-          'EventDate': date,
+          'EventDate': myTimeStamp,
           'EventName': eventName,
-          'GroupID': "company",
+          'GroupID': groupID,
+          'GroupName': "SFA"
         })
-        .then((value) => print("User Added"))
-        .catchError((error) => print("Failed to add user: $error"));
+        .then((value) => print("Event Added"))
+        .catchError((error) => print("Failed to add event: $error"));
   }
 
   Future<void> getDataFromFireStore() async {
@@ -220,7 +232,9 @@ appBar: AppBar(
                   }
                   return null;
                 },
-                onSaved: (value) => date,
+                onChanged: (val) {
+                  setState(() => date = val);
+                },
                 decoration: const InputDecoration(
                   hintText: 'Enter the date...',
                   labelText: 'Date',
@@ -232,7 +246,9 @@ appBar: AppBar(
                   }
                   return null;
                 },
-                onSaved: (value) => eventName,
+                onChanged: (val) {
+                  setState(() => eventName = val);
+                },
                 decoration: const InputDecoration(
                   hintText: 'Enter the event name...',
                   labelText: 'Event Name',
@@ -248,10 +264,12 @@ appBar: AppBar(
                   }
                   return DropdownButtonFormField<int>(
                     validator: (value) => value == null ? 'No Entry' : null,
+                    onSaved: (newValue) => groupID,
                     onChanged: (value) {
                       setState(() {
-                        newValue =
-                            value; // This needs to be set to the GroupID I think
+                        groupID = value;
+
+                        newValue = value;
                       });
                     },
                     items: snapshot.data?.docs.map((DocumentSnapshot document) {
@@ -271,14 +289,15 @@ appBar: AppBar(
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 16.0),
               child: ElevatedButton(
+                // style: ButtonStyle(backgroundColor: maroon),
                 onPressed: () {
                   if (addForm.currentState!.validate()) {
                     print(date);
                     print(eventName);
+                    print(groupID);
+                    addUser(date, eventName, groupID);
+                    Navigator.of(context).pop();
                   }
-                  print("Not Valid");
-
-                  // addUser();
                 },
                 child: const Text('Submit'),
               ),
@@ -333,7 +352,6 @@ appBar: AppBar(
                   //   'GroupID': 18,
                   //   'GroupName': "RELLIS"
                   // });
-                  //addUser();
 
                   showDialog(
                     context: context,
