@@ -126,10 +126,8 @@ class AdminCalendarState extends State<AdminCalendar> {
         .collection('Events')
         .where('GroupID', isEqualTo: groupID)
         .get();
-    DateTime tempDate = DateFormat("yyyy-MM-dd").parse(date);
-    print(tempDate);
+    DateTime tempDate = DateFormat("yyyy-mm-dd hh:mm:ss").parse(date);
     Timestamp myTimeStamp = Timestamp.fromDate(tempDate);
-    print(myTimeStamp);
     return fireStoreReference
         .collection("Events")
         .doc()
