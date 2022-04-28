@@ -250,7 +250,7 @@ appBar: AppBar(
                     onChanged: (int? value) {
                       setState(() {
                         value =
-                            newValue; // This needs to be set to the GroupID i think
+                            newValue; // This needs to be set to the GroupID I think
                       });
                     },
                   );
@@ -260,6 +260,8 @@ appBar: AppBar(
               child: ElevatedButton(
                 onPressed: () {
                   if (addForm.currentState!.validate()) {}
+                  print(date);
+                  print(eventName);
                   // addUser();
                 },
                 child: const Text('Submit'),
@@ -316,7 +318,7 @@ appBar: AppBar(
                   //   'GroupName': "RELLIS"
                   // });
                   //addUser();
-                  print(eventName);
+
                   showDialog(
                     context: context,
                     builder: (BuildContext context) =>
