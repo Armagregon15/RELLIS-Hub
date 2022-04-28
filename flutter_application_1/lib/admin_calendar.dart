@@ -1,9 +1,11 @@
 //import 'dart:html';
 //import 'dart:html';
+import 'dart:html';
 import 'dart:math';
 //import 'package:flutter_application_1/events.dart';
 
 import 'package:flutter/scheduler.dart';
+import 'package:path/path.dart';
 //import 'package:flutter_application_1/events.dart';
 //import 'package:flutter_application_1/events.dart';
 //import 'dart:collection';
@@ -38,6 +40,12 @@ class AdminCalendarState extends State<AdminCalendar> {
   MeetingDataSource? events;
   final List<String> options = <String>['Add', 'Delete', 'Update'];
   bool isInitialLoaded = false;
+  // Timestamp date = DateFormat("yyyy-dd-mm") as Timestamp;
+  String date = "";
+  String eventName = "";
+  int? groupID = 0;
+  String groupName = "";
+  CollectionReference oEvents = FirebaseFirestore.instance.collection('Events');
 
   @override
   void initState() {
@@ -97,7 +105,6 @@ class AdminCalendarState extends State<AdminCalendar> {
           if (!isInitialLoaded) {
             return;
           }
-
           setState(() {
             int index = events!.appointments!
                 .indexWhere((app) => app.key == element.doc.id);
@@ -111,6 +118,30 @@ class AdminCalendarState extends State<AdminCalendar> {
     });
 
     super.initState();
+  }
+
+  Future addUser(String date, String eventName, int? groupID) {
+    // Call the user's CollectionReference to add a new user
+    var event = FirebaseFirestore.instance
+        .collection('Events')
+        .where('GroupID', isEqualTo: groupID)
+        .get();
+    Map<int, String> groups = {0: "Sports", 1:"TAMUC", 2:"Hiking", 3:"Movies", 4:"TAMUCT", 5:"TAMUSA", 6:"STUCO", 7:"RELLIS Rangers", 8:"SFA", 9:"STACC", 10:"TAMUT", 11:"TAMUK", 12:"TSU", 13:"WTAMU", 14:"Technology", 15: "TAMUCC", 16: "TAMIU", 17:"PVAMU", 18:"RELLIS"};
+    DateTime tempDate = DateFormat("yyyy-MM-dd").parse(date);
+    print(tempDate);
+    Timestamp myTimeStamp = Timestamp.fromDate(tempDate);
+    print(myTimeStamp);
+    return fireStoreReference
+        .collection("Events")
+        .doc()
+        .set({
+          'EventDate': myTimeStamp,
+          'EventName': eventName,
+          'GroupID': groupID,
+          'GroupName': groups[groupID]
+        })
+        .then((value) => print("Event Added"))
+        .catchError((error) => print("Failed to add event: $error"));
   }
 
   Future<void> getDataFromFireStore() async {
@@ -168,7 +199,7 @@ class AdminCalendarState extends State<AdminCalendar> {
   /*
 appBar: AppBar(
           title: InkWell(
-            
+
               onTap: () {
                 //"The Hub @ RELLIS",
                 Navigator.push(
@@ -184,6 +215,108 @@ appBar: AppBar(
           backgroundColor: const Color(0xFF500000),
         )
         */
+  Widget _buildPopupDialog(BuildContext context) {
+    final addForm = GlobalKey<FormState>();
+    int? newValue = 0;
+    return AlertDialog(
+      title: const Text('Add Event'),
+      content: Form(
+        key: addForm,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            TextFormField(
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return "Date is required";
+                  }
+                  return null;
+                },
+                onChanged: (val) {
+                  setState(() => date = val);
+                },
+                decoration: const InputDecoration(
+                  hintText: 'YYYY-MM-DD HH-MM-SS',
+                  labelText: 'Date',
+                )),
+            TextFormField(
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return "YYYY-MM-DD HH:MM:SS";
+                  }
+                  return null;
+                },
+                onChanged: (val) {
+                  setState(() => eventName = val);
+                },
+                decoration: const InputDecoration(
+                  hintText: 'Enter the event name...',
+                  labelText: 'Event Name',
+                )),
+            StreamBuilder<QuerySnapshot>(
+                stream:
+                    FirebaseFirestore.instance.collection('Groups').snapshots(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                  return DropdownButtonFormField<int>(
+                    validator: (value) => value == null ? 'No Entry' : null,
+                    onSaved: (newValue) => groupID,
+                    onChanged: (value) {
+                      setState(() {
+                        groupID = value;
+
+                        newValue = value;
+                      });
+                    },
+                    items: snapshot.data?.docs.map((DocumentSnapshot document) {
+                      return DropdownMenuItem<int>(
+                          value: document["GroupID"],
+                          child: Container(
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5.0)),
+                            height: 50.0,
+                            padding:
+                                const EdgeInsets.fromLTRB(10.0, 2.0, 10.0, 0.0),
+                            child: Text(document['GroupName']),
+                          ));
+                    }).toList(),
+                  );
+                }),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16.0),
+              child: ElevatedButton(
+                // style: ButtonStyle(backgroundColor: maroon),
+                onPressed: () {
+                  if (addForm.currentState!.validate()) {
+                    print(date);
+                    print(eventName);
+                    print(groupID);
+                    addUser(date, eventName, groupID);
+                    Navigator.of(context).pop();
+                  }
+                },
+                child: const Text('Submit'),
+              ),
+            ),
+          ],
+        ),
+      ),
+      actions: <Widget>[
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: const Text('Close'),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     isInitialLoaded = true;
@@ -214,12 +347,18 @@ appBar: AppBar(
               }).toList(),
               onSelected: (String value) {
                 if (value == 'Add') {
-                  fireStoreReference.collection("Events").doc().set({
-                    //'EventDate': 1  6  2022,
-                    'EventName': 'Hello',
-                    'GroupID': 18,
-                    'GroupName': "RELLIS"
-                  });
+                  // fireStoreReference.collection("Events").doc().set({
+                  //   //'EventDate': 1  6  2022,
+                  //   'EventName': 'Hello',
+                  //   'GroupID': 18,
+                  //   'GroupName': "RELLIS"
+                  // });
+
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) =>
+                        _buildPopupDialog(context),
+                  );
                 } else if (value == "Delete") {
                   try {
                     fireStoreReference.collection('Events').doc('1').delete();

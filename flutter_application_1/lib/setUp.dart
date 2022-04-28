@@ -4,15 +4,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/authenticate.dart';
 import 'package:flutter_application_1/authmain.dart';
-import 'calendar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'database_service.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'loading.dart';
 import 'dart:async';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'admin_calendar.dart';
+import 'calendar.dart';
 
+Color maroon = const Color(0xFF500000);
 List<int> indexdb = [18];
 final AuthService _auth = AuthService();
 DatabaseService _dbs = DatabaseService(uid: '123');
@@ -48,7 +48,7 @@ class _formStartState extends State<formStart> {
         : Scaffold(
             appBar: AppBar(
               centerTitle: true,
-              backgroundColor: const Color(0xFF500000),
+              backgroundColor: maroon,
               title: const Text('The Hub @ Rellis'),
             ),
             body: Center(
@@ -63,7 +63,7 @@ class _formStartState extends State<formStart> {
               ),
               unselectedItemColor: Colors.white,
               selectedItemColor: Colors.white,
-              backgroundColor: const Color(0xFF500000),
+              backgroundColor: maroon,
               elevation: 90,
               type: BottomNavigationBarType.fixed,
               items: const <BottomNavigationBarItem>[
@@ -141,7 +141,7 @@ class _schoolFormState extends State<schoolForm> {
                 }),
             floatingActionButton: FloatingActionButton.extended(
               label: const Text("Submit"),
-              backgroundColor: const Color(0xFF500000),
+              backgroundColor: maroon,
               onPressed: () async {
                 try {
                   //var uid = await _auth.getUID();
@@ -226,7 +226,7 @@ class _clubFormState extends State<clubForm> {
             }),
         floatingActionButton: FloatingActionButton.extended(
           label: const Text("Submit"),
-          backgroundColor: const Color(0xFF500000),
+          backgroundColor: maroon,
           onPressed: () async {
             try {
               //var uid = await _auth.getUID();
@@ -298,7 +298,7 @@ class _interestFormState extends State<interestForm> {
             }),
         floatingActionButton: FloatingActionButton.extended(
           label: const Text("Submit"),
-          backgroundColor: const Color(0xFF500000),
+          backgroundColor: maroon,
           onPressed: () async {
             try {
               //var uid = await _auth.getUID();
@@ -487,47 +487,45 @@ class HomePage extends State<MainPage> {
                     color: Color.fromARGB(255, 180, 179, 175),
                     width: 10,
                     style: BorderStyle.solid)),
-            height: MediaQuery.of(context).size.height / 4.5,
+            height: MediaQuery.of(context).size.height / 5,
             child: Center(
               child: Card(
                 child: Column(
                   children: [
-                    SizedBox(
-                      height: 190,
-                      child: Column(
-                        children: [
-                          Container(
-                              padding: const EdgeInsets.all(8),
-                              child: Center(
-                                  child: Text(
-                                document['GroupName'],
-                                style: TextStyle(fontSize: 20),
-                              ))),
-                          Container(
-                              padding: const EdgeInsets.all(8),
-                              child:
-                                  Center(child: Text(document['EventName']))),
-                          Container(
-                              padding: const EdgeInsets.all(8),
-                              child: Center(child: Text(d.toString()))),
-                          IconButton(
-                            color: Color.fromARGB(255, 234, 195, 18),
-                            icon: const Icon(
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: SizedBox(
+                        height: 190,
+                        child: Column(
+                          children: [
+                            Container(
+                                padding: const EdgeInsets.all(20),
+                                child: Center(
+                                    child: Text(
+                                  document['GroupName'],
+                                  style: TextStyle(fontSize: 20),
+                                ))),
+                            Container(
+                                padding: const EdgeInsets.all(20),
+                                child:
+                                    Center(child: Text(document['EventName']))),
+                            Container(
+                                padding: const EdgeInsets.all(10),
+                                child: Center(child: Text(d.toString()))),
+                            Icon(
                               Icons.menu_book,
-                              color: Color.fromARGB(255, 255, 174, 1),
+                              color: maroon,
                             ),
-                            alignment: Alignment.bottomCenter,
-                            padding: new EdgeInsets.all(10.0),
-                            onPressed: () {},
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ],
                 ),
                 elevation: 6,
               ),
-            ));
+            ),
+          );
   }
 
   @override
@@ -590,7 +588,7 @@ class HomePage extends State<MainPage> {
                       "The Hub @ RELLIS",
                       style: TextStyle(fontFamily: "Roboto", fontSize: 30),
                     )),
-                backgroundColor: const Color(0xFF500000),
+                backgroundColor: maroon,
               ),
               body: StreamBuilder<QuerySnapshot>(
                   stream: FirebaseFirestore.instance
@@ -623,7 +621,7 @@ class HomePage extends State<MainPage> {
                 selectedItemColor: Colors.white,
                 currentIndex: _selectedIndex,
                 onTap: _onItemTapped,
-                backgroundColor: const Color(0xFF500000),
+                backgroundColor: maroon,
                 elevation: 90,
                 items: const <BottomNavigationBarItem>[
                   BottomNavigationBarItem(
@@ -652,7 +650,7 @@ class HomePage extends State<MainPage> {
               ),
               floatingActionButton: FloatingActionButton.extended(
                 label: const Text("Sign Out"),
-                backgroundColor: const Color(0xFF500000),
+                backgroundColor: maroon,
                 onPressed: () async {
                   await _auth.signOut();
                   Navigator.push(context,
@@ -681,7 +679,7 @@ class HomePage extends State<MainPage> {
                       "The Hub @ RELLIS",
                       style: TextStyle(fontFamily: "Roboto", fontSize: 30),
                     )),
-                backgroundColor: const Color(0xFF500000),
+                backgroundColor: maroon,
               ),
               body: StreamBuilder<QuerySnapshot>(
                   stream: FirebaseFirestore.instance
@@ -714,7 +712,7 @@ class HomePage extends State<MainPage> {
                 selectedItemColor: Colors.white,
                 currentIndex: _selectedIndex,
                 onTap: _onItemTapped,
-                backgroundColor: const Color(0xFF500000),
+                backgroundColor: maroon,
                 elevation: 90,
                 items: const <BottomNavigationBarItem>[
                   BottomNavigationBarItem(
@@ -743,7 +741,7 @@ class HomePage extends State<MainPage> {
               ),
               floatingActionButton: FloatingActionButton.extended(
                 label: const Text("Sign Out"),
-                backgroundColor: const Color(0xFF500000),
+                backgroundColor: maroon,
                 onPressed: () async {
                   await _auth.signOut();
                   Navigator.push(context,
