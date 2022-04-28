@@ -126,6 +126,7 @@ class AdminCalendarState extends State<AdminCalendar> {
         .collection('Events')
         .where('GroupID', isEqualTo: groupID)
         .get();
+    Map<int, String> groups = {0: "Sports", 1:"TAMUC", 2:"Hiking", 3:"Movies", 4:"TAMUCT", 5:"TAMUSA", 6:"STUCO", 7:"RELLIS Rangers", 8:"SFA", 9:"STACC", 10:"TAMUT", 11:"TAMUK", 12:"TSU", 13:"WTAMU", 14:"Technology", 15: "TAMUCC", 16: "TAMIU", 17:"PVAMU", 18:"RELLIS"};
     DateTime tempDate = DateFormat("yyyy-MM-dd").parse(date);
     print(tempDate);
     Timestamp myTimeStamp = Timestamp.fromDate(tempDate);
@@ -137,7 +138,7 @@ class AdminCalendarState extends State<AdminCalendar> {
           'EventDate': myTimeStamp,
           'EventName': eventName,
           'GroupID': groupID,
-          'GroupName': "SFA"
+          'GroupName': groups[groupID]
         })
         .then((value) => print("Event Added"))
         .catchError((error) => print("Failed to add event: $error"));
@@ -255,7 +256,7 @@ appBar: AppBar(
                 )),
             StreamBuilder<QuerySnapshot>(
                 stream:
-                    FirebaseFirestore.instance.collection('Events').snapshots(),
+                    FirebaseFirestore.instance.collection('Groups').snapshots(),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
                     return const Center(
