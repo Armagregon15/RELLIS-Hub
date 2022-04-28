@@ -237,7 +237,7 @@ appBar: AppBar(
                   setState(() => date = val);
                 },
                 decoration: const InputDecoration(
-                  hintText: 'Enter the date...',
+                  hintText: 'YYYY-MM-DD HH-MM-SS',
                   labelText: 'Date',
                 )),
             TextFormField(
