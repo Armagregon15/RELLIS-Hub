@@ -1,5 +1,6 @@
 //import 'dart:html';
 //import 'dart:html';
+import 'dart:html';
 import 'dart:math';
 //import 'package:flutter_application_1/events.dart';
 
@@ -201,8 +202,9 @@ appBar: AppBar(
           backgroundColor: const Color(0xFF500000),
         )
         */
-  Widget _buildPopupDialog(BuildContext context, DocumentSnapshot document) {
+  Widget _buildPopupDialog(BuildContext context) {
     final addForm = GlobalKey<FormState>();
+    int newValue = 0;
     return AlertDialog(
       title: const Text('Add Event'),
       content: Form(
@@ -247,7 +249,8 @@ appBar: AppBar(
                     }).toList(),
                     onChanged: (int? value) {
                       setState(() {
-                        value = document["GroupID"];
+                        value =
+                            newValue; // This needs to be set to the GroupID i think
                       });
                     },
                   );
@@ -257,6 +260,7 @@ appBar: AppBar(
               child: ElevatedButton(
                 onPressed: () {
                   if (addForm.currentState!.validate()) {}
+                  // addUser();
                 },
                 child: const Text('Submit'),
               ),
