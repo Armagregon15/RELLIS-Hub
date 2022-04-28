@@ -243,7 +243,7 @@ appBar: AppBar(
             TextFormField(
                 validator: (value) {
                   if (value!.isEmpty) {
-                    return "Date is required";
+                    return "YYYY-MM-DD HH:MM:SS";
                   }
                   return null;
                 },

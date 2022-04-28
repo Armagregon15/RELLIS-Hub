@@ -487,7 +487,7 @@ class HomePage extends State<MainPage> {
                     color: Color.fromARGB(255, 180, 179, 175),
                     width: 10,
                     style: BorderStyle.solid)),
-            height: MediaQuery.of(context).size.height / 4.5,
+            height: MediaQuery.of(context).size.height / 5,
             child: Center(
               child: Card(
                 child: Column(
@@ -510,7 +510,7 @@ class HomePage extends State<MainPage> {
                                 child:
                                     Center(child: Text(document['EventName']))),
                             Container(
-                                padding: const EdgeInsets.all(15),
+                                padding: const EdgeInsets.all(10),
                                 child: Center(child: Text(d.toString()))),
                             Icon(
                               Icons.menu_book,
