@@ -42,6 +42,8 @@ class AdminCalendarState extends State<AdminCalendar> {
   bool isInitialLoaded = false;
   // Timestamp date = DateFormat("yyyy-dd-mm") as Timestamp;
   String date = "";
+  String toDate = "";
+  String fromDate = "";
   String eventName = "";
   int? groupID = 0;
   String groupName = "";
@@ -120,22 +122,50 @@ class AdminCalendarState extends State<AdminCalendar> {
     super.initState();
   }
 
-  Future addUser(String date, String eventName, int? groupID) {
+  Future addUser(String date, String eventName, int? groupID, String toDate,
+      String fromDate) {
     // Call the user's CollectionReference to add a new user
     var event = FirebaseFirestore.instance
         .collection('Events')
         .where('GroupID', isEqualTo: groupID)
         .get();
-    Map<int, String> groups = {0: "Sports", 1:"TAMUC", 2:"Hiking", 3:"Movies", 4:"TAMUCT", 5:"TAMUSA", 6:"STUCO", 7:"RELLIS Rangers", 8:"SFA", 9:"STACC", 10:"TAMUT", 11:"TAMUK", 12:"TSU", 13:"WTAMU", 14:"Technology", 15: "TAMUCC", 16: "TAMIU", 17:"PVAMU", 18:"RELLIS"};
-    DateTime tempDate = DateFormat("yyyy-MM-dd").parse(date);
-    print(tempDate);
-    Timestamp myTimeStamp = Timestamp.fromDate(tempDate);
-    print(myTimeStamp);
+    Map<int, String> groups = {
+      0: "Sports",
+      1: "TAMUC",
+      2: "Hiking",
+      3: "Movies",
+      4: "TAMUCT",
+      5: "TAMUSA",
+      6: "STUCO",
+      7: "RELLIS Rangers",
+      8: "SFA",
+      9: "STACC",
+      10: "TAMUT",
+      11: "TAMUK",
+      12: "TSU",
+      13: "WTAMU",
+      14: "Technology",
+      15: "TAMUCC",
+      16: "TAMIU",
+      17: "PVAMU",
+      18: "RELLIS"
+    };
+    toDate = date + " " + toDate;
+    fromDate = date + " " + fromDate;
+    //DateTime tempDate = DateFormat("yyyy-MM-dd").parse(date);
+    DateTime toDates = DateFormat("yyyy-MM-dd hh:mm:ss").parse(toDate);
+    DateTime fromDates = DateFormat("yyyy-MM-dd hh:mm:ss").parse(fromDate);
+    //print(tempDate);
+    Timestamp fromTimeStamp = Timestamp.fromDate(fromDates);
+    Timestamp toTimeStamp = Timestamp.fromDate(toDates);
+    //print(myTimeStamp);
     return fireStoreReference
         .collection("Events")
         .doc()
         .set({
-          'EventDate': myTimeStamp,
+          'EventDate': fromTimeStamp,
+          "to": toTimeStamp,
+          //"From": fromDate,
           'EventName': eventName,
           'GroupID': groupID,
           'GroupName': groups[groupID]
@@ -167,7 +197,7 @@ class AdminCalendarState extends State<AdminCalendar> {
         .map((e) => Events(
               eventName: e.data()['EventName'],
               from: e.data()['EventDate'].toDate(),
-              to: e.data()['EventDate'].toDate(),
+              to: e.data()['to'].toDate(),
               /*
               from: DateFormat('yyyy-mm-dd HH:mm:ss')
                   .parse(e.data()['EventDate']),
@@ -229,21 +259,7 @@ appBar: AppBar(
             TextFormField(
                 validator: (value) {
                   if (value!.isEmpty) {
-                    return "Date is required";
-                  }
-                  return null;
-                },
-                onChanged: (val) {
-                  setState(() => date = val);
-                },
-                decoration: const InputDecoration(
-                  hintText: 'YYYY-MM-DD HH-MM-SS',
-                  labelText: 'Date',
-                )),
-            TextFormField(
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return "YYYY-MM-DD HH:MM:SS";
+                    return "Missing event name";
                   }
                   return null;
                 },
@@ -253,6 +269,49 @@ appBar: AppBar(
                 decoration: const InputDecoration(
                   hintText: 'Enter the event name...',
                   labelText: 'Event Name',
+                )),
+            TextFormField(
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return "Missing date";
+                  }
+                  if(value !=)
+                  return null;
+                },
+                onChanged: (val) {
+                  setState(() => date = val);
+                },
+                decoration: const InputDecoration(
+                  hintText: 'yyyy-mm-dd',
+                  labelText: 'Date (yyyy-mm-dd)',
+                )),
+            TextFormField(
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return "Missing start time";
+                  }
+                  return null;
+                },
+                onChanged: (val) {
+                  setState(() => fromDate = val);
+                },
+                decoration: const InputDecoration(
+                  hintText: 'hh:mm:ss',
+                  labelText: 'From (hh:mm:ss)',
+                )),
+            TextFormField(
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return "Missing end time";
+                  }
+                  return null;
+                },
+                onChanged: (val) {
+                  setState(() => toDate = val);
+                },
+                decoration: const InputDecoration(
+                  hintText: 'hh:mm:ss',
+                  labelText: 'To (hh:mm:ss)',
                 )),
             StreamBuilder<QuerySnapshot>(
                 stream:
@@ -290,13 +349,14 @@ appBar: AppBar(
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 16.0),
               child: ElevatedButton(
-                // style: ButtonStyle(backgroundColor: maroon),
+                style:
+                    ElevatedButton.styleFrom(primary: const Color(0xFF500000)),
                 onPressed: () {
                   if (addForm.currentState!.validate()) {
                     print(date);
                     print(eventName);
                     print(groupID);
-                    addUser(date, eventName, groupID);
+                    addUser(date, eventName, groupID, toDate, fromDate);
                     Navigator.of(context).pop();
                   }
                 },
@@ -308,6 +368,9 @@ appBar: AppBar(
       ),
       actions: <Widget>[
         TextButton(
+          style: TextButton.styleFrom(
+            primary: const Color(0xFF500000), // This is a custom color variable
+          ),
           onPressed: () {
             Navigator.of(context).pop();
           },
@@ -496,7 +559,7 @@ class Events {
     return Events(
       eventName: element.doc.data()!['EventName'],
       from: element.doc.data()!('EventDate').toDate(),
-      to: element.doc.data()!('EventDate').toDate(),
+      to: element.doc.data()!('to').toDate(),
 
       //from: DateFormat('yyyy-mm-dd HH:mm:ss')
       //.parse(element.doc.data()!['EventDate']),
