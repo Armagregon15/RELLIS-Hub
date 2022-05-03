@@ -42,12 +42,12 @@ class AdminCalendarState extends State<AdminCalendar> {
   bool isInitialLoaded = false;
   // Timestamp date = DateFormat("yyyy-dd-mm") as Timestamp;
   String date = "";
+  String toDate = "";
+  String fromDate = "";
   String eventName = "";
   int? groupID = 0;
   String groupName = "";
   CollectionReference oEvents = FirebaseFirestore.instance.collection('Events');
-
-  int _selectedIndex = 0;
 
   @override
   void initState() {
@@ -122,7 +122,8 @@ class AdminCalendarState extends State<AdminCalendar> {
     super.initState();
   }
 
-  Future addUser(String date, String eventName, int? groupID) {
+  Future addUser(String date, String eventName, int? groupID, String toDate,
+      String fromDate) {
     // Call the user's CollectionReference to add a new user
     var event = FirebaseFirestore.instance
         .collection('Events')
@@ -149,15 +150,22 @@ class AdminCalendarState extends State<AdminCalendar> {
       17: "PVAMU",
       18: "RELLIS"
     };
-    DateTime tempDate = DateFormat("yyyy-MM-dd").parse(date);
-    print(tempDate);
-    Timestamp myTimeStamp = Timestamp.fromDate(tempDate);
-    print(myTimeStamp);
+    toDate = date + " " + toDate;
+    fromDate = date + " " + fromDate;
+    //DateTime tempDate = DateFormat("yyyy-MM-dd").parse(date);
+    DateTime toDates = DateFormat("yyyy-MM-dd hh:mm:ss").parse(toDate);
+    DateTime fromDates = DateFormat("yyyy-MM-dd hh:mm:ss").parse(fromDate);
+    //print(tempDate);
+    Timestamp fromTimeStamp = Timestamp.fromDate(fromDates);
+    Timestamp toTimeStamp = Timestamp.fromDate(toDates);
+    //print(myTimeStamp);
     return fireStoreReference
         .collection("Events")
         .doc()
         .set({
-          'EventDate': myTimeStamp,
+          'EventDate': fromTimeStamp,
+          "to": toTimeStamp,
+          //"From": fromDate,
           'EventName': eventName,
           'GroupID': groupID,
           'GroupName': groups[groupID]
@@ -168,9 +176,17 @@ class AdminCalendarState extends State<AdminCalendar> {
 
   Future<void> getDataFromFireStore() async {
     await _dbs.getIndexDB().then((value) {
+      // Future.delayed(
+      // const Duration(seconds: 2));
+
       List<int> indexdb = _dbs.getTheList(value);
+      print('first time calendar');
+      print(indexdb);
     });
-    var snapShotsValue = await fireStoreReference.collection("Events").get();
+    var snapShotsValue = await fireStoreReference
+        .collection("Events")
+        //.where("GroupID", whereIn: indexdb)
+        .get();
     print("Get data from fire store");
     print(indexdb);
     print('snap shots value');
@@ -181,8 +197,15 @@ class AdminCalendarState extends State<AdminCalendar> {
         .map((e) => Events(
               eventName: e.data()['EventName'],
               from: e.data()['EventDate'].toDate(),
-              to: e.data()['EventDate'].toDate(),
+              to: e.data()['to'].toDate(),
+              /*
+              from: DateFormat('yyyy-mm-dd HH:mm:ss')
+                  .parse(e.data()['EventDate']),
+              to: DateFormat('yyyy-mm-dd HH:mm:ss')
+                  .parse(e.data()['EventDate']),
+                  */
               eventDate: e.data()['EventDate'],
+              //eventDateTime: e.data()['EventDate'].toDate(),
               background: _colorCollection[random.nextInt(9)],
               isAllDay: false,
               groupID: e.data()['GroupID'],
@@ -191,9 +214,37 @@ class AdminCalendarState extends State<AdminCalendar> {
         .toList();
     setState(() {
       events = MeetingDataSource(list);
+      print('List in get data');
+      print(indexdb);
+      print(events.toString());
+      //list[0].printDate();
+      // print(snapShotsValue.docs['EventDate'][0]);
+      // print(list[0]['eventDate']);
+      // print([0]['eventDate']);
+      // print(list.eventDate.toString());
+      print('List in get data');
     });
   }
 
+  /*
+appBar: AppBar(
+          title: InkWell(
+
+              onTap: () {
+                //"The Hub @ RELLIS",
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            loading ? Loading() : MainPage()));
+              },
+              child: const Text(
+                "The Hub @ RELLIS",
+                style: TextStyle(fontFamily: "Roboto", fontSize: 30),
+              )),
+          backgroundColor: const Color(0xFF500000),
+        )
+        */
   Widget _buildPopupDialog(BuildContext context) {
     final addForm = GlobalKey<FormState>();
     int? newValue = 0;
@@ -208,21 +259,7 @@ class AdminCalendarState extends State<AdminCalendar> {
             TextFormField(
                 validator: (value) {
                   if (value!.isEmpty) {
-                    return "Date is required";
-                  }
-                  return null;
-                },
-                onChanged: (val) {
-                  setState(() => date = val);
-                },
-                decoration: const InputDecoration(
-                  hintText: 'YYYY-MM-DD HH-MM-SS',
-                  labelText: 'Date',
-                )),
-            TextFormField(
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return "YYYY-MM-DD HH:MM:SS";
+                    return "Missing event name";
                   }
                   return null;
                 },
@@ -232,6 +269,49 @@ class AdminCalendarState extends State<AdminCalendar> {
                 decoration: const InputDecoration(
                   hintText: 'Enter the event name...',
                   labelText: 'Event Name',
+                )),
+            TextFormField(
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return "Missing date";
+                  }
+                  if(value !=)
+                  return null;
+                },
+                onChanged: (val) {
+                  setState(() => date = val);
+                },
+                decoration: const InputDecoration(
+                  hintText: 'yyyy-mm-dd',
+                  labelText: 'Date (yyyy-mm-dd)',
+                )),
+            TextFormField(
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return "Missing start time";
+                  }
+                  return null;
+                },
+                onChanged: (val) {
+                  setState(() => fromDate = val);
+                },
+                decoration: const InputDecoration(
+                  hintText: 'hh:mm:ss',
+                  labelText: 'From (hh:mm:ss)',
+                )),
+            TextFormField(
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return "Missing end time";
+                  }
+                  return null;
+                },
+                onChanged: (val) {
+                  setState(() => toDate = val);
+                },
+                decoration: const InputDecoration(
+                  hintText: 'hh:mm:ss',
+                  labelText: 'To (hh:mm:ss)',
                 )),
             StreamBuilder<QuerySnapshot>(
                 stream:
@@ -269,13 +349,14 @@ class AdminCalendarState extends State<AdminCalendar> {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 16.0),
               child: ElevatedButton(
-                // style: ButtonStyle(backgroundColor: maroon),
+                style:
+                    ElevatedButton.styleFrom(primary: const Color(0xFF500000)),
                 onPressed: () {
                   if (addForm.currentState!.validate()) {
                     print(date);
                     print(eventName);
                     print(groupID);
-                    addUser(date, eventName, groupID);
+                    addUser(date, eventName, groupID, toDate, fromDate);
                     Navigator.of(context).pop();
                   }
                 },
@@ -287,6 +368,9 @@ class AdminCalendarState extends State<AdminCalendar> {
       ),
       actions: <Widget>[
         TextButton(
+          style: TextButton.styleFrom(
+            primary: const Color(0xFF500000), // This is a custom color variable
+          ),
           onPressed: () {
             Navigator.of(context).pop();
           },
@@ -298,114 +382,91 @@ class AdminCalendarState extends State<AdminCalendar> {
 
   @override
   Widget build(BuildContext context) {
-    _onItemTapped(int index) async {
-      _selectedIndex = index;
-      if (_selectedIndex == 0) {
-        return loading
-            ? Loading()
-            : Navigator.push(
-                context, MaterialPageRoute(builder: (context) => MainPage()));
-      }
-      if (_selectedIndex == 1) {
-        return loading
-            ? Loading()
-            : Navigator.push(context,
-                MaterialPageRoute(builder: (context) => AdminCalendar()));
-      }
-    }
-
     isInitialLoaded = true;
     return Scaffold(
-      appBar: AppBar(
-          title: InkWell(
-              onTap: () {
-                //"The Hub @ RELLIS",
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            loading ? Loading() : MainPage()));
-              },
-              child: const Text(
-                "The Hub @ RELLIS",
-                style: TextStyle(fontFamily: "Roboto", fontSize: 30),
-              )),
-          backgroundColor: const Color(0xFF500000),
-          leading: PopupMenuButton<String>(
-            icon: Icon(Icons.settings),
-            itemBuilder: (BuildContext context) => options.map((String choice) {
-              return PopupMenuItem<String>(
-                value: choice,
-                child: Text(choice),
-              );
-            }).toList(),
-            onSelected: (String value) {
-              if (value == 'Add') {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) => _buildPopupDialog(context),
+        appBar: AppBar(
+            title: InkWell(
+                onTap: () {
+                  //"The Hub @ RELLIS",
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              loading ? Loading() : MainPage()));
+                },
+                child: const Text(
+                  "The Hub @ RELLIS",
+                  style: TextStyle(fontFamily: "Roboto", fontSize: 30),
+                )),
+            backgroundColor: const Color(0xFF500000),
+            leading: PopupMenuButton<String>(
+              icon: Icon(Icons.settings),
+              itemBuilder: (BuildContext context) =>
+                  options.map((String choice) {
+                return PopupMenuItem<String>(
+                  value: choice,
+                  child: Text(choice),
                 );
-              } else if (value == "Delete") {
-                try {
-                  fireStoreReference.collection('Events').doc('1').delete();
-                } catch (e) {}
-              } else if (value == "Update") {
-                try {
-                  fireStoreReference
-                      .collection('Events')
-                      .doc('1')
-                      .update({'Subject': 'Meeting'});
-                } catch (e) {}
-              }
-            },
-          )),
-      body: SfCalendar(
-        view: CalendarView.month,
-        todayHighlightColor: const Color(0xFF500000),
-        showDatePickerButton: true,
-        monthViewSettings: const MonthViewSettings(
-            appointmentDisplayMode: MonthAppointmentDisplayMode.appointment,
-            showAgenda: true,
-            agendaStyle: AgendaStyle(
-                backgroundColor: Color(0xFF500000),
-                dateTextStyle: TextStyle(color: Colors.white),
-                dayTextStyle: TextStyle(color: Colors.white))),
-        dataSource: events,
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        selectedFontSize: 15,
-        // ignore: prefer_const_constructors
-        selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
-        // ignore: prefer_const_constructors
-        selectedIconTheme: IconThemeData(
-          color: Colors.white,
-          size: 35,
-        ),
+              }).toList(),
+              onSelected: (String value) {
+                if (value == 'Add') {
+                  // fireStoreReference.collection("Events").doc().set({
+                  //   //'EventDate': 1  6  2022,
+                  //   'EventName': 'Hello',
+                  //   'GroupID': 18,
+                  //   'GroupName': "RELLIS"
+                  // });
 
-        unselectedItemColor: Colors.white,
-        selectedItemColor: Colors.white,
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        backgroundColor: maroon,
-        elevation: 90,
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.arrow_back,
-              color: Colors.white,
-            ),
-            label: 'Back',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.refresh,
-              color: Colors.white,
-            ),
-            label: 'Refresh',
-          ),
-        ],
-      ),
-    );
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) =>
+                        _buildPopupDialog(context),
+                  );
+                } else if (value == "Delete") {
+                  try {
+                    fireStoreReference.collection('Events').doc('1').delete();
+                  } catch (e) {}
+                } else if (value == "Update") {
+                  try {
+                    fireStoreReference
+                        .collection('Events')
+                        .doc('1')
+                        .update({'Subject': 'Meeting'});
+                  } catch (e) {}
+                }
+              },
+            )),
+        body: SfCalendar(
+          view: CalendarView.month,
+          todayHighlightColor: const Color(0xFF500000),
+          showDatePickerButton: true,
+          //backgroundColor: const Color(0xFF500000),
+          monthViewSettings: const MonthViewSettings(
+              appointmentDisplayMode: MonthAppointmentDisplayMode.appointment,
+              showAgenda: true,
+              agendaStyle: AgendaStyle(
+                  backgroundColor: Color(0xFF500000),
+                  dateTextStyle: TextStyle(color: Colors.white),
+                  dayTextStyle: TextStyle(color: Colors.white))),
+          dataSource: events,
+          /*
+          loadMoreWidgetBuilder:
+              (BuildContext context, LoadMoreCallback loadMoreAppointments) {
+            return FutureBuilder<void>(
+              //initialData: 'loading',
+              future: loadMoreAppointments(),
+              builder: (context, snapShot) {
+                return Container(
+                  alignment: Alignment.center,
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation(const Color(0xFF500000)),
+                  ),
+                );
+              },
+            );
+          },
+          */
+        ));
   }
 
   void _initializeEventColor() {
@@ -498,7 +559,7 @@ class Events {
     return Events(
       eventName: element.doc.data()!['EventName'],
       from: element.doc.data()!('EventDate').toDate(),
-      to: element.doc.data()!('EventDate').toDate(),
+      to: element.doc.data()!('to').toDate(),
 
       //from: DateFormat('yyyy-mm-dd HH:mm:ss')
       //.parse(element.doc.data()!['EventDate']),

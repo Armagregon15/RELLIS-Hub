@@ -25,6 +25,7 @@ class _RegisterState extends State<Register> {
   // text field state
   String email = '';
   String password = '';
+  String password1 = '';
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +36,11 @@ class _RegisterState extends State<Register> {
             appBar: AppBar(
               backgroundColor: const Color(0xFF500000),
               elevation: 0.0,
-              title: Text('The Hub @ RELLIS'),
+              automaticallyImplyLeading: false,
+              title: Text(
+                'The Hub @ RELLIS',
+                style: TextStyle(fontSize: 30),
+              ),
               actions: <Widget>[
                 FlatButton.icon(
                   icon: Icon(Icons.person),
@@ -74,35 +79,70 @@ class _RegisterState extends State<Register> {
                       },
                     ),
                     SizedBox(height: 20.0),
-                    RaisedButton(
-                        color: const Color(0xFF500000),
-                        child: Text(
-                          'Register',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        onPressed: () async {
-                          if (_formKey.currentState!.validate()) {
-                            setState(() => loading = true);
-                            dynamic result = await _auth
-                                .registerWithEmailAndPassword(email, password);
-                            indexdb = [18];
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => formStart()));
-                            if (result == null) {
-                              setState(() {
-                                loading = false;
-                                error = 'Please supply a valid email';
-                              });
-                            } else {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => formStart()));
-                            }
+                    TextFormField(
+                        decoration: textInputDecoration.copyWith(
+                            hintText: 'Confirm Password'),
+                        obscureText: true,
+                        validator: (val) {
+                          if (val!.isEmpty) {
+                            return 'Enter a password 6+ chars long';
                           }
-                        }),
+                          if (val != password) {
+                            return 'Password does not match';
+                          }
+                          return null;
+                        }
+
+                        // onChanged: (val) {
+                        // setState(() => password = val);
+                        //},
+                        ),
+                    SizedBox(height: 20.0),
+                    Container(
+                        height: 50,
+                        width: 250,
+                        decoration: BoxDecoration(
+                            color: const Color(0xFF500000),
+                            borderRadius: BorderRadius.circular(20)),
+                        child: RaisedButton(
+                            color: const Color(0xFF500000),
+                            child: Text(
+                              'Register',
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 20),
+                            ),
+                            onPressed: () async {
+                              _auth.checkIfEmailInUse(email);
+                              if (_auth.validEmail()) {
+                                setState(() {
+                                  loading = false;
+                                  error = 'The email is already registered';
+                                });
+                              } else {
+                                if (_formKey.currentState!.validate()) {
+                                  setState(() => loading = true);
+                                  dynamic result =
+                                      await _auth.registerWithEmailAndPassword(
+                                          email, password);
+                                  indexdb = [18];
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => formStart()));
+                                  if (result == null) {
+                                    setState(() {
+                                      loading = false;
+                                      error = 'Please supply a valid email';
+                                    });
+                                  } else {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => formStart()));
+                                  }
+                                }
+                              }
+                            })),
                     SizedBox(height: 12.0),
                     Text(
                       error,
