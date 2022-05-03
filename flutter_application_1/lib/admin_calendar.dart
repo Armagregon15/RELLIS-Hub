@@ -275,7 +275,7 @@ appBar: AppBar(
                   if (value!.isEmpty) {
                     return "Missing date";
                   }
-                  if(value !=)
+                  //if(value !=)
                   return null;
                 },
                 onChanged: (val) {

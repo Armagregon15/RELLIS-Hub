@@ -113,33 +113,34 @@ class _RegisterState extends State<Register> {
                             ),
                             onPressed: () async {
                               _auth.checkIfEmailInUse(email);
-                              if (_auth.validEmail()) {
-                                setState(() {
-                                  loading = false;
-                                  error = 'The email is already registered';
-                                });
-                              } else {
-                                if (_formKey.currentState!.validate()) {
-                                  setState(() => loading = true);
-                                  dynamic result =
-                                      await _auth.registerWithEmailAndPassword(
-                                          email, password);
-                                  indexdb = [18];
+
+                              if (_formKey.currentState!.validate()) {
+                                if (_auth.validEmail() == true) {
+                                  setState(() {
+                                    //loading = true;
+                                    error = 'The email is already registered';
+                                  });
+                                }
+                                setState(() => loading = true);
+                                dynamic result =
+                                    await _auth.registerWithEmailAndPassword(
+                                        email, password);
+                                indexdb = [18];
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => formStart()));
+
+                                if (result == null) {
+                                  setState(() {
+                                    loading = false;
+                                    error = 'Please supply a valid email';
+                                  });
+                                } else {
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) => formStart()));
-                                  if (result == null) {
-                                    setState(() {
-                                      loading = false;
-                                      error = 'Please supply a valid email';
-                                    });
-                                  } else {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => formStart()));
-                                  }
                                 }
                               }
                             })),
