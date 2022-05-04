@@ -23,7 +23,7 @@ class AdminCalendarState extends State<AdminCalendar> {
   final List<Color> _colorCollection = <Color>[];
   final fireStoreReference = FirebaseFirestore.instance;
   MeetingDataSource? events;
-  final List<String> options = <String>['Add', 'Delete', 'Update'];
+  final List<String> options = <String>['Add', 'Delete'];
   bool isInitialLoaded = false;
   String date = "";
   String toDate = "";
@@ -440,13 +440,6 @@ class AdminCalendarState extends State<AdminCalendar> {
                     builder: (BuildContext context) =>
                         _buildPopupDialogDelete(context),
                   );
-                } catch (e) {}
-              } else if (value == "Update") {
-                try {
-                  fireStoreReference
-                      .collection('Events')
-                      .doc('1')
-                      .update({'Subject': 'Meeting'});
                 } catch (e) {}
               }
             },
