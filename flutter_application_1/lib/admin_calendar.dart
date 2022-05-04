@@ -30,6 +30,7 @@ class AdminCalendarState extends State<AdminCalendar> {
   String fromDate = "";
   String eventName = "";
   int? groupID = 0;
+  String? docID = "";
   String groupName = "";
   CollectionReference oEvents = FirebaseFirestore.instance.collection('Events');
   int _selectedIndex = 0;
@@ -102,10 +103,6 @@ class AdminCalendarState extends State<AdminCalendar> {
 
   Future addUser(String date, String eventName, int? groupID, String toDate,
       String fromDate) {
-    var event = FirebaseFirestore.instance
-        .collection('Events')
-        .where('GroupID', isEqualTo: groupID)
-        .get();
     Map<int, String> groups = {
       0: "Sports",
       1: "TAMUC",
@@ -147,6 +144,15 @@ class AdminCalendarState extends State<AdminCalendar> {
         .catchError((error) => print("Failed to add event: $error"));
   }
 
+  Future delUser(String eventName, int? groupID) {
+    return fireStoreReference
+        .collection("Events")
+        .doc(docID)
+        .delete()
+        .then((value) => print("Event Added"))
+        .catchError((error) => print("Failed to add event: $error"));
+  }
+
   Future<void> getDataFromFireStore() async {
     await _dbs.getIndexDB().then((value) {
       List<int> indexdb = _dbs.getTheList(value);
@@ -172,7 +178,7 @@ class AdminCalendarState extends State<AdminCalendar> {
     });
   }
 
-  Widget _buildPopupDialog(BuildContext context) {
+  Widget _buildPopupDialogAdd(BuildContext context) {
     final addForm = GlobalKey<FormState>();
     int? newValue = 0;
     return AlertDialog(
@@ -254,7 +260,6 @@ class AdminCalendarState extends State<AdminCalendar> {
                     onChanged: (value) {
                       setState(() {
                         groupID = value;
-
                         newValue = value;
                       });
                     },
@@ -280,6 +285,82 @@ class AdminCalendarState extends State<AdminCalendar> {
                 onPressed: () {
                   if (addForm.currentState!.validate()) {
                     addUser(date, eventName, groupID, toDate, fromDate);
+                    Navigator.of(context).pop();
+                  }
+                },
+                child: const Text('Submit'),
+              ),
+            ),
+          ],
+        ),
+      ),
+      actions: <Widget>[
+        TextButton(
+          style: TextButton.styleFrom(
+            primary: const Color(0xFF500000), // This is a custom color variable
+          ),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: const Text('Close'),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPopupDialogDelete(BuildContext context) {
+    final delForm = GlobalKey<FormState>();
+    String? newValue = "";
+    return AlertDialog(
+      title: const Text('Delete Event'),
+      content: Form(
+        key: delForm,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            StreamBuilder<QuerySnapshot>(
+                stream:
+                    FirebaseFirestore.instance.collection('Events').snapshots(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                  return DropdownButtonFormField<String>(
+                    validator: (value) => value == null ? 'No Entry' : null,
+                    onSaved: (newValue) => docID,
+                    onChanged: (value) {
+                      setState(() {
+                        docID = value;
+                        newValue = value;
+                      });
+                    },
+                    items: snapshot.data?.docs.map((DocumentSnapshot document) {
+                      String gn = document['GroupName'];
+                      String en = document['EventName'];
+                      return DropdownMenuItem<String>(
+                          value: document.id,
+                          child: Container(
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5.0)),
+                            height: 50.0,
+                            padding:
+                                const EdgeInsets.fromLTRB(10.0, 2.0, 10.0, 0.0),
+                            child: Text(gn + " - " + en),
+                          ));
+                    }).toList(),
+                  );
+                }),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16.0),
+              child: ElevatedButton(
+                style:
+                    ElevatedButton.styleFrom(primary: const Color(0xFF500000)),
+                onPressed: () {
+                  if (delForm.currentState!.validate()) {
+                    delUser(eventName, groupID);
                     Navigator.of(context).pop();
                   }
                 },
@@ -349,11 +430,16 @@ class AdminCalendarState extends State<AdminCalendar> {
               if (value == 'Add') {
                 showDialog(
                   context: context,
-                  builder: (BuildContext context) => _buildPopupDialog(context),
+                  builder: (BuildContext context) =>
+                      _buildPopupDialogAdd(context),
                 );
               } else if (value == "Delete") {
                 try {
-                  fireStoreReference.collection('Events').doc('1').delete();
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) =>
+                        _buildPopupDialogDelete(context),
+                  );
                 } catch (e) {}
               } else if (value == "Update") {
                 try {
@@ -387,7 +473,6 @@ class AdminCalendarState extends State<AdminCalendar> {
           color: Colors.white,
           size: 35,
         ),
-
         unselectedItemColor: Colors.white,
         selectedItemColor: Colors.white,
         currentIndex: _selectedIndex,
@@ -480,6 +565,7 @@ class MeetingDataSource extends CalendarDataSource {
 class Events {
   String? eventName;
   int? groupID;
+  String? docID;
   Timestamp? eventDate;
   String? groupName;
   DateTime? from;
