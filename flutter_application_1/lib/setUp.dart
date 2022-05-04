@@ -355,8 +355,6 @@ class __buildItemState extends State<_buildItem> {
         setState(() {
           selected = !selected;
           print(widget.value);
-          //String stuff = _dbs.getIndexDB().toString();
-          //print(stuff);
           if (selected == false) {
             if (!indexdb.contains(widget.value) && indexdb.length < 10) {
               indexdb.add(widget.value);
@@ -432,7 +430,6 @@ class HomePage extends State<MainPage> {
 
   _onItemTapped(int index) async {
     _dbs.checkIfAdmin();
-    //indexdb = [18];
     _selectedIndex = index;
     print(_selectedIndex);
     print(index);
@@ -594,7 +591,7 @@ class HomePage extends State<MainPage> {
               body: StreamBuilder<QuerySnapshot>(
                   stream: FirebaseFirestore.instance
                       .collection('Events')
-                      //.where('GroupID', whereIn: indexdb)
+                      .orderBy('EventDate', descending: false)
                       .snapshots(),
                   builder: (context, snapshot) {
                     if (!snapshot.hasData) {
