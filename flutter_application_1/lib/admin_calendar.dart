@@ -163,7 +163,6 @@ class AdminCalendarState extends State<AdminCalendar> {
       );
       return null;
     }
-
   }
 
   Future delUser(String eventName, int? groupID) {
@@ -307,27 +306,20 @@ class AdminCalendarState extends State<AdminCalendar> {
                     ElevatedButton.styleFrom(primary: const Color(0xFF500000)),
                 onPressed: () {
                   if (addForm.currentState!.validate()) {
-
-                    print(date);
-                    print(eventName);
-                    print(groupID);
                     var results =
                         addUser(date, eventName, groupID, toDate, fromDate);
 
                     if (results == null) {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) => submitError(),
+                      );
                       setState(() {
                         //loading = false;
-                        error = 'Please supply a valid email';
-
-                        Text(
-                          error,
-                          style: TextStyle(color: Colors.red, fontSize: 14.0),
-                        );
                       });
                     } else {
                       Navigator.of(context).pop();
                     }
-
                   }
 
                   Text(
@@ -426,6 +418,27 @@ class AdminCalendarState extends State<AdminCalendar> {
             Navigator.of(context).pop();
           },
           child: const Text('Close'),
+        ),
+      ],
+    );
+  }
+
+  submitError() {
+    return AlertDialog(
+      title: const Text('Submission Error'),
+      content: SingleChildScrollView(
+        child: ListBody(
+          children: const <Widget>[
+            Text('Please make sure all fields are filled'),
+          ],
+        ),
+      ),
+      actions: <Widget>[
+        TextButton(
+          child: const Text('Okay'),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
         ),
       ],
     );
