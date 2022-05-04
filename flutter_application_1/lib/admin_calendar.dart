@@ -41,6 +41,7 @@ class AdminCalendarState extends State<AdminCalendar> {
   final List<String> options = <String>['Add', 'Delete', 'Update'];
   bool isInitialLoaded = false;
   // Timestamp date = DateFormat("yyyy-dd-mm") as Timestamp;
+  String error = " ";
   String date = "";
   String toDate = "";
   String fromDate = "";
@@ -122,7 +123,7 @@ class AdminCalendarState extends State<AdminCalendar> {
     super.initState();
   }
 
-  Future addUser(String date, String eventName, int? groupID, String toDate,
+  Future? addUser(String date, String eventName, int? groupID, String toDate,
       String fromDate) {
     // Call the user's CollectionReference to add a new user
     var event = FirebaseFirestore.instance
@@ -153,25 +154,37 @@ class AdminCalendarState extends State<AdminCalendar> {
     toDate = date + " " + toDate;
     fromDate = date + " " + fromDate;
     //DateTime tempDate = DateFormat("yyyy-MM-dd").parse(date);
-    DateTime toDates = DateFormat("yyyy-MM-dd hh:mm:ss").parse(toDate);
-    DateTime fromDates = DateFormat("yyyy-MM-dd hh:mm:ss").parse(fromDate);
-    //print(tempDate);
-    Timestamp fromTimeStamp = Timestamp.fromDate(fromDates);
-    Timestamp toTimeStamp = Timestamp.fromDate(toDates);
-    //print(myTimeStamp);
-    return fireStoreReference
-        .collection("Events")
-        .doc()
-        .set({
-          'EventDate': fromTimeStamp,
-          "to": toTimeStamp,
-          //"From": fromDate,
-          'EventName': eventName,
-          'GroupID': groupID,
-          'GroupName': groups[groupID]
-        })
-        .then((value) => print("Event Added"))
-        .catchError((error) => print("Failed to add event: $error"));
+    try {
+      DateTime toDates = DateFormat("yyyy-MM-dd hh:mm:ss").parseStrict(toDate);
+
+      DateTime fromDates =
+          DateFormat("yyyy-MM-dd hh:mm:ss").parseStrict(fromDate);
+
+      //print(tempDate);
+      Timestamp fromTimeStamp = Timestamp.fromDate(fromDates);
+      Timestamp toTimeStamp = Timestamp.fromDate(toDates);
+      //print(myTimeStamp);
+      return fireStoreReference
+          .collection("Events")
+          .doc()
+          .set({
+            'EventDate': fromTimeStamp,
+            "to": toTimeStamp,
+            //"From": fromDate,
+            'EventName': eventName,
+            'GroupID': groupID,
+            'GroupName': groups[groupID]
+          })
+          .then((value) => print("Event Added"))
+          .catchError((error) => print("Failed to add event: $error"));
+    } catch (e) {
+      print(e);
+      Text(
+        error,
+        style: const TextStyle(color: Colors.red, fontSize: 14.0),
+      );
+      return null;
+    }
   }
 
   Future<void> getDataFromFireStore() async {
@@ -290,7 +303,8 @@ appBar: AppBar(
                   if (value!.isEmpty) {
                     return "Missing start time";
                   }
-                  return null;
+                  //if (value.parse) {}
+                  //return null;
                 },
                 onChanged: (val) {
                   setState(() => fromDate = val);
@@ -356,9 +370,28 @@ appBar: AppBar(
                     print(date);
                     print(eventName);
                     print(groupID);
-                    addUser(date, eventName, groupID, toDate, fromDate);
-                    Navigator.of(context).pop();
+                    var results =
+                        addUser(date, eventName, groupID, toDate, fromDate);
+
+                    if (results == null) {
+                      setState(() {
+                        //loading = false;
+                        error = 'Please supply a valid email';
+
+                        Text(
+                          error,
+                          style: TextStyle(color: Colors.red, fontSize: 14.0),
+                        );
+                      });
+                    } else {
+                      Navigator.of(context).pop();
+                    }
                   }
+
+                  Text(
+                    error,
+                    style: TextStyle(color: Colors.red, fontSize: 14.0),
+                  );
                 },
                 child: const Text('Submit'),
               ),
@@ -507,7 +540,10 @@ class MeetingDataSource extends CalendarDataSource {
 
   @override
   String getSubject(int index) {
-    return appointments![index].eventName;
+    String fullName =
+        appointments![index].groupName + " - " + appointments![index].eventName;
+    //return appointments![index].eventName;
+    return fullName;
   }
 
   @override
