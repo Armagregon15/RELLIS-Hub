@@ -40,9 +40,13 @@ class _LoginHub extends State<LoginHub> {
         : Scaffold(
             backgroundColor: Colors.white,
             appBar: AppBar(
+              automaticallyImplyLeading: false,
               backgroundColor: const Color(0xFF500000),
               elevation: 0.0,
-              title: Text('The Hub @ RELLIS'),
+              title: Text(
+                'The Hub @ RELLIS',
+                style: TextStyle(fontSize: 30),
+              ),
               actions: <Widget>[
                 FlatButton.icon(
                   icon: Icon(Icons.person),
@@ -71,42 +75,52 @@ class _LoginHub extends State<LoginHub> {
                     SizedBox(height: 20.0),
                     TextFormField(
                       obscureText: true,
-                      decoration:
-                          textInputDecoration.copyWith(hintText: 'Password'),
+                      decoration: textInputDecoration.copyWith(
+                        hintText: 'Password',
+                      ),
                       validator: (val) => val!.length < 6
-                          ? 'Enter a password 6+ chars long'
+                          ? 'Could not sign in with those credentials'
                           : null,
                       onChanged: (val) {
                         setState(() => password = val);
                       },
                     ),
                     SizedBox(height: 20.0),
-                    RaisedButton(
-                        color: const Color(0xFF500000),
-                        child: Text(
-                          'Sign In',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        onPressed: () async {
-                          if (_formKey.currentState!.validate()) {
-                            setState(() => loading = true);
-                            dynamic result = await _auth
-                                .signInWithEmailAndPassword(email, password);
-                            //Navigator.push(context,
-                            //MaterialPageRoute(builder: (context)=>MainPage()));
-                            if (result == null) {
-                              setState(() {
-                                loading = false;
-                                error =
-                                    'Could not sign in with those credentials';
-                              });
-                            } else {
-                              
-                              Navigator.push(context,
-                            MaterialPageRoute(builder: (context)=>LoadPage()));
-                            }
-                          }
-                        }),
+                    Container(
+                        height: 50,
+                        width: 250,
+                        decoration: BoxDecoration(
+                            color: const Color(0xFF500000),
+                            borderRadius: BorderRadius.circular(20)),
+                        child: RaisedButton(
+                            color: const Color(0xFF500000),
+                            child: Text(
+                              'Sign In',
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 20),
+                            ),
+                            onPressed: () async {
+                              if (_formKey.currentState!.validate()) {
+                                setState(() => loading = true);
+                                dynamic result =
+                                    await _auth.signInWithEmailAndPassword(
+                                        email, password);
+                                //Navigator.push(context,
+                                //MaterialPageRoute(builder: (context)=>MainPage()));
+                                if (result == null) {
+                                  setState(() {
+                                    loading = false;
+                                    error =
+                                        'Could not sign in with those credentials';
+                                  });
+                                } else {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => LoadPage()));
+                                }
+                              }
+                            })),
                     SizedBox(height: 12.0),
                     Text(
                       error,
