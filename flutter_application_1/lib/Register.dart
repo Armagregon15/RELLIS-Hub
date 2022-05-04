@@ -60,8 +60,9 @@ class _RegisterState extends State<Register> {
                     TextFormField(
                       decoration:
                           textInputDecoration.copyWith(hintText: 'Email'),
-                      validator: (val) =>
-                          val!.isEmpty ? 'Enter an email' : null,
+                      validator: (val) => val!.isEmpty || !val.contains('.edu')
+                          ? 'Enter an email ending in .edu'
+                          : null,
                       onChanged: (val) {
                         setState(() => email = val);
                       },
