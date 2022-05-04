@@ -35,6 +35,7 @@ class MyApp extends StatelessWidget {
           primaryColor: const Color(0xFF500000),
         ),
         home: Wrapper(),
+        debugShowCheckedModeBanner: false,
       ),
     );
   }

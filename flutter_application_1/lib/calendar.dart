@@ -38,7 +38,7 @@ class CalendarState extends State<Calendar> {
   MeetingDataSource? events;
   final List<String> options = <String>['Add', 'Delete', 'Update'];
   bool isInitialLoaded = false;
-
+  int _selectedIndex = 0;
   @override
   void initState() {
     _dbs.getIndexDB().then((value) {
@@ -167,38 +167,53 @@ class CalendarState extends State<Calendar> {
 
   @override
   Widget build(BuildContext context) {
+    _onItemTapped(int index) async {
+      _selectedIndex = index;
+      if (_selectedIndex == 0) {
+        return loading
+            ? Loading()
+            : Navigator.push(
+                context, MaterialPageRoute(builder: (context) => MainPage()));
+      }
+      if (_selectedIndex == 1) {
+        return loading
+            ? Loading()
+            : Navigator.push(
+                context, MaterialPageRoute(builder: (context) => Calendar()));
+      }
+    }
+
     isInitialLoaded = true;
     return Scaffold(
-        appBar: AppBar(
-          title: InkWell(
-              onTap: () {
-                //"The Hub @ RELLIS",
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            loading ? Loading() : MainPage()));
-              },
-              child: const Text(
-                "The Hub @ RELLIS",
-                style: TextStyle(fontFamily: "Roboto", fontSize: 30),
-              )),
-          backgroundColor: const Color(0xFF500000),
-        ),
-        body: SfCalendar(
-          view: CalendarView.month,
-          todayHighlightColor: const Color(0xFF500000),
-          showDatePickerButton: true,
-          //backgroundColor: const Color(0xFF500000),
-          monthViewSettings: const MonthViewSettings(
-              appointmentDisplayMode: MonthAppointmentDisplayMode.appointment,
-              showAgenda: true,
-              agendaStyle: AgendaStyle(
-                  backgroundColor: Color(0xFF500000),
-                  dateTextStyle: TextStyle(color: Colors.white),
-                  dayTextStyle: TextStyle(color: Colors.white))),
-          dataSource: events,
-          /*
+      appBar: AppBar(
+        title: InkWell(
+            onTap: () {
+              //"The Hub @ RELLIS",
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => loading ? Loading() : MainPage()));
+            },
+            child: const Text(
+              "The Hub @ RELLIS",
+              style: TextStyle(fontFamily: "Roboto", fontSize: 30),
+            )),
+        backgroundColor: const Color(0xFF500000),
+      ),
+      body: SfCalendar(
+        view: CalendarView.month,
+        todayHighlightColor: const Color(0xFF500000),
+        showDatePickerButton: true,
+        //backgroundColor: const Color(0xFF500000),
+        monthViewSettings: const MonthViewSettings(
+            appointmentDisplayMode: MonthAppointmentDisplayMode.appointment,
+            showAgenda: true,
+            agendaStyle: AgendaStyle(
+                backgroundColor: Color(0xFF500000),
+                dateTextStyle: TextStyle(color: Colors.white),
+                dayTextStyle: TextStyle(color: Colors.white))),
+        dataSource: events,
+        /*
           loadMoreWidgetBuilder:
               (BuildContext context, LoadMoreCallback loadMoreAppointments) {
             return FutureBuilder<void>(
@@ -215,7 +230,41 @@ class CalendarState extends State<Calendar> {
             );
           },
           */
-        ));
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        selectedFontSize: 15,
+        // ignore: prefer_const_constructors
+        selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
+        // ignore: prefer_const_constructors
+        selectedIconTheme: IconThemeData(
+          color: Colors.white,
+          size: 35,
+        ),
+
+        unselectedItemColor: Colors.white,
+        selectedItemColor: Colors.white,
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        backgroundColor: maroon,
+        elevation: 90,
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.arrow_back,
+              color: Colors.white,
+            ),
+            label: 'Back',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.refresh,
+              color: Colors.white,
+            ),
+            label: 'Refresh',
+          ),
+        ],
+      ),
+    );
   }
 
   void _initializeEventColor() {
