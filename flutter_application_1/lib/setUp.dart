@@ -510,10 +510,6 @@ class HomePage extends State<MainPage> {
                             Container(
                                 padding: const EdgeInsets.all(10),
                                 child: Center(child: Text(d.toString()))),
-                            Icon(
-                              Icons.menu_book,
-                              color: maroon,
-                            ),
                           ],
                         ),
                       ),
