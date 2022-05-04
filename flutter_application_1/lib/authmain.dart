@@ -10,7 +10,6 @@ import 'user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthService {
-  bool valid = true;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   String admin = 'i7FYbLbMlzNfaYEFVWQOimDRYdu2';
   // create user obj based on firebase user
@@ -55,32 +54,6 @@ class AuthService {
       print('here');
       // print(error.toString());
       return null;
-    }
-  }
-
-  bool validEmail() {
-    return valid;
-  }
-
-  Future<void> checkIfEmailInUse(String emailAddress) async {
-    try {
-      // Fetch sign-in methods for the email address
-      final list =
-          await FirebaseAuth.instance.fetchSignInMethodsForEmail(emailAddress);
-
-      // In case list is not empty
-      if (list.isNotEmpty) {
-        // Return true because there is an existing
-        // user using the email address
-        valid = true;
-      } else {
-        // Return false because email adress is not in use
-        valid = false;
-      }
-    } catch (error) {
-      // Handle error
-      // ...
-      valid = true;
     }
   }
 
