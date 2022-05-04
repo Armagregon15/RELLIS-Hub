@@ -507,7 +507,10 @@ class MeetingDataSource extends CalendarDataSource {
 
   @override
   String getSubject(int index) {
-    return appointments![index].eventName;
+   String fullName =
+        appointments![index].groupName + " - " + appointments![index].eventName;
+    //return appointments![index].eventName;
+    return fullName;
   }
 
   @override

@@ -84,6 +84,7 @@ class _LoginHub extends State<LoginHub> {
                       onChanged: (val) {
                         setState(() => password = val);
                       },
+                      //onFieldSubmitted: 
                     ),
                     SizedBox(height: 20.0),
                     Container(
