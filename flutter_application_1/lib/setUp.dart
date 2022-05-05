@@ -516,6 +516,7 @@ class HomePage extends State<MainPage> {
                                     Center(child: Text(document['EventName']))),
                             Container(
                                 padding: const EdgeInsets.all(10),
+
                                 child: Center(
                                     child: Text("DATE: " +
                                         formattedDate +
@@ -528,6 +529,7 @@ class HomePage extends State<MainPage> {
                               Icons.menu_book,
                               color: maroon,
                             ),
+
                           ],
                         ),
                       ),

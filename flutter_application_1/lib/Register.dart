@@ -17,6 +17,7 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterState extends State<Register> {
+  var focusNode = FocusNode();
   final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
   String error = '';
@@ -37,7 +38,7 @@ class _RegisterState extends State<Register> {
               backgroundColor: const Color(0xFF500000),
               elevation: 0.0,
               automaticallyImplyLeading: false,
-              title: Text(
+              title: const Text(
                 'The Hub @ RELLIS',
                 style: TextStyle(fontSize: 30),
               ),
@@ -66,6 +67,37 @@ class _RegisterState extends State<Register> {
                       onChanged: (val) {
                         setState(() => email = val);
                       },
+                      onFieldSubmitted: (value) async {
+                        _auth.checkIfEmailInUse(email);
+                        if (_formKey.currentState!.validate()) {
+                          if (_auth.validEmail() == true) {
+                            setState(() {
+                              //loading = true;
+                              error = 'The email is already registered';
+                            });
+                          }
+                          setState(() => loading = true);
+                          dynamic result = await _auth
+                              .registerWithEmailAndPassword(email, password);
+                          indexdb = [18];
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => formStart()));
+
+                          if (result == null) {
+                            setState(() {
+                              loading = false;
+                              error = 'Please supply a valid email';
+                            });
+                          } else {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => formStart()));
+                          }
+                        }
+                      },
                     ),
                     SizedBox(height: 20.0),
                     TextFormField(
@@ -78,26 +110,87 @@ class _RegisterState extends State<Register> {
                       onChanged: (val) {
                         setState(() => password = val);
                       },
+                      onFieldSubmitted: (value) async {
+                        _auth.checkIfEmailInUse(email);
+                        if (_formKey.currentState!.validate()) {
+                          if (_auth.validEmail() == true) {
+                            setState(() {
+                              //loading = true;
+                              error = 'The email is already registered';
+                            });
+                          }
+                          setState(() => loading = true);
+                          dynamic result = await _auth
+                              .registerWithEmailAndPassword(email, password);
+                          indexdb = [18];
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => formStart()));
+
+                          if (result == null) {
+                            setState(() {
+                              loading = false;
+                              error = 'Please supply a valid email';
+                            });
+                          } else {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => formStart()));
+                          }
+                        }
+                      },
                     ),
                     SizedBox(height: 20.0),
                     TextFormField(
-                        decoration: textInputDecoration.copyWith(
-                            hintText: 'Confirm Password'),
-                        obscureText: true,
-                        validator: (val) {
-                          if (val!.isEmpty) {
-                            return 'Enter a password 6+ chars long';
-                          }
-                          if (val != password) {
-                            return 'Password does not match';
-                          }
-                          return null;
+                      decoration: textInputDecoration.copyWith(
+                          hintText: 'Confirm Password'),
+                      obscureText: true,
+                      validator: (val) {
+                        if (val!.isEmpty) {
+                          return 'Enter a password 6+ chars long';
                         }
+                        if (val != password) {
+                          return 'Password does not match';
+                        }
+                        return null;
+                      },
+                      onFieldSubmitted: (value) async {
+                        _auth.checkIfEmailInUse(email);
+                        if (_formKey.currentState!.validate()) {
+                          if (_auth.validEmail() == true) {
+                            setState(() {
+                              //loading = true;
+                              error = 'The email is already registered';
+                            });
+                          }
+                          setState(() => loading = true);
+                          dynamic result = await _auth
+                              .registerWithEmailAndPassword(email, password);
+                          indexdb = [18];
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => formStart()));
 
-                        // onChanged: (val) {
-                        // setState(() => password = val);
-                        //},
-                        ),
+                          if (result == null) {
+                            setState(() {
+                              loading = false;
+                              error = 'Please supply a valid email';
+                            });
+                          } else {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => formStart()));
+                          }
+                        }
+                      },
+                      // onChanged: (val) {
+                      // setState(() => password = val);
+                      //},
+                    ),
                     SizedBox(height: 20.0),
                     Container(
                         height: 50,
@@ -107,14 +200,13 @@ class _RegisterState extends State<Register> {
                             borderRadius: BorderRadius.circular(20)),
                         child: RaisedButton(
                             color: const Color(0xFF500000),
-                            child: Text(
+                            child: const Text(
                               'Register',
                               style:
                                   TextStyle(color: Colors.white, fontSize: 20),
                             ),
                             onPressed: () async {
                               _auth.checkIfEmailInUse(email);
-
                               if (_formKey.currentState!.validate()) {
                                 if (_auth.validEmail() == true) {
                                   setState(() {
