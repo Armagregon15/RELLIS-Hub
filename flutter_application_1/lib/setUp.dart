@@ -11,6 +11,7 @@ import 'dart:async';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'admin_calendar.dart';
 import 'calendar.dart';
+import 'package:intl/intl.dart';
 //import 'time';
 
 Color maroon = const Color(0xFF500000);
@@ -472,8 +473,14 @@ class HomePage extends State<MainPage> {
   // Builds container for each event displayed //
   Widget _buildHomeItem(BuildContext context, DocumentSnapshot document) {
     Timestamp t = document['EventDate'];
+    Timestamp from = document['EventDate'];
+    Timestamp to = document['to'];
     DateTime d = t.toDate();
-
+    DateTime firstHere = from.toDate();
+    DateTime here = to.toDate();
+    String formattedDate = DateFormat("yyyy-MM-dd").format(d);
+    String formattedFrom = DateFormat("h:mm a").format(firstHere);
+    String formattedTo = DateFormat("h:mm a").format(here);
     return loading
         ? Loading()
         : Container(
@@ -509,7 +516,20 @@ class HomePage extends State<MainPage> {
                                     Center(child: Text(document['EventName']))),
                             Container(
                                 padding: const EdgeInsets.all(10),
-                                child: Center(child: Text(d.toString()))),
+
+                                child: Center(
+                                    child: Text("DATE: " +
+                                        formattedDate +
+                                        "  " +
+                                        " @ " +
+                                        formattedFrom +
+                                        " - " +
+                                        formattedTo))),
+                            Icon(
+                              Icons.menu_book,
+                              color: maroon,
+                            ),
+
                           ],
                         ),
                       ),

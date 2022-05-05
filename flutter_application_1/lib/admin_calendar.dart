@@ -128,15 +128,15 @@ class AdminCalendarState extends State<AdminCalendar> {
       17: "PVAMU",
       18: "RELLIS"
     };
-    toDate = date + " " + toDate;
-    fromDate = date + " " + fromDate;
+    toDate = date + " " + toDate; // + ":00";
+    fromDate = date + " " + fromDate; // + "00";
 
     //DateTime tempDate = DateFormat("yyyy-MM-dd").parse(date);
     try {
-      DateTime toDates = DateFormat("yyyy-MM-dd hh:mm:ss").parseStrict(toDate);
+      DateTime toDates = DateFormat("yyyy-MM-dd h:mm a").parseStrict(toDate);
 
       DateTime fromDates =
-          DateFormat("yyyy-MM-dd hh:mm:ss").parseStrict(fromDate);
+          DateFormat("yyyy-MM-dd h:mm a").parseStrict(fromDate);
 
       //print(tempDate);
       Timestamp fromTimeStamp = Timestamp.fromDate(fromDates);
@@ -170,7 +170,7 @@ class AdminCalendarState extends State<AdminCalendar> {
         .collection("Events")
         .doc(docID)
         .delete()
-        .then((value) => print("Event Added"))
+        .then((value) => print("Event Deleted"))
         .catchError((error) => print("Failed to add event: $error"));
   }
 
@@ -250,8 +250,8 @@ class AdminCalendarState extends State<AdminCalendar> {
                   setState(() => fromDate = val);
                 },
                 decoration: const InputDecoration(
-                  hintText: 'hh:mm:ss',
-                  labelText: 'From (hh:mm:ss)',
+                  hintText: 'h:mm AM',
+                  labelText: 'From (h:mm) (AM/PM)',
                 )),
             TextFormField(
                 validator: (value) {
@@ -264,8 +264,8 @@ class AdminCalendarState extends State<AdminCalendar> {
                   setState(() => toDate = val);
                 },
                 decoration: const InputDecoration(
-                  hintText: 'hh:mm:ss',
-                  labelText: 'To (hh:mm:ss)',
+                  hintText: 'h:mm PM',
+                  labelText: 'To (h:mm) (AM/PM)',
                 )),
             StreamBuilder<QuerySnapshot>(
                 stream:
@@ -306,6 +306,7 @@ class AdminCalendarState extends State<AdminCalendar> {
                     ElevatedButton.styleFrom(primary: const Color(0xFF500000)),
                 onPressed: () {
                   if (addForm.currentState!.validate()) {
+
                     var results =
                         addUser(date, eventName, groupID, toDate, fromDate);
 
