@@ -1,7 +1,6 @@
 // ignore: file_names
 // ignore_for_file: prefer_const_constructors, avoid_print, file_names, unused_element
 
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/authenticate.dart';
 import 'package:flutter_application_1/authmain.dart';
@@ -13,8 +12,6 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'admin_calendar.dart';
 import 'calendar.dart';
 import 'package:intl/intl.dart';
-import 'authenticate.dart';
-import 'authmain.dart';
 //import 'time';
 
 Color maroon = const Color(0xFF500000);
@@ -474,39 +471,20 @@ class HomePage extends State<MainPage> {
   }
 
   // Builds container for each event displayed //
-  Widget _buildHomeItemUser(BuildContext context, DocumentSnapshot document) {
+  Widget _buildHomeItem(BuildContext context, DocumentSnapshot document) {
     Timestamp t = document['EventDate'];
     Timestamp from = document['EventDate'];
     Timestamp to = document['to'];
-    String docID = document.id;
     DateTime d = t.toDate();
     DateTime firstHere = from.toDate();
     DateTime here = to.toDate();
     String formattedDate = DateFormat("yyyy-MM-dd").format(d);
     String formattedFrom = DateFormat("h:mm a").format(firstHere);
     String formattedTo = DateFormat("h:mm a").format(here);
-    int likedValue = 0;
-
-    infoPage() {
-      return AlertDialog(
-        title: Text(document["EventName"]),
-        content: SingleChildScrollView(
-          child: ListBody(
-            children: <Widget>[
-              Text("Group's Name: " + document["GroupName"] + "\n"),
-              Text("Event Date: " + formattedDate + "\n"),
-              Text("Event Time: " + formattedFrom + " - " + formattedTo + "\n"),
-              Text("Event Location: " + document["Location"] + "\n"),
-              Text("Contact Organizer: " + document["Organizer"] + "\n"),
-            ],
-          ),
-        ),
-      );
-    }
-
     return loading
         ? Loading()
         : Container(
+            //color: Colors.white10,
             decoration: BoxDecoration(
                 color: Color.fromARGB(255, 0, 0, 0),
                 backgroundBlendMode: BlendMode.srcOver,
@@ -514,173 +492,45 @@ class HomePage extends State<MainPage> {
                     color: Color.fromARGB(255, 180, 179, 175),
                     width: 10,
                     style: BorderStyle.solid)),
+            height: MediaQuery.of(context).size.height / 5,
             child: Center(
               child: Card(
                 child: Column(
                   children: [
-                    Container(
-                        padding: EdgeInsets.all(15),
-                        child: Center(
-                            child: Text(
-                          document['GroupName'],
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
-                        ))),
-                    Container(
-                        padding: EdgeInsets.all(20),
-                        child: Center(child: Text(document['EventName']))),
-                    Container(
-                        padding: EdgeInsets.all(10),
-                        child: Center(
-                            child: Text(formattedDate +
-                                "  " +
-                                formattedFrom +
-                                " - " +
-                                formattedTo))),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Column(
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: SizedBox(
+                        height: 190,
+                        child: Column(
                           children: [
-                            IconButton(
-                              onPressed: () => showDialog(
-                                context: context,
-                                builder: (context) => infoPage(),
-                              ),
-                              icon: Icon(Icons.info),
-                              color: maroon,
-                            ),
-                            //Text(""),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            IconButton(
-                              padding: EdgeInsets.all(.1),
-                              onPressed: () {
-                                // setState(() {
-                                //   likedValue += 1;
-                                //   FirebaseFirestore.instance
-                                //       .collection("Events")
-                                //       .doc(docID)
-                                //       .update({'Interest': likedValue});
-                                // });
-                              },
-                              icon: Icon(Icons.favorite),
+                            Container(
+                                padding: const EdgeInsets.all(20),
+                                child: Center(
+                                    child: Text(
+                                  document['GroupName'],
+                                  style: TextStyle(fontSize: 20),
+                                ))),
+                            Container(
+                                padding: const EdgeInsets.all(20),
+                                child:
+                                    Center(child: Text(document['EventName']))),
+                            Container(
+                                padding: const EdgeInsets.all(10),
+                                child: Center(
+                                    child: Text("DATE: " +
+                                        formattedDate +
+                                        "  " +
+                                        " @ " +
+                                        formattedFrom +
+                                        " - " +
+                                        formattedTo))),
+                            Icon(
+                              Icons.menu_book,
                               color: maroon,
                             ),
                           ],
                         ),
-                      ],
-                    ),
-                  ],
-                ),
-                elevation: 6,
-              ),
-            ),
-          );
-  }
-
-  Widget _buildHomeItemAdmin(BuildContext context, DocumentSnapshot document) {
-    Timestamp t = document['EventDate'];
-    Timestamp from = document['EventDate'];
-    Timestamp to = document['to'];
-    String docID = document.id;
-    DateTime d = t.toDate();
-    DateTime firstHere = from.toDate();
-    DateTime here = to.toDate();
-    String formattedDate = DateFormat("yyyy-MM-dd").format(d);
-    String formattedFrom = DateFormat("h:mm a").format(firstHere);
-    String formattedTo = DateFormat("h:mm a").format(here);
-    int likedValue = document["Interest"];
-    bool isPressed = false;
-
-    infoPage() {
-      return AlertDialog(
-        title: Text(document["EventName"]),
-        content: SingleChildScrollView(
-          child: ListBody(
-            children: <Widget>[
-              Text("Group's Name: " + document["GroupName"] + "\n"),
-              Text("Event Date: " + formattedDate + "\n"),
-              Text("Event Time: " + formattedFrom + " - " + formattedTo + "\n"),
-              Text("Event Location: " + document["Location"] + "\n"),
-              Text("Contact Organizer: " + document["Organizer"] + "\n"),
-            ],
-          ),
-        ),
-      );
-    }
-
-    return loading
-        ? Loading()
-        : Container(
-            decoration: BoxDecoration(
-                color: Color.fromARGB(255, 0, 0, 0),
-                backgroundBlendMode: BlendMode.srcOver,
-                border: Border.all(
-                    color: Color.fromARGB(255, 180, 179, 175),
-                    width: 10,
-                    style: BorderStyle.solid)),
-            child: Center(
-              child: Card(
-                child: Column(
-                  children: [
-                    Container(
-                        padding: EdgeInsets.all(15),
-                        child: Center(
-                            child: Text(
-                          document['GroupName'],
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
-                        ))),
-                    Container(
-                        padding: EdgeInsets.all(20),
-                        child: Center(child: Text(document['EventName']))),
-                    Container(
-                        padding: EdgeInsets.all(10),
-                        child: Center(
-                            child: Text(formattedDate +
-                                "  " +
-                                formattedFrom +
-                                " - " +
-                                formattedTo))),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Column(
-                          children: [
-                            IconButton(
-                              onPressed: () => showDialog(
-                                context: context,
-                                builder: (context) => infoPage(),
-                              ),
-                              icon: Icon(Icons.info),
-                              color: maroon,
-                            ),
-                            //Text(""),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            IconButton(
-                              padding: EdgeInsets.all(.1),
-                              onPressed: () {
-                                // setState(() {
-                                //   likedValue += 1;
-                                //   FirebaseFirestore.instance
-                                //       .collection("Events")
-                                //       .doc(docID)
-                                //       .update({'Interest': likedValue});
-                                // });
-                              },
-                              icon: Icon(Icons.favorite),
-                              color: maroon,
-                            ),
-                            Text(document["Interest"].toString())
-                          ],
-                        ),
-                      ],
+                      ),
                     ),
                   ],
                 ),
@@ -762,10 +612,10 @@ class HomePage extends State<MainPage> {
                       return Text("Loading");
                     } else {
                       return ListView.builder(
-                        itemExtent: 250,
+                        itemExtent: MediaQuery.of(context).size.height / 3.5,
                         itemCount: snapshot.data?.docs.length,
-                        itemBuilder: (context, index) => _buildHomeItemAdmin(
-                            context, snapshot.data!.docs[index]),
+                        itemBuilder: (context, index) =>
+                            _buildHomeItem(context, snapshot.data!.docs[index]),
                       );
                     }
                   }),
@@ -853,10 +703,10 @@ class HomePage extends State<MainPage> {
                       return Text("Loading");
                     } else {
                       return ListView.builder(
-                        itemExtent: 250,
+                        itemExtent: MediaQuery.of(context).size.height / 3.5,
                         itemCount: snapshot.data?.docs.length,
-                        itemBuilder: (context, index) => _buildHomeItemUser(
-                            context, snapshot.data!.docs[index]),
+                        itemBuilder: (context, index) =>
+                            _buildHomeItem(context, snapshot.data!.docs[index]),
                       );
                     }
                   }),
