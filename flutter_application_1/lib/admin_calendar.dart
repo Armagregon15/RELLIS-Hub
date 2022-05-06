@@ -1,7 +1,5 @@
-import 'dart:html';
 import 'dart:math';
 import 'package:flutter/scheduler.dart';
-import 'package:path/path.dart';
 import 'authmain.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -25,22 +23,24 @@ class AdminCalendarState extends State<AdminCalendar> {
   final List<Color> _colorCollection = <Color>[];
   final fireStoreReference = FirebaseFirestore.instance;
   MeetingDataSource? events;
-  final List<String> options = <String>['Add', 'Delete', 'Update'];
+  final List<String> options = <String>['Add', 'Delete'];
   bool isInitialLoaded = false;
+
+  // Timestamp date = DateFormat("yyyy-dd-mm") as Timestamp;
+  String error = " ";
+
   String date = "";
+  String toDate = "";
+  String fromDate = "";
   String eventName = "";
   int? groupID = 0;
+  String? docID = "";
   String groupName = "";
   CollectionReference oEvents = FirebaseFirestore.instance.collection('Events');
-
   int _selectedIndex = 0;
-
   @override
   void initState() {
     _dbs.getIndexDB().then((value) {
-      // Future.delayed(
-      // const Duration(seconds: 2));
-
       List<int> indexdb = _dbs.getTheList(value);
       print('first time');
       print(indexdb);
@@ -57,9 +57,6 @@ class AdminCalendarState extends State<AdminCalendar> {
         .snapshots()
         .listen((event) {
       for (var element in event.docChanges) {
-        // print('element printed');
-
-        //print(element);
         if (element.type == DocumentChangeType.added) {
           if (!isInitialLoaded) {
             return;
@@ -108,12 +105,8 @@ class AdminCalendarState extends State<AdminCalendar> {
     super.initState();
   }
 
-  Future addUser(String date, String eventName, int? groupID) {
-    // Call the user's CollectionReference to add a new user
-    var event = FirebaseFirestore.instance
-        .collection('Events')
-        .where('GroupID', isEqualTo: groupID)
-        .get();
+  Future? addUser(String date, String eventName, int? groupID, String toDate,
+      String fromDate) {
     Map<int, String> groups = {
       0: "Sports",
       1: "TAMUC",
@@ -135,39 +128,65 @@ class AdminCalendarState extends State<AdminCalendar> {
       17: "PVAMU",
       18: "RELLIS"
     };
-    DateTime tempDate = DateFormat("yyyy-MM-dd").parse(date);
-    print(tempDate);
-    Timestamp myTimeStamp = Timestamp.fromDate(tempDate);
-    print(myTimeStamp);
+    toDate = date + " " + toDate; // + ":00";
+    fromDate = date + " " + fromDate; // + "00";
+
+    //DateTime tempDate = DateFormat("yyyy-MM-dd").parse(date);
+    try {
+      DateTime toDates = DateFormat("yyyy-MM-dd h:mm a").parseStrict(toDate);
+
+      DateTime fromDates =
+          DateFormat("yyyy-MM-dd h:mm a").parseStrict(fromDate);
+
+      //print(tempDate);
+      Timestamp fromTimeStamp = Timestamp.fromDate(fromDates);
+      Timestamp toTimeStamp = Timestamp.fromDate(toDates);
+      //print(myTimeStamp);
+      return fireStoreReference
+          .collection("Events")
+          .doc()
+          .set({
+            'EventDate': fromTimeStamp,
+            "to": toTimeStamp,
+            //"From": fromDate,
+            'EventName': eventName,
+            'GroupID': groupID,
+            'GroupName': groups[groupID]
+          })
+          .then((value) => print("Event Added"))
+          .catchError((error) => print("Failed to add event: $error"));
+    } catch (e) {
+      print(e);
+      Text(
+        error,
+        style: const TextStyle(color: Colors.red, fontSize: 14.0),
+      );
+      return null;
+    }
+  }
+
+  Future delUser(String eventName, int? groupID) {
     return fireStoreReference
         .collection("Events")
-        .doc()
-        .set({
-          'EventDate': myTimeStamp,
-          'EventName': eventName,
-          'GroupID': groupID,
-          'GroupName': groups[groupID]
-        })
-        .then((value) => print("Event Added"))
+        .doc(docID)
+        .delete()
+        .then((value) => print("Event Deleted"))
         .catchError((error) => print("Failed to add event: $error"));
   }
 
   Future<void> getDataFromFireStore() async {
     await _dbs.getIndexDB().then((value) {
       List<int> indexdb = _dbs.getTheList(value);
+      print('first time calendar');
+      print(indexdb);
     });
     var snapShotsValue = await fireStoreReference.collection("Events").get();
-    print("Get data from fire store");
-    print(indexdb);
-    print('snap shots value');
-    print(snapShotsValue);
-    print('snap shots value');
     final Random random = Random();
     List<Events> list = snapShotsValue.docs
         .map((e) => Events(
               eventName: e.data()['EventName'],
               from: e.data()['EventDate'].toDate(),
-              to: e.data()['EventDate'].toDate(),
+              to: e.data()['to'].toDate(),
               eventDate: e.data()['EventDate'],
               background: _colorCollection[random.nextInt(9)],
               isAllDay: false,
@@ -180,7 +199,7 @@ class AdminCalendarState extends State<AdminCalendar> {
     });
   }
 
-  Widget _buildPopupDialog(BuildContext context) {
+  Widget _buildPopupDialogAdd(BuildContext context) {
     final addForm = GlobalKey<FormState>();
     int? newValue = 0;
     return AlertDialog(
@@ -194,21 +213,7 @@ class AdminCalendarState extends State<AdminCalendar> {
             TextFormField(
                 validator: (value) {
                   if (value!.isEmpty) {
-                    return "Date is required";
-                  }
-                  return null;
-                },
-                onChanged: (val) {
-                  setState(() => date = val);
-                },
-                decoration: const InputDecoration(
-                  hintText: 'YYYY-MM-DD HH-MM-SS',
-                  labelText: 'Date',
-                )),
-            TextFormField(
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return "YYYY-MM-DD HH:MM:SS";
+                    return "Missing event name";
                   }
                   return null;
                 },
@@ -218,6 +223,49 @@ class AdminCalendarState extends State<AdminCalendar> {
                 decoration: const InputDecoration(
                   hintText: 'Enter the event name...',
                   labelText: 'Event Name',
+                )),
+            TextFormField(
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return "Missing date";
+                  }
+                  return null;
+                },
+                onChanged: (val) {
+                  setState(() => date = val);
+                },
+                decoration: const InputDecoration(
+                  hintText: 'yyyy-mm-dd',
+                  labelText: 'Date (yyyy-mm-dd)',
+                )),
+            TextFormField(
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return "Missing start time";
+                  }
+                  //if (value.parse) {}
+                  //return null;
+                },
+                onChanged: (val) {
+                  setState(() => fromDate = val);
+                },
+                decoration: const InputDecoration(
+                  hintText: 'h:mm AM',
+                  labelText: 'From (h:mm) (AM/PM)',
+                )),
+            TextFormField(
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return "Missing end time";
+                  }
+                  return null;
+                },
+                onChanged: (val) {
+                  setState(() => toDate = val);
+                },
+                decoration: const InputDecoration(
+                  hintText: 'h:mm PM',
+                  labelText: 'To (h:mm) (AM/PM)',
                 )),
             StreamBuilder<QuerySnapshot>(
                 stream:
@@ -234,7 +282,6 @@ class AdminCalendarState extends State<AdminCalendar> {
                     onChanged: (value) {
                       setState(() {
                         groupID = value;
-
                         newValue = value;
                       });
                     },
@@ -255,13 +302,104 @@ class AdminCalendarState extends State<AdminCalendar> {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 16.0),
               child: ElevatedButton(
-                // style: ButtonStyle(backgroundColor: maroon),
+                style:
+                    ElevatedButton.styleFrom(primary: const Color(0xFF500000)),
                 onPressed: () {
                   if (addForm.currentState!.validate()) {
-                    print(date);
-                    print(eventName);
-                    print(groupID);
-                    addUser(date, eventName, groupID);
+                    var results =
+                        addUser(date, eventName, groupID, toDate, fromDate);
+
+                    if (results == null) {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) => submitError(),
+                      );
+                      setState(() {
+                        //loading = false;
+                      });
+                    } else {
+                      Navigator.of(context).pop();
+                    }
+                  }
+
+                  Text(
+                    error,
+                    style: TextStyle(color: Colors.red, fontSize: 14.0),
+                  );
+                },
+                child: const Text('Submit'),
+              ),
+            ),
+          ],
+        ),
+      ),
+      actions: <Widget>[
+        TextButton(
+          style: TextButton.styleFrom(
+            primary: const Color(0xFF500000), // This is a custom color variable
+          ),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: const Text('Close'),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPopupDialogDelete(BuildContext context) {
+    final delForm = GlobalKey<FormState>();
+    String? newValue = "";
+    return AlertDialog(
+      title: const Text('Delete Event'),
+      content: Form(
+        key: delForm,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            StreamBuilder<QuerySnapshot>(
+                stream:
+                    FirebaseFirestore.instance.collection('Events').snapshots(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                  return DropdownButtonFormField<String>(
+                    validator: (value) => value == null ? 'No Entry' : null,
+                    onSaved: (newValue) => docID,
+                    onChanged: (value) {
+                      setState(() {
+                        docID = value;
+                        newValue = value;
+                      });
+                    },
+                    items: snapshot.data?.docs.map((DocumentSnapshot document) {
+                      String gn = document['GroupName'];
+                      String en = document['EventName'];
+                      return DropdownMenuItem<String>(
+                          value: document.id,
+                          child: Container(
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5.0)),
+                            height: 50.0,
+                            padding:
+                                const EdgeInsets.fromLTRB(10.0, 2.0, 10.0, 0.0),
+                            child: Text(gn + " - " + en),
+                          ));
+                    }).toList(),
+                  );
+                }),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16.0),
+              child: ElevatedButton(
+                style:
+                    ElevatedButton.styleFrom(primary: const Color(0xFF500000)),
+                onPressed: () {
+                  if (delForm.currentState!.validate()) {
+                    delUser(eventName, groupID);
                     Navigator.of(context).pop();
                   }
                 },
@@ -273,10 +411,34 @@ class AdminCalendarState extends State<AdminCalendar> {
       ),
       actions: <Widget>[
         TextButton(
+          style: TextButton.styleFrom(
+            primary: const Color(0xFF500000), // This is a custom color variable
+          ),
           onPressed: () {
             Navigator.of(context).pop();
           },
           child: const Text('Close'),
+        ),
+      ],
+    );
+  }
+
+  submitError() {
+    return AlertDialog(
+      title: const Text('Submission Error'),
+      content: SingleChildScrollView(
+        child: ListBody(
+          children: const <Widget>[
+            Text('Please make sure all fields are filled'),
+          ],
+        ),
+      ),
+      actions: <Widget>[
+        TextButton(
+          child: const Text('Okay'),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
         ),
       ],
     );
@@ -305,7 +467,6 @@ class AdminCalendarState extends State<AdminCalendar> {
       appBar: AppBar(
           title: InkWell(
               onTap: () {
-                //"The Hub @ RELLIS",
                 Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -318,7 +479,7 @@ class AdminCalendarState extends State<AdminCalendar> {
               )),
           backgroundColor: const Color(0xFF500000),
           leading: PopupMenuButton<String>(
-            icon: Icon(Icons.settings),
+            icon: Icon(Icons.add),
             itemBuilder: (BuildContext context) => options.map((String choice) {
               return PopupMenuItem<String>(
                 value: choice,
@@ -329,18 +490,16 @@ class AdminCalendarState extends State<AdminCalendar> {
               if (value == 'Add') {
                 showDialog(
                   context: context,
-                  builder: (BuildContext context) => _buildPopupDialog(context),
+                  builder: (BuildContext context) =>
+                      _buildPopupDialogAdd(context),
                 );
               } else if (value == "Delete") {
                 try {
-                  fireStoreReference.collection('Events').doc('1').delete();
-                } catch (e) {}
-              } else if (value == "Update") {
-                try {
-                  fireStoreReference
-                      .collection('Events')
-                      .doc('1')
-                      .update({'Subject': 'Meeting'});
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) =>
+                        _buildPopupDialogDelete(context),
+                  );
                 } catch (e) {}
               }
             },
@@ -367,7 +526,6 @@ class AdminCalendarState extends State<AdminCalendar> {
           color: Colors.white,
           size: 35,
         ),
-
         unselectedItemColor: Colors.white,
         selectedItemColor: Colors.white,
         currentIndex: _selectedIndex,
@@ -432,7 +590,10 @@ class MeetingDataSource extends CalendarDataSource {
 
   @override
   String getSubject(int index) {
-    return appointments![index].eventName;
+    String fullName =
+        appointments![index].groupName + " - " + appointments![index].eventName;
+    //return appointments![index].eventName;
+    return fullName;
   }
 
   @override
@@ -460,6 +621,7 @@ class MeetingDataSource extends CalendarDataSource {
 class Events {
   String? eventName;
   int? groupID;
+  String? docID;
   Timestamp? eventDate;
   String? groupName;
   DateTime? from;
@@ -484,7 +646,7 @@ class Events {
     return Events(
       eventName: element.doc.data()!['EventName'],
       from: element.doc.data()!('EventDate').toDate(),
-      to: element.doc.data()!('EventDate').toDate(),
+      to: element.doc.data()!('to').toDate(),
 
       //from: DateFormat('yyyy-mm-dd HH:mm:ss')
       //.parse(element.doc.data()!['EventDate']),
