@@ -60,6 +60,27 @@ class _LoginHub extends State<LoginHub> {
                   children: <Widget>[
                     SizedBox(height: 20.0),
                     TextFormField(
+                      onFieldSubmitted: (value) async {
+                        if (_formKey.currentState!.validate()) {
+                          setState(() => loading = true);
+                          dynamic result = await _auth
+                              .signInWithEmailAndPassword(email, password);
+                          //Navigator.push(context,
+                          //MaterialPageRoute(builder: (context)=>MainPage()));
+                          if (result == null) {
+                            setState(() {
+                              loading = false;
+                              error =
+                                  'Could not sign in with those credentials';
+                            });
+                          } else {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => LoadPage()));
+                          }
+                        }
+                      },
                       decoration:
                           textInputDecoration.copyWith(hintText: 'Email'),
                       validator: (val) =>
@@ -70,6 +91,27 @@ class _LoginHub extends State<LoginHub> {
                     ),
                     SizedBox(height: 20.0),
                     TextFormField(
+                      onFieldSubmitted: (value) async {
+                        if (_formKey.currentState!.validate()) {
+                          setState(() => loading = true);
+                          dynamic result = await _auth
+                              .signInWithEmailAndPassword(email, password);
+                          //Navigator.push(context,
+                          //MaterialPageRoute(builder: (context)=>MainPage()));
+                          if (result == null) {
+                            setState(() {
+                              loading = false;
+                              error =
+                                  'Could not sign in with those credentials';
+                            });
+                          } else {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => LoadPage()));
+                          }
+                        }
+                      },
                       obscureText: true,
                       decoration:
                           textInputDecoration.copyWith(hintText: 'Password'),

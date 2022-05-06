@@ -136,7 +136,7 @@ class CalendarState extends State<Calendar> {
         .map((e) => Events(
               eventName: e.data()['EventName'],
               from: e.data()['EventDate'].toDate(),
-              to: e.data()['EventDate'].toDate(),
+              to: e.data()['to'].toDate(),
               /*
               from: DateFormat('yyyy-mm-dd HH:mm:ss')
                   .parse(e.data()['EventDate']),
@@ -213,6 +213,23 @@ class CalendarState extends State<Calendar> {
                 dateTextStyle: TextStyle(color: Colors.white),
                 dayTextStyle: TextStyle(color: Colors.white))),
         dataSource: events,
+        /*
+          loadMoreWidgetBuilder:
+              (BuildContext context, LoadMoreCallback loadMoreAppointments) {
+            return FutureBuilder<void>(
+              //initialData: 'loading',
+              future: loadMoreAppointments(),
+              builder: (context, snapShot) {
+                return Container(
+                  alignment: Alignment.center,
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation(const Color(0xFF500000)),
+                  ),
+                );
+              },
+            );
+          },
+          */
       ),
       bottomNavigationBar: BottomNavigationBar(
         selectedFontSize: 15,
@@ -288,7 +305,10 @@ class MeetingDataSource extends CalendarDataSource {
 
   @override
   String getSubject(int index) {
-    return appointments![index].eventName;
+    String fullName =
+        appointments![index].groupName + " - " + appointments![index].eventName;
+    //return appointments![index].eventName;
+    return fullName;
   }
 
   @override
@@ -340,7 +360,7 @@ class Events {
     return Events(
       eventName: element.doc.data()!['EventName'],
       from: element.doc.data()!('EventDate').toDate(),
-      to: element.doc.data()!('EventDate').toDate(),
+      to: element.doc.data()!('to').toDate(),
 
       //from: DateFormat('yyyy-mm-dd HH:mm:ss')
       //.parse(element.doc.data()!['EventDate']),

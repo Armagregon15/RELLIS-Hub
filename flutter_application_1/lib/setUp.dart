@@ -11,6 +11,8 @@ import 'dart:async';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'admin_calendar.dart';
 import 'calendar.dart';
+import 'package:intl/intl.dart';
+//import 'time';
 
 Color maroon = const Color(0xFF500000);
 List<int> indexdb = [18];
@@ -354,8 +356,6 @@ class __buildItemState extends State<_buildItem> {
         setState(() {
           selected = !selected;
           print(widget.value);
-          //String stuff = _dbs.getIndexDB().toString();
-          //print(stuff);
           if (selected == false) {
             if (!indexdb.contains(widget.value) && indexdb.length < 10) {
               indexdb.add(widget.value);
@@ -431,7 +431,6 @@ class HomePage extends State<MainPage> {
 
   _onItemTapped(int index) async {
     _dbs.checkIfAdmin();
-    //indexdb = [18];
     _selectedIndex = index;
     print(_selectedIndex);
     print(index);
@@ -474,8 +473,14 @@ class HomePage extends State<MainPage> {
   // Builds container for each event displayed //
   Widget _buildHomeItem(BuildContext context, DocumentSnapshot document) {
     Timestamp t = document['EventDate'];
+    Timestamp from = document['EventDate'];
+    Timestamp to = document['to'];
     DateTime d = t.toDate();
-
+    DateTime firstHere = from.toDate();
+    DateTime here = to.toDate();
+    String formattedDate = DateFormat("yyyy-MM-dd").format(d);
+    String formattedFrom = DateFormat("h:mm a").format(firstHere);
+    String formattedTo = DateFormat("h:mm a").format(here);
     return loading
         ? Loading()
         : Container(
@@ -511,11 +516,20 @@ class HomePage extends State<MainPage> {
                                     Center(child: Text(document['EventName']))),
                             Container(
                                 padding: const EdgeInsets.all(10),
-                                child: Center(child: Text(d.toString()))),
+
+                                child: Center(
+                                    child: Text("DATE: " +
+                                        formattedDate +
+                                        "  " +
+                                        " @ " +
+                                        formattedFrom +
+                                        " - " +
+                                        formattedTo))),
                             Icon(
                               Icons.menu_book,
                               color: maroon,
                             ),
+
                           ],
                         ),
                       ),
@@ -593,7 +607,7 @@ class HomePage extends State<MainPage> {
               body: StreamBuilder<QuerySnapshot>(
                   stream: FirebaseFirestore.instance
                       .collection('Events')
-                      //.where('GroupID', whereIn: indexdb)
+                      .orderBy('EventDate', descending: false)
                       .snapshots(),
                   builder: (context, snapshot) {
                     if (!snapshot.hasData) {

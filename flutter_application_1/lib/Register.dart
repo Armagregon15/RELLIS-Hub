@@ -17,6 +17,7 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterState extends State<Register> {
+  var focusNode = FocusNode();
   final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
   String error = '';
@@ -25,6 +26,7 @@ class _RegisterState extends State<Register> {
   // text field state
   String email = '';
   String password = '';
+  String password1 = '';
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +37,11 @@ class _RegisterState extends State<Register> {
             appBar: AppBar(
               backgroundColor: const Color(0xFF500000),
               elevation: 0.0,
-              title: Text('The Hub @ RELLIS'),
+              automaticallyImplyLeading: false,
+              title: const Text(
+                'The Hub @ RELLIS',
+                style: TextStyle(fontSize: 30),
+              ),
               actions: <Widget>[
                 FlatButton.icon(
                   icon: Icon(Icons.person),
@@ -55,10 +61,42 @@ class _RegisterState extends State<Register> {
                     TextFormField(
                       decoration:
                           textInputDecoration.copyWith(hintText: 'Email'),
-                      validator: (val) =>
-                          val!.isEmpty ? 'Enter an email' : null,
+                      validator: (val) => val!.isEmpty || !val.contains('.edu')
+                          ? 'Enter an email ending in .edu'
+                          : null,
                       onChanged: (val) {
                         setState(() => email = val);
+                      },
+                      onFieldSubmitted: (value) async {
+                        _auth.checkIfEmailInUse(email);
+                        if (_formKey.currentState!.validate()) {
+                          if (_auth.validEmail() == true) {
+                            setState(() {
+                              //loading = true;
+                              error = 'The email is already registered';
+                            });
+                          }
+                          setState(() => loading = true);
+                          dynamic result = await _auth
+                              .registerWithEmailAndPassword(email, password);
+                          indexdb = [18];
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => formStart()));
+
+                          if (result == null) {
+                            setState(() {
+                              loading = false;
+                              error = 'Please supply a valid email';
+                            });
+                          } else {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => formStart()));
+                          }
+                        }
                       },
                     ),
                     SizedBox(height: 20.0),
@@ -72,37 +110,133 @@ class _RegisterState extends State<Register> {
                       onChanged: (val) {
                         setState(() => password = val);
                       },
-                    ),
-                    SizedBox(height: 20.0),
-                    RaisedButton(
-                        color: const Color(0xFF500000),
-                        child: Text(
-                          'Register',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        onPressed: () async {
-                          if (_formKey.currentState!.validate()) {
-                            setState(() => loading = true);
-                            dynamic result = await _auth
-                                .registerWithEmailAndPassword(email, password);
-                            indexdb = [18];
+                      onFieldSubmitted: (value) async {
+                        _auth.checkIfEmailInUse(email);
+                        if (_formKey.currentState!.validate()) {
+                          if (_auth.validEmail() == true) {
+                            setState(() {
+                              //loading = true;
+                              error = 'The email is already registered';
+                            });
+                          }
+                          setState(() => loading = true);
+                          dynamic result = await _auth
+                              .registerWithEmailAndPassword(email, password);
+                          indexdb = [18];
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => formStart()));
+
+                          if (result == null) {
+                            setState(() {
+                              loading = false;
+                              error = 'Please supply a valid email';
+                            });
+                          } else {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => formStart()));
-                            if (result == null) {
-                              setState(() {
-                                loading = false;
-                                error = 'Please supply a valid email';
-                              });
-                            } else {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => formStart()));
-                            }
                           }
-                        }),
+                        }
+                      },
+                    ),
+                    SizedBox(height: 20.0),
+                    TextFormField(
+                      decoration: textInputDecoration.copyWith(
+                          hintText: 'Confirm Password'),
+                      obscureText: true,
+                      validator: (val) {
+                        if (val!.isEmpty) {
+                          return 'Enter a password 6+ chars long';
+                        }
+                        if (val != password) {
+                          return 'Password does not match';
+                        }
+                        return null;
+                      },
+                      onFieldSubmitted: (value) async {
+                        _auth.checkIfEmailInUse(email);
+                        if (_formKey.currentState!.validate()) {
+                          if (_auth.validEmail() == true) {
+                            setState(() {
+                              //loading = true;
+                              error = 'The email is already registered';
+                            });
+                          }
+                          setState(() => loading = true);
+                          dynamic result = await _auth
+                              .registerWithEmailAndPassword(email, password);
+                          indexdb = [18];
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => formStart()));
+
+                          if (result == null) {
+                            setState(() {
+                              loading = false;
+                              error = 'Please supply a valid email';
+                            });
+                          } else {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => formStart()));
+                          }
+                        }
+                      },
+                      // onChanged: (val) {
+                      // setState(() => password = val);
+                      //},
+                    ),
+                    SizedBox(height: 20.0),
+                    Container(
+                        height: 50,
+                        width: 250,
+                        decoration: BoxDecoration(
+                            color: const Color(0xFF500000),
+                            borderRadius: BorderRadius.circular(20)),
+                        child: RaisedButton(
+                            color: const Color(0xFF500000),
+                            child: const Text(
+                              'Register',
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 20),
+                            ),
+                            onPressed: () async {
+                              _auth.checkIfEmailInUse(email);
+                              if (_formKey.currentState!.validate()) {
+                                if (_auth.validEmail() == true) {
+                                  setState(() {
+                                    //loading = true;
+                                    error = 'The email is already registered';
+                                  });
+                                }
+                                setState(() => loading = true);
+                                dynamic result =
+                                    await _auth.registerWithEmailAndPassword(
+                                        email, password);
+                                indexdb = [18];
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => formStart()));
+
+                                if (result == null) {
+                                  setState(() {
+                                    loading = false;
+                                    error = 'Please supply a valid email';
+                                  });
+                                } else {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => formStart()));
+                                }
+                              }
+                            })),
                     SizedBox(height: 12.0),
                     Text(
                       error,
