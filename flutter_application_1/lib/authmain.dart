@@ -1,10 +1,6 @@
 // ignore_for_file: unnecessary_null_comparison
 
-import 'dart:math';
-
-import 'package:flutter_application_1/authenticate.dart';
 import 'package:flutter_application_1/setUp.dart';
-
 import 'database_service.dart';
 import 'user.dart';
 import 'package:firebase_auth/firebase_auth.dart';

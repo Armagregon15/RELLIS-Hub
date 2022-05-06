@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'loading.dart';
 import 'setUp.dart';
 import "authmain.dart";
+
 //import 'form_start.dart';
 
 class Register extends StatefulWidget {
