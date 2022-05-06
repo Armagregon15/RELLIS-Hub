@@ -36,6 +36,8 @@ class AdminCalendarState extends State<AdminCalendar> {
   int? groupID = 0;
   String? docID = "";
   String groupName = "";
+  String location = "";
+  String organizer = "";
   CollectionReference oEvents = FirebaseFirestore.instance.collection('Events');
   int _selectedIndex = 0;
   @override
@@ -148,7 +150,9 @@ class AdminCalendarState extends State<AdminCalendar> {
           .set({
             'EventDate': fromTimeStamp,
             "to": toTimeStamp,
-            //"From": fromDate,
+            'Location': location,
+            'Organizer': organizer,
+            'Interest': 0,
             'EventName': eventName,
             'GroupID': groupID,
             'GroupName': groups[groupID]
@@ -223,6 +227,34 @@ class AdminCalendarState extends State<AdminCalendar> {
                 decoration: const InputDecoration(
                   hintText: 'Enter the event name...',
                   labelText: 'Event Name',
+                )),
+            TextFormField(
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return "Missing organizer email";
+                  }
+                  return null;
+                },
+                onChanged: (val) {
+                  setState(() => organizer = val);
+                },
+                decoration: const InputDecoration(
+                  hintText: 'Enter the organizer email...',
+                  labelText: 'Organizer Email',
+                )),
+            TextFormField(
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return "Missing location";
+                  }
+                  return null;
+                },
+                onChanged: (val) {
+                  setState(() => location = val);
+                },
+                decoration: const InputDecoration(
+                  hintText: 'Enter the location...',
+                  labelText: 'Event Location',
                 )),
             TextFormField(
                 validator: (value) {
