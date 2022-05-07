@@ -25,10 +25,7 @@ class AdminCalendarState extends State<AdminCalendar> {
   MeetingDataSource? events;
   final List<String> options = <String>['Add', 'Delete'];
   bool isInitialLoaded = false;
-
-  // Timestamp date = DateFormat("yyyy-dd-mm") as Timestamp;
   String error = " ";
-
   String date = "";
   String toDate = "";
   String fromDate = "";
@@ -40,75 +37,11 @@ class AdminCalendarState extends State<AdminCalendar> {
   String organizer = "";
   CollectionReference oEvents = FirebaseFirestore.instance.collection('Events');
   int _selectedIndex = 0;
-  @override
-  void initState() {
-    _dbs.getIndexDB().then((value) {
-      List<int> indexdb = _dbs.getTheList(value);
-      print('first time');
-      print(indexdb);
-    });
-    _initializeEventColor();
-    getDataFromFireStore().then((results) {
-      SchedulerBinding.instance!.addPostFrameCallback((timeStamp) {
-        setState(() {});
-      });
-    });
-    fireStoreReference
-        .collection("Events")
-        .where("GroupID", whereIn: indexdb)
-        .snapshots()
-        .listen((event) {
-      for (var element in event.docChanges) {
-        if (element.type == DocumentChangeType.added) {
-          if (!isInitialLoaded) {
-            return;
-          }
-          final Random random = Random();
-          Events app = Events.fromFireBaseSnapShotData(
-              element, _colorCollection[random.nextInt(9)]);
-          setState(() {
-            events!.appointments!.add(app);
-            events!.notifyListeners(CalendarDataSourceAction.add, [app]);
-          });
-        } else if (element.type == DocumentChangeType.modified) {
-          if (!isInitialLoaded) {
-            return;
-          }
-          final Random random = Random();
-          Events app = Events.fromFireBaseSnapShotData(
-              element, _colorCollection[random.nextInt(9)]);
-          setState(() {
-            int index = events!.appointments!
-                .indexWhere((app) => app.key == element.doc.id);
-
-            Events meeting = events!.appointments![index];
-
-            events!.appointments!.remove(meeting);
-            events!.notifyListeners(CalendarDataSourceAction.remove, [meeting]);
-            events!.appointments!.add(app);
-            events!.notifyListeners(CalendarDataSourceAction.add, [app]);
-          });
-        } else if (element.type == DocumentChangeType.removed) {
-          if (!isInitialLoaded) {
-            return;
-          }
-          setState(() {
-            int index = events!.appointments!
-                .indexWhere((app) => app.key == element.doc.id);
-
-            Events meeting = events!.appointments![index];
-            events!.appointments!.remove(meeting);
-            events!.notifyListeners(CalendarDataSourceAction.remove, [meeting]);
-          });
-        }
-      }
-    });
-
-    super.initState();
-  }
 
   Future? addUser(String date, String eventName, int? groupID, String toDate,
       String fromDate) {
+    // This map needs to be taken out. At the moment it is how events are given a group name when adding a new event to the Events collection. //
+    //It needs to be replaced by placing some kind of refrence at line 154 to the documents name //
     Map<int, String> groups = {
       0: "Sports",
       1: "TAMUC",
@@ -133,17 +66,12 @@ class AdminCalendarState extends State<AdminCalendar> {
     toDate = date + " " + toDate; // + ":00";
     fromDate = date + " " + fromDate; // + "00";
 
-    //DateTime tempDate = DateFormat("yyyy-MM-dd").parse(date);
     try {
       DateTime toDates = DateFormat("yyyy-MM-dd h:mm a").parseStrict(toDate);
-
       DateTime fromDates =
           DateFormat("yyyy-MM-dd h:mm a").parseStrict(fromDate);
-
-      //print(tempDate);
       Timestamp fromTimeStamp = Timestamp.fromDate(fromDates);
       Timestamp toTimeStamp = Timestamp.fromDate(toDates);
-      //print(myTimeStamp);
       return fireStoreReference
           .collection("Events")
           .doc()
@@ -160,7 +88,6 @@ class AdminCalendarState extends State<AdminCalendar> {
           .then((value) => print("Event Added"))
           .catchError((error) => print("Failed to add event: $error"));
     } catch (e) {
-      print(e);
       Text(
         error,
         style: const TextStyle(color: Colors.red, fontSize: 14.0),
@@ -181,8 +108,6 @@ class AdminCalendarState extends State<AdminCalendar> {
   Future<void> getDataFromFireStore() async {
     await _dbs.getIndexDB().then((value) {
       List<int> indexdb = _dbs.getTheList(value);
-      print('first time calendar');
-      print(indexdb);
     });
     var snapShotsValue = await fireStoreReference.collection("Events").get();
     final Random random = Random();
@@ -196,6 +121,8 @@ class AdminCalendarState extends State<AdminCalendar> {
               isAllDay: false,
               groupID: e.data()['GroupID'],
               groupName: e.data()['GroupName'],
+              location: e.data()['Location'],
+              organizer: e.data()['Organizer'],
             ))
         .toList();
     setState(() {
@@ -205,6 +132,7 @@ class AdminCalendarState extends State<AdminCalendar> {
 
   Widget _buildPopupDialogAdd(BuildContext context) {
     final addForm = GlobalKey<FormState>();
+    // This variable is being used I have no idea why it thinks it's not //
     int? newValue = 0;
     return AlertDialog(
       title: const Text('Add Event'),
@@ -275,8 +203,6 @@ class AdminCalendarState extends State<AdminCalendar> {
                   if (value!.isEmpty) {
                     return "Missing start time";
                   }
-                  //if (value.parse) {}
-                  //return null;
                 },
                 onChanged: (val) {
                   setState(() => fromDate = val);
@@ -346,18 +272,10 @@ class AdminCalendarState extends State<AdminCalendar> {
                         context: context,
                         builder: (BuildContext context) => submitError(),
                       );
-                      setState(() {
-                        //loading = false;
-                      });
                     } else {
                       Navigator.of(context).pop();
                     }
                   }
-
-                  Text(
-                    error,
-                    style: TextStyle(color: Colors.red, fontSize: 14.0),
-                  );
                 },
                 child: const Text('Submit'),
               ),
@@ -526,13 +444,11 @@ class AdminCalendarState extends State<AdminCalendar> {
                       _buildPopupDialogAdd(context),
                 );
               } else if (value == "Delete") {
-                try {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) =>
-                        _buildPopupDialogDelete(context),
-                  );
-                } catch (e) {}
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) =>
+                      _buildPopupDialogDelete(context),
+                );
               }
             },
           )),
@@ -598,6 +514,65 @@ class AdminCalendarState extends State<AdminCalendar> {
     _colorCollection.add(const Color(0xFF636363));
     _colorCollection.add(const Color(0xFF0A8043));
   }
+
+  @override
+  void initState() {
+    _dbs.getIndexDB().then((value) {});
+    _initializeEventColor();
+    getDataFromFireStore().then((results) {
+      SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+        setState(() {});
+      });
+    });
+    fireStoreReference
+        .collection("Events")
+        .where("GroupID", whereIn: indexdb)
+        .snapshots()
+        .listen((event) {
+      for (var element in event.docChanges) {
+        if (element.type == DocumentChangeType.added) {
+          if (!isInitialLoaded) {
+            return;
+          }
+          final Random random = Random();
+          Events app = Events.fromFireBaseSnapShotData(
+              element, _colorCollection[random.nextInt(9)]);
+          setState(() {
+            events!.appointments!.add(app);
+            events!.notifyListeners(CalendarDataSourceAction.add, [app]);
+          });
+        } else if (element.type == DocumentChangeType.modified) {
+          if (!isInitialLoaded) {
+            return;
+          }
+          final Random random = Random();
+          Events app = Events.fromFireBaseSnapShotData(
+              element, _colorCollection[random.nextInt(9)]);
+          setState(() {
+            int index = events!.appointments!
+                .indexWhere((app) => app.key == element.doc.id);
+            Events meeting = events!.appointments![index];
+            events!.appointments!.remove(meeting);
+            events!.notifyListeners(CalendarDataSourceAction.remove, [meeting]);
+            events!.appointments!.add(app);
+            events!.notifyListeners(CalendarDataSourceAction.add, [app]);
+          });
+        } else if (element.type == DocumentChangeType.removed) {
+          if (!isInitialLoaded) {
+            return;
+          }
+          setState(() {
+            int index = events!.appointments!
+                .indexWhere((app) => app.key == element.doc.id);
+            Events meeting = events!.appointments![index];
+            events!.appointments!.remove(meeting);
+            events!.notifyListeners(CalendarDataSourceAction.remove, [meeting]);
+          });
+        }
+      }
+    });
+    super.initState();
+  }
 }
 
 class MeetingDataSource extends CalendarDataSource {
@@ -624,8 +599,19 @@ class MeetingDataSource extends CalendarDataSource {
   String getSubject(int index) {
     String fullName =
         appointments![index].groupName + " - " + appointments![index].eventName;
-    //return appointments![index].eventName;
     return fullName;
+  }
+
+  @override
+  String getLocation(int index) {
+    String loc = appointments![index].location;
+    return loc;
+  }
+
+  @override
+  String getOrganizer(int index) {
+    String org = appointments![index].organizer;
+    return org;
   }
 
   @override
@@ -660,42 +646,34 @@ class Events {
   DateTime? to;
   Color? background;
   bool? isAllDay;
+  String? location;
+  String? organizer;
+
   Events({
-    //required this.eventDate,
-    //required this.eventName,
-    //required this.groupName,
     this.eventName,
     this.groupID,
     this.eventDate,
-    //this.eventDateTime,
     this.groupName,
     this.from,
     this.to,
     this.background,
     this.isAllDay,
+    this.location,
+    this.organizer,
   });
+
   static Events fromFireBaseSnapShotData(dynamic element, Color color) {
     return Events(
       eventName: element.doc.data()!['EventName'],
       from: element.doc.data()!('EventDate').toDate(),
       to: element.doc.data()!('to').toDate(),
-
-      //from: DateFormat('yyyy-mm-dd HH:mm:ss')
-      //.parse(element.doc.data()!['EventDate']),
-      //to: DateFormat('yyyy-mm-dd HH:mm:ss')
-      //.parse(element.doc.data()!['EventDate']),
-
       eventDate: element.doc.data()!['EventDate'],
-      //eventDateTime: element.doc.data()!['EventDate'].toDate(),
       background: color,
       isAllDay: false,
       groupID: element.doc.data()!['GroupID'],
       groupName: element.doc.data()!['GroupName'],
+      location: element.doc.data()!['Location'],
+      organizer: element.doc.data()!['Organizer'],
     );
-    //key: element.doc.id);
-  }
-
-  void printDate() {
-    print(this.eventDate.toString());
   }
 }
