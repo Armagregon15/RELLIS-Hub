@@ -428,7 +428,7 @@ class MainPage extends StatefulWidget {
 
 class HomePage extends State<MainPage> {
   int _selectedIndex = 0;
-
+  bool isPressed = false;
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   static List? userEvents = [];
 
@@ -486,113 +486,6 @@ class HomePage extends State<MainPage> {
     String formattedFrom = DateFormat("h:mm a").format(firstHere);
     String formattedTo = DateFormat("h:mm a").format(here);
     int likedValue = 0;
-
-    infoPage() {
-      return AlertDialog(
-        title: Text(document["EventName"]),
-        content: SingleChildScrollView(
-          child: ListBody(
-            children: <Widget>[
-              Text("Group's Name: " + document["GroupName"] + "\n"),
-              Text("Event Date: " + formattedDate + "\n"),
-              Text("Event Time: " + formattedFrom + " - " + formattedTo + "\n"),
-              Text("Event Location: " + document["Location"] + "\n"),
-              Text("Contact Organizer: " + document["Organizer"] + "\n"),
-            ],
-          ),
-        ),
-      );
-    }
-
-    return loading
-        ? Loading()
-        : Container(
-            decoration: BoxDecoration(
-                color: Color.fromARGB(255, 0, 0, 0),
-                backgroundBlendMode: BlendMode.srcOver,
-                border: Border.all(
-                    color: Color.fromARGB(255, 180, 179, 175),
-                    width: 10,
-                    style: BorderStyle.solid)),
-            child: Center(
-              child: Card(
-                child: Column(
-                  children: [
-                    Container(
-                        padding: EdgeInsets.all(15),
-                        child: Center(
-                            child: Text(
-                          document['GroupName'],
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
-                        ))),
-                    Container(
-                        padding: EdgeInsets.all(20),
-                        child: Center(child: Text(document['EventName']))),
-                    Container(
-                        padding: EdgeInsets.all(10),
-                        child: Center(
-                            child: Text(formattedDate +
-                                "  " +
-                                formattedFrom +
-                                " - " +
-                                formattedTo))),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Column(
-                          children: [
-                            IconButton(
-                              onPressed: () => showDialog(
-                                context: context,
-                                builder: (context) => infoPage(),
-                              ),
-                              icon: Icon(Icons.info),
-                              color: maroon,
-                            ),
-                            //Text(""),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            IconButton(
-                              padding: EdgeInsets.all(.1),
-                              onPressed: () {
-                                // setState(() {
-                                //   likedValue += 1;
-                                //   FirebaseFirestore.instance
-                                //       .collection("Events")
-                                //       .doc(docID)
-                                //       .update({'Interest': likedValue});
-                                // });
-                              },
-                              icon: Icon(Icons.favorite),
-                              color: maroon,
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                elevation: 6,
-              ),
-            ),
-          );
-  }
-
-  Widget _buildHomeItemAdmin(BuildContext context, DocumentSnapshot document) {
-    Timestamp t = document['EventDate'];
-    Timestamp from = document['EventDate'];
-    Timestamp to = document['to'];
-    String docID = document.id;
-    DateTime d = t.toDate();
-    DateTime firstHere = from.toDate();
-    DateTime here = to.toDate();
-    String formattedDate = DateFormat("yyyy-MM-dd").format(d);
-    String formattedFrom = DateFormat("h:mm a").format(firstHere);
-    String formattedTo = DateFormat("h:mm a").format(here);
-    int likedValue = document["Interest"];
     bool isPressed = false;
 
     infoPage() {
@@ -665,15 +558,127 @@ class HomePage extends State<MainPage> {
                           children: [
                             IconButton(
                               padding: EdgeInsets.all(.1),
-                              onPressed: () {
-                                // setState(() {
-                                //   likedValue += 1;
-                                //   FirebaseFirestore.instance
-                                //       .collection("Events")
-                                //       .doc(docID)
-                                //       .update({'Interest': likedValue});
-                                // });
-                              },
+                              onPressed: isPressed == true
+                                  ? null
+                                  : () {
+                                      setState(() {
+                                        // likedValue += 1;
+                                        // FirebaseFirestore.instance
+                                        //     .collection("Events")
+                                        //     .doc(docID)
+                                        //     .update({'Interest': likedValue});
+                                        isPressed = !isPressed;
+                                      });
+                                    },
+                              icon: Icon(Icons.favorite),
+                              color: maroon,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                elevation: 6,
+              ),
+            ),
+          );
+  }
+
+  Widget _buildHomeItemAdmin(BuildContext context, DocumentSnapshot document) {
+    Timestamp t = document['EventDate'];
+    Timestamp from = document['EventDate'];
+    Timestamp to = document['to'];
+    String docID = document.id;
+    DateTime d = t.toDate();
+    DateTime firstHere = from.toDate();
+    DateTime here = to.toDate();
+    String formattedDate = DateFormat("yyyy-MM-dd").format(d);
+    String formattedFrom = DateFormat("h:mm a").format(firstHere);
+    String formattedTo = DateFormat("h:mm a").format(here);
+    int likedValue = document["Interest"];
+
+    infoPage() {
+      return AlertDialog(
+        title: Text(document["EventName"]),
+        content: SingleChildScrollView(
+          child: ListBody(
+            children: <Widget>[
+              Text("Group's Name: " + document["GroupName"] + "\n"),
+              Text("Event Date: " + formattedDate + "\n"),
+              Text("Event Time: " + formattedFrom + " - " + formattedTo + "\n"),
+              Text("Event Location: " + document["Location"] + "\n"),
+              Text("Contact Organizer: " + document["Organizer"] + "\n"),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return loading
+        ? Loading()
+        : Container(
+            decoration: BoxDecoration(
+                color: Color.fromARGB(255, 0, 0, 0),
+                backgroundBlendMode: BlendMode.srcOver,
+                border: Border.all(
+                    color: Color.fromARGB(255, 180, 179, 175),
+                    width: 10,
+                    style: BorderStyle.solid)),
+            child: Center(
+              child: Card(
+                child: Column(
+                  children: [
+                    Container(
+                        padding: EdgeInsets.all(15),
+                        child: Center(
+                            child: Text(
+                          document['GroupName'],
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
+                        ))),
+                    Container(
+                        padding: EdgeInsets.all(20),
+                        child: Center(child: Text(document['EventName']))),
+                    Container(
+                        padding: EdgeInsets.all(10),
+                        child: Center(
+                            child: Text(formattedDate +
+                                "  " +
+                                formattedFrom +
+                                " - " +
+                                formattedTo))),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Column(
+                          children: [
+                            IconButton(
+                              onPressed: () => showDialog(
+                                context: context,
+                                builder: (context) => infoPage(),
+                              ),
+                              icon: Icon(Icons.info),
+                              color: maroon,
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            IconButton(
+                              padding: EdgeInsets.all(.1),
+                              onPressed: isPressed == true
+                                  ? null
+                                  : () {
+                                      setState(() {
+                                        // likedValue += 1;
+                                        // FirebaseFirestore.instance
+                                        //     .collection("Events")
+                                        //     .doc(docID)
+                                        //     .update({'Interest': likedValue});
+                                        isPressed = true;
+                                      });
+                                    },
                               icon: Icon(Icons.favorite),
                               color: maroon,
                             ),
