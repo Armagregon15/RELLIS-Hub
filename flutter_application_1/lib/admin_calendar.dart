@@ -306,7 +306,6 @@ class AdminCalendarState extends State<AdminCalendar> {
                     ElevatedButton.styleFrom(primary: const Color(0xFF500000)),
                 onPressed: () {
                   if (addForm.currentState!.validate()) {
-
                     var results =
                         addUser(date, eventName, groupID, toDate, fromDate);
 
