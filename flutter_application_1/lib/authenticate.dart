@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'loading.dart';
 import 'loginPage.dart';
-import 'authmain.dart';
 import 'Register.dart';
 
 bool loading = false;
