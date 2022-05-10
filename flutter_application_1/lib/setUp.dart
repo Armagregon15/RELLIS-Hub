@@ -1,7 +1,6 @@
 // ignore: file_names
 // ignore_for_file: prefer_const_constructors, avoid_print, file_names, unused_element
 
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/authenticate.dart';
 import 'package:flutter_application_1/authmain.dart';
@@ -15,7 +14,6 @@ import 'calendar.dart';
 import 'package:intl/intl.dart';
 import 'authenticate.dart';
 import 'authmain.dart';
-//import 'time';
 
 Color maroon = const Color(0xFF500000);
 List<int> indexdb = [18];
@@ -149,26 +147,12 @@ class _schoolFormState extends State<schoolForm> {
               backgroundColor: maroon,
               onPressed: () async {
                 try {
-                  //var uid = await _auth.getUID();
-                  //MyUser _auth.user.uid;
-                  // indexdb = _dbs.getTheList();
-                  // print('to user ->');
-                  // print(indexdb);
                   loading ? Loading() : _dbs.updateUserData(indexdb);
-                  //DatabaseService(uid: uid).getIndexDB();
-
-                  print('new test');
-                  print(indexdb);
-                  print('new test');
                 } catch (error) {
                   loading ? Loading() : print(error.toString());
 
                   return null;
                 }
-                //print(_dbs.getTheList());
-                //indexdb = _dbs.getTheList();
-                //print('new test');
-                //print(indexdb);
                 loading
                     ? Loading()
                     : Navigator.push(context,
@@ -234,26 +218,11 @@ class _clubFormState extends State<clubForm> {
           backgroundColor: maroon,
           onPressed: () async {
             try {
-              //var uid = await _auth.getUID();
-              //MyUser _auth.user.uid;
-              // indexdb = _dbs.getTheList();
-              // print('to user ->');
-              // print(indexdb);
               loading ? Loading() : _dbs.updateUserData(indexdb);
-              //DatabaseService(uid: uid).getIndexDB();
-
-              print('new test');
-              print(indexdb);
-              print('new test');
             } catch (error) {
               loading ? Loading() : print(error.toString());
-
               return null;
             }
-            //print(_dbs.getTheList());
-            //indexdb = _dbs.getTheList();
-            //print('new test');
-            //print(indexdb);
             loading
                 ? Loading()
                 : Navigator.push(context,
@@ -306,26 +275,12 @@ class _interestFormState extends State<interestForm> {
           backgroundColor: maroon,
           onPressed: () async {
             try {
-              //var uid = await _auth.getUID();
-              //MyUser _auth.user.uid;
-              // indexdb = _dbs.getTheList();
-              // print('to user ->');
-              // print(indexdb);
               loading ? Loading() : _dbs.updateUserData(indexdb);
-              //DatabaseService(uid: uid).getIndexDB();
-
-              print('new test');
-              print(indexdb);
-              print('new test');
             } catch (error) {
               loading ? Loading() : print(error.toString());
 
               return null;
             }
-            //print(_dbs.getTheList());
-            //indexdb = _dbs.getTheList();
-            //print('new test');
-            //print(indexdb);
             loading
                 ? Loading()
                 : Navigator.push(context,
@@ -348,7 +303,6 @@ class __buildItemState extends State<_buildItem> {
   bool selected = true;
   int index = 0;
   List<int> tempIndex = [18];
-  //indexdb = [18];
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -358,14 +312,12 @@ class __buildItemState extends State<_buildItem> {
       onTap: () {
         setState(() {
           selected = !selected;
-          print(widget.value);
           if (selected == false) {
             if (!indexdb.contains(widget.value) && indexdb.length < 10) {
               indexdb.add(widget.value);
             }
           } else if (indexdb.contains(widget.value)) {
             indexdb.remove(widget.value);
-            print(indexdb);
           } else {
             print('cannot select more than 10 options');
           }
@@ -375,29 +327,16 @@ class __buildItemState extends State<_buildItem> {
   }
 }
 
-// Joe work on this //
 //there is already a loading page
 class LoadPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     _dbs.checkIfAdmin();
     _dbs.getIndexDB().then((value) {
-      // Future.delayed(
-      // const Duration(seconds: 2));
-
       indexdb = _dbs.getTheList(value);
-      print('first time');
-      print(indexdb);
-      print('am i the admin');
-      if (_dbs.getIsAdmin()) {
-        print('yeah, you the boss');
-      } else {
-        print('nope, you are a chump');
-      }
     });
     Timer(Duration(seconds: 1), () {
       if (indexdb.length == 1) {
-        print('after timer');
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => formStart()));
       } else {
@@ -435,10 +374,7 @@ class HomePage extends State<MainPage> {
   _onItemTapped(int index) async {
     _dbs.checkIfAdmin();
     _selectedIndex = index;
-    print(_selectedIndex);
-    print(index);
     if (_selectedIndex == 0) {
-      print('I went there');
       indexdb = [18];
       await _dbs.updateUserData(indexdb);
       _dbs.setTheList(indexdb);
@@ -466,11 +402,7 @@ class HomePage extends State<MainPage> {
           : Navigator.push(
               context, MaterialPageRoute(builder: (context) => Calendar()));
     }
-    return loading
-        ? Loading()
-        : setState(() {
-            //Calendar();
-          });
+    return loading ? Loading() : setState(() {});
   }
 
   // Builds container for each event displayed //
@@ -558,18 +490,17 @@ class HomePage extends State<MainPage> {
                           children: [
                             IconButton(
                               padding: EdgeInsets.all(.1),
-                              onPressed: isPressed == true
-                                  ? null
-                                  : () {
-                                      setState(() {
-                                        // likedValue += 1;
-                                        // FirebaseFirestore.instance
-                                        //     .collection("Events")
-                                        //     .doc(docID)
-                                        //     .update({'Interest': likedValue});
-                                        isPressed = !isPressed;
-                                      });
-                                    },
+                              onPressed: null, //isPressed == true
+                              // : () {
+                              //     setState(() {
+                              //       // likedValue += 1;
+                              //       // FirebaseFirestore.instance
+                              //       //     .collection("Events")
+                              //       //     .doc(docID)
+                              //       //     .update({'Interest': likedValue});
+                              //       isPressed = !isPressed;
+                              //     });
+                              //   },
                               icon: Icon(Icons.favorite),
                               color: maroon,
                             ),
@@ -667,18 +598,17 @@ class HomePage extends State<MainPage> {
                           children: [
                             IconButton(
                               padding: EdgeInsets.all(.1),
-                              onPressed: isPressed == true
-                                  ? null
-                                  : () {
-                                      setState(() {
-                                        // likedValue += 1;
-                                        // FirebaseFirestore.instance
-                                        //     .collection("Events")
-                                        //     .doc(docID)
-                                        //     .update({'Interest': likedValue});
-                                        isPressed = true;
-                                      });
-                                    },
+                              onPressed: null, //isPressed == true
+                              // : () {
+                              //     setState(() {
+                              //       // likedValue += 1;
+                              //       // FirebaseFirestore.instance
+                              //       //     .collection("Events")
+                              //       //     .doc(docID)
+                              //       //     .update({'Interest': likedValue});
+                              //       isPressed = !isPressed;
+                              //     });
+                              //   },
                               icon: Icon(Icons.favorite),
                               color: maroon,
                             ),
@@ -697,44 +627,13 @@ class HomePage extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
-    //return loading ? Loading() :
     _dbs.checkIfAdmin();
-    //Navigator.push(
-    //  context, MaterialPageRoute(builder:(context) => Loading()));
-
-    // _dbs.getIndexDB();
-    // indexdb = _dbs.getTheList();
-    // print('first time');
-    // print(indexdb);
-
     _dbs.getIndexDB().then((value) {
-      // Future.delayed(
-      // const Duration(seconds: 2));
-
       indexdb = _dbs.getTheList(value);
-      print('first time');
-      print(indexdb);
     });
     Future.delayed(const Duration(seconds: 2));
-    print('after delay');
-    Timer(Duration(seconds: 1), () {
-      print('after timer');
-    });
-    // if (indexdb.length == 1) {
-    //   print('the index is 18');
-    //   Navigator.push(
-    //       context, MaterialPageRoute(builder: (context) => MainPage()));
-    // }
-    // int semaphore = _dbs.getSemaphore();
-    // if (semaphore == 1) {
-    //   Navigator.push(
-    //        context, MaterialPageRoute(builder: (context) => MainPage()));
-    // }
-    // _dbs.getHomeList(context);
-    // print('second time');
-    // print(indexdb);
-    //print(newIndex);
-    //User user = Provider.of<User>(context);
+    Timer(Duration(seconds: 1), () {});
+
     if (_dbs.getIsAdmin()) {
       return MaterialApp(
           debugShowCheckedModeBanner: false,
@@ -825,7 +724,6 @@ class HomePage extends State<MainPage> {
                   // Implementation for saving selection goes here
                 },
               )));
-      //}); return MainPage();
     } else {
       return MaterialApp(
           debugShowCheckedModeBanner: false,
@@ -835,7 +733,6 @@ class HomePage extends State<MainPage> {
                 // ignore: prefer_const_constructors
                 title: InkWell(
                     onTap: () {
-                      //"The Hub @ RELLIS",
                       Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -886,7 +783,6 @@ class HomePage extends State<MainPage> {
                     icon: Icon(
                       Icons.person,
                       color: Colors.white,
-                      //onPressed: formStart(),
                     ),
                     label: 'Profile',
                   ),
@@ -918,20 +814,4 @@ class HomePage extends State<MainPage> {
               )));
     }
   }
-
-  // String uid = FirebaseAuth.instance.currentUser!.uid;
-  //print(DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid).getIndexDB());
-  //var uid = await _auth.getUID();
-  //Future future = DatabaseService(uid: uid).getIndexDB();
-
-  //List<int> newIndex = DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid).getIndexDB() as List<int>;
-  //List<int> newIndex = DatabaseService(uid: '').getIndexDB() as List<int>;
-  //  List newIndex = await FirebaseFirestore.instance
-  //      .doc(FirebaseAuth.instance.currentUser!.uid)
-  //      .get('EventIDs');
-
-  // Future getIndexDB(DocumentSnapshot document) async {
-  //   FirebaseFirestore.instance.collection('Users').doc(uid).get();
-  //   newIndex = document['GroupIDs'];
-  //}
 }

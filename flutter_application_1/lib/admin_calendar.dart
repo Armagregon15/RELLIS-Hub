@@ -502,7 +502,6 @@ class AdminCalendarState extends State<AdminCalendar> {
 
   void _initializeEventColor() {
     // ignore: deprecated_member_use
-    //this._colorCollection = <Color>[];
     _colorCollection.add(const Color(0xFF0F8644));
     _colorCollection.add(const Color(0xFF8B1FA9));
     _colorCollection.add(const Color(0xFFD20100));

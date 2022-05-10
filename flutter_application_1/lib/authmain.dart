@@ -1,5 +1,4 @@
 // ignore_for_file: unnecessary_null_comparison
-
 import 'package:flutter_application_1/setUp.dart';
 import 'database_service.dart';
 import 'user.dart';
@@ -48,7 +47,6 @@ class AuthService {
       return user;
     } catch (error) {
       print('here');
-      // print(error.toString());
       return null;
     }
   }
@@ -63,7 +61,6 @@ class AuthService {
       await DatabaseService(uid: user.uid).updateUserData(indexdb);
       return _userFromFirebaseUser(user);
     } catch (error) {
-      //print(error.toString());
       return null;
     }
   }
