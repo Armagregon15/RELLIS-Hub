@@ -16,8 +16,11 @@ import 'calendar.dart';
 Color maroon = const Color(0xFF500000);
 List<int> indexdb = [18];
 final AuthService _auth = AuthService();
+<<<<<<< Updated upstream
 DatabaseService _dbs = DatabaseService(uid: '123');
 bool loading = false;
+=======
+>>>>>>> Stashed changes
 
 class formStart extends StatefulWidget {
   @override
@@ -304,6 +307,7 @@ class _interestFormState extends State<interestForm> {
             try {
               //var uid = await _auth.getUID();
               //MyUser _auth.user.uid;
+<<<<<<< Updated upstream
               // indexdb = _dbs.getTheList();
               // print('to user ->');
               // print(indexdb);
@@ -313,6 +317,9 @@ class _interestFormState extends State<interestForm> {
               print('new test');
               print(indexdb);
               print('new test');
+=======
+              DatabaseService(uid: uid).updateUserData(indexdb);
+>>>>>>> Stashed changes
             } catch (error) {
               loading ? Loading() : print(error.toString());
 
@@ -355,8 +362,13 @@ class __buildItemState extends State<_buildItem> {
         setState(() {
           selected = !selected;
           print(widget.value);
+<<<<<<< Updated upstream
           //String stuff = _dbs.getIndexDB().toString();
           //print(stuff);
+=======
+          String stuff = DatabaseService(uid: '').getIndexDB().toString();
+          print(stuff);
+>>>>>>> Stashed changes
           if (selected == false) {
             if (!indexdb.contains(widget.value) && indexdb.length < 10) {
               indexdb.add(widget.value);
@@ -570,6 +582,7 @@ class HomePage extends State<MainPage> {
     // print(indexdb);
     //print(newIndex);
     //User user = Provider.of<User>(context);
+<<<<<<< Updated upstream
     if (_dbs.getIsAdmin()) {
       return MaterialApp(
           debugShowCheckedModeBanner: false,
@@ -591,6 +604,38 @@ class HomePage extends State<MainPage> {
                       style: TextStyle(fontFamily: "Roboto", fontSize: 30),
                     )),
                 backgroundColor: maroon,
+=======
+    return MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'The HUB at RELLIS Home',
+        home: Scaffold(
+            body: StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection('Events')
+                    .where('GroupID',
+                        whereIn: [18])//DatabaseService(uid: '').getTheList())
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return Text("Loading");
+                  } else {
+                    return ListView.builder(
+                      itemExtent: MediaQuery.of(context).size.height / 3.5,
+                      itemCount: snapshot.data?.docs.length,
+                      itemBuilder: (context, index) =>
+                          _buildHomeItem(context, snapshot.data!.docs[index]),
+                    );
+                  }
+                }),
+            bottomNavigationBar: BottomNavigationBar(
+              selectedFontSize: 15,
+              // ignore: prefer_const_constructors
+              selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
+              // ignore: prefer_const_constructors
+              selectedIconTheme: IconThemeData(
+                color: Colors.white,
+                size: 35,
+>>>>>>> Stashed changes
               ),
               body: StreamBuilder<QuerySnapshot>(
                   stream: FirebaseFirestore.instance
