@@ -42,22 +42,15 @@ class DatabaseService {
 
   List<int> getTheList(thelist) {
     Future.delayed(const Duration(seconds: 2));
-    print('why');
-    print(thelist);
-    print('why');
     if (thelist.isNotEmpty) {
       return thelist;
     } else {
-      print('i did a thing that was bad');
       return [18];
     }
   }
 
   Future<void> updateUserData(groupIDs) async {
     var uid = await _auth.getUID();
-    print('updating');
-    print(uid);
-    print(groupIDs);
     return await userCollection
         .doc(uid)
         .set({'GroupIDs': groupIDs, 'UserID': uid});
@@ -83,7 +76,6 @@ class DatabaseService {
 
   Future<List<int>> getIndexDB() async {
     var uid = await _auth.getUID();
-    print(uid);
     var thisguy = await userCollection.doc(uid.toString()).get();
 
     Map<String, dynamic> data = thisguy.data() as Map<String, dynamic>;
