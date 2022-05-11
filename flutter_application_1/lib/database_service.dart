@@ -9,9 +9,13 @@ import 'package:flutter/material.dart';
 
 class DatabaseService {
   final String uid;
+<<<<<<< Updated upstream
   bool isAdmin = false;
   int semaphore = 0;
   List<int> thelist = [];
+=======
+  static List<dynamic> thelist = [];
+>>>>>>> Stashed changes
   DatabaseService({required this.uid});
   final AuthService _auth = AuthService();
   //collection reference
@@ -20,6 +24,7 @@ class DatabaseService {
 
   final CollectionReference eventCollection =
       FirebaseFirestore.instance.collection('Events');
+<<<<<<< Updated upstream
   void setTheList(List<int> newList) {
     thelist = newList;
   }
@@ -62,6 +67,10 @@ class DatabaseService {
       print('i did a thing that was bad');
       return [18];
     }
+=======
+  List<int> getTheList() {
+    return thelist as List<int>;
+>>>>>>> Stashed changes
   }
 
   Future<void> updateUserData(groupIDs) async {
@@ -98,6 +107,7 @@ class DatabaseService {
     var thisguy = await userCollection.doc(uid.toString()).get();
 
     Map<String, dynamic> data = thisguy.data() as Map<String, dynamic>;
+<<<<<<< Updated upstream
     //print('groupids');
     //print(data['GroupIDs'].length);
     //print('groupids');
@@ -116,6 +126,16 @@ class DatabaseService {
     //print(thisguy.toString());
     //print(thisguy);
 
+=======
+
+    print(data['GroupIDs']);
+    thelist = data['GroupIDs'];
+    print('look here');
+    print(thelist);
+    print('look here');
+    print(thisguy.toString());
+    print(thisguy);
+>>>>>>> Stashed changes
     //var docs = thisguy.docs.map(json.decode(json.encode(doc.data())));
     // for (var snapshot in thisguy.docs) {
     //   Map<String, dynamic> data = snapshot.get(1);
@@ -131,10 +151,14 @@ class DatabaseService {
     //   }
     //   return newIndex;
     // }
+<<<<<<< Updated upstream
     // semaphore++;
     // print('semaphore');
     // print(semaphore);
     return thelist;
+=======
+    return data['GroupIDs'];
+>>>>>>> Stashed changes
   }
   // Future getIndexDB() async {
   //   var uid = await _auth.getUID();
