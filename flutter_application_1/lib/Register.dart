@@ -33,23 +33,24 @@ class _RegisterState extends State<Register> {
             appBar: AppBar(
               backgroundColor: const Color(0xFF500000),
               elevation: 0.0,
-              title: Text('The Hub @ RELLIS'),
+              title: const Text('The Hub @ RELLIS'),
               actions: <Widget>[
                 FlatButton.icon(
-                  icon: Icon(Icons.person),
-                  label: Text('Sign In'),
+                  icon: const Icon(Icons.person),
+                  label: const Text('Sign In'),
                   textColor: Colors.white,
                   onPressed: () => widget.toggleView(),
                 ),
               ],
             ),
             body: Container(
-              padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
+              padding:
+                  const EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
               child: Form(
                 key: _formKey,
                 child: Column(
                   children: <Widget>[
-                    SizedBox(height: 20.0),
+                    const SizedBox(height: 20.0),
                     TextFormField(
                       decoration:
                           textInputDecoration.copyWith(hintText: 'Email'),
@@ -59,7 +60,7 @@ class _RegisterState extends State<Register> {
                         setState(() => email = val);
                       },
                     ),
-                    SizedBox(height: 20.0),
+                    const SizedBox(height: 20.0),
                     TextFormField(
                       decoration:
                           textInputDecoration.copyWith(hintText: 'Password'),
@@ -71,10 +72,10 @@ class _RegisterState extends State<Register> {
                         setState(() => password = val);
                       },
                     ),
-                    SizedBox(height: 20.0),
+                    const SizedBox(height: 20.0),
                     RaisedButton(
                         color: const Color(0xFF500000),
-                        child: Text(
+                        child: const Text(
                           'Register',
                           style: TextStyle(color: Colors.white),
                         ),
@@ -101,10 +102,10 @@ class _RegisterState extends State<Register> {
                             }
                           }
                         }),
-                    SizedBox(height: 12.0),
+                    const SizedBox(height: 12.0),
                     Text(
                       error,
-                      style: TextStyle(color: Colors.red, fontSize: 14.0),
+                      style: const TextStyle(color: Colors.red, fontSize: 14.0),
                     )
                   ],
                 ),

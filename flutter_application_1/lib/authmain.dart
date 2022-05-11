@@ -14,7 +14,6 @@ class AuthService {
 
   // auth change user stream
   Stream<MyUser?>? get user {
-    print('here');
     try {
       return _auth
           .authStateChanges()
@@ -40,13 +39,11 @@ class AuthService {
   // sign in with email and password
   Future signInWithEmailAndPassword(String email, String password) async {
     try {
-      print('here fool');
       UserCredential result = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
       User user = result.user!;
       return user;
     } catch (error) {
-      print('here');
       return null;
     }
   }
