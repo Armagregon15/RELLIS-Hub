@@ -537,6 +537,7 @@ class AdminCalendarState extends State<AdminCalendar> {
     );
   }
 
+//Gives each event a random color
   void _initializeEventColor() {
     // ignore: deprecated_member_use
     _colorCollection.add(const Color(0xFF0F8644));
@@ -611,6 +612,8 @@ class AdminCalendarState extends State<AdminCalendar> {
   }
 }
 
+//Will get the event data to store on calendar as appointments
+//Appointments is from the syncfusion package
 class MeetingDataSource extends CalendarDataSource {
   MeetingDataSource(List<Events> source) {
     appointments = source;
@@ -672,7 +675,9 @@ class MeetingDataSource extends CalendarDataSource {
   }
 }
 
+// Creates event class
 class Events {
+// intitalize data
   String? eventName;
   int? groupID;
   String? docID;
@@ -685,6 +690,7 @@ class Events {
   String? location;
   String? organizer;
 
+// constructor
   Events({
     this.eventName,
     this.groupID,
@@ -698,6 +704,7 @@ class Events {
     this.organizer,
   });
 
+//gets data from database and stores in a event object that will then be used to populate interface
   static Events fromFireBaseSnapShotData(dynamic element, Color color) {
     return Events(
       eventName: element.doc.data()!['EventName'],
