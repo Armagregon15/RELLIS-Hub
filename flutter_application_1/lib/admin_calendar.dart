@@ -20,12 +20,18 @@ class AdminCalendar extends StatefulWidget {
 }
 
 class AdminCalendarState extends State<AdminCalendar> {
+  // Declaration of all variables used throughout AdminCalendarState Class //
   final List<Color> _colorCollection = <Color>[];
   final fireStoreReference = FirebaseFirestore.instance;
   MeetingDataSource? events;
   final List<String> options = <String>['Add', 'Delete'];
   bool isInitialLoaded = false;
   String error = " ";
+
+  // Used for bottomnavbar //
+  int _selectedIndex = 0;
+
+  // These variables are used when interacting with database both delete and add //
   String date = "";
   String toDate = "";
   String fromDate = "";
@@ -35,13 +41,16 @@ class AdminCalendarState extends State<AdminCalendar> {
   String groupName = "";
   String location = "";
   String organizer = "";
-  CollectionReference oEvents = FirebaseFirestore.instance.collection('Events');
-  int _selectedIndex = 0;
 
+  // Creates a refrence object of a collection in database //
+  CollectionReference oEvents = FirebaseFirestore.instance.collection('Events');
+
+  // This is a function that adds a user to the database //
   Future? addUser(String date, String eventName, int? groupID, String toDate,
       String fromDate) {
     // This map needs to be taken out. At the moment it is how events are given a group name when adding a new event to the Events collection. //
-    //It needs to be replaced by placing some kind of refrence at line 154 to the documents name //
+    // It needs to be replaced by placing some kind of refrence at line 154 to the documents name //
+    // This is a key value pair table that is a temporary fix to link the name of the group to the the groupID //
     Map<int, String> groups = {
       0: "Sports",
       1: "TAMUC",
@@ -63,6 +72,8 @@ class AdminCalendarState extends State<AdminCalendar> {
       17: "PVAMU",
       18: "RELLIS"
     };
+
+    // Parsing date //
     toDate = date + " " + toDate; // + ":00";
     fromDate = date + " " + fromDate; // + "00";
 
@@ -72,6 +83,7 @@ class AdminCalendarState extends State<AdminCalendar> {
           DateFormat("yyyy-MM-dd h:mm a").parseStrict(fromDate);
       Timestamp fromTimeStamp = Timestamp.fromDate(fromDates);
       Timestamp toTimeStamp = Timestamp.fromDate(toDates);
+      // This is where the magic happens, the app takes the user input and assigns it to local variables which are then passed to the collection and creates a document //
       return fireStoreReference
           .collection("Events")
           .doc()
@@ -96,6 +108,7 @@ class AdminCalendarState extends State<AdminCalendar> {
     }
   }
 
+  // This function deletes the user by docID //
   Future delUser(String eventName, int? groupID) {
     return fireStoreReference
         .collection("Events")
@@ -130,18 +143,21 @@ class AdminCalendarState extends State<AdminCalendar> {
     });
   }
 
+  // This is the form that pops up after pressing the "Add Event" button //
   Widget _buildPopupDialogAdd(BuildContext context) {
     final addForm = GlobalKey<FormState>();
-    // This variable is being used I have no idea why it thinks it's not //
+    // This variable is being used. I have no idea why it thinks it's not //
     int? newValue = 0;
     return AlertDialog(
       title: const Text('Add Event'),
+      // Creates a form which has a key that gives it an identifier //
       content: Form(
         key: addForm,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
+            // One of the fields that takes user input and assigns it to local var //
             TextFormField(
                 validator: (value) {
                   if (value!.isEmpty) {
@@ -156,6 +172,7 @@ class AdminCalendarState extends State<AdminCalendar> {
                   hintText: 'Enter the event name...',
                   labelText: 'Event Name',
                 )),
+            // One of the fields that takes user input and assigns it to local var //
             TextFormField(
                 validator: (value) {
                   if (value!.isEmpty) {
@@ -170,6 +187,7 @@ class AdminCalendarState extends State<AdminCalendar> {
                   hintText: 'Enter the organizer email...',
                   labelText: 'Organizer Email',
                 )),
+            // One of the fields that takes user input and assigns it to local var //
             TextFormField(
                 validator: (value) {
                   if (value!.isEmpty) {
@@ -184,6 +202,7 @@ class AdminCalendarState extends State<AdminCalendar> {
                   hintText: 'Enter the location...',
                   labelText: 'Event Location',
                 )),
+            // One of the fields that takes user input and assigns it to local var //
             TextFormField(
                 validator: (value) {
                   if (value!.isEmpty) {
@@ -198,6 +217,7 @@ class AdminCalendarState extends State<AdminCalendar> {
                   hintText: 'yyyy-mm-dd',
                   labelText: 'Date (yyyy-mm-dd)',
                 )),
+            // One of the fields that takes user input and assigns it to local var //
             TextFormField(
                 validator: (value) {
                   if (value!.isEmpty) {
@@ -211,6 +231,7 @@ class AdminCalendarState extends State<AdminCalendar> {
                   hintText: 'h:mm AM',
                   labelText: 'From (h:mm) (AM/PM)',
                 )),
+            // One of the fields that takes user input and assigns it to local var //
             TextFormField(
                 validator: (value) {
                   if (value!.isEmpty) {
@@ -225,6 +246,9 @@ class AdminCalendarState extends State<AdminCalendar> {
                   hintText: 'h:mm PM',
                   labelText: 'To (h:mm) (AM/PM)',
                 )),
+            // This is a streambuilder that querys the database for all documents in the groups collection //
+            // It then takes those ducments and populates a drop down menu with them so the user can choose what group the event belongs to //
+            // For detailed info on how streambuilder works see setup.dart //
             StreamBuilder<QuerySnapshot>(
                 stream:
                     FirebaseFirestore.instance.collection('Groups').snapshots(),
@@ -258,6 +282,7 @@ class AdminCalendarState extends State<AdminCalendar> {
                   );
                 }),
             Padding(
+              // button that submits the field once filled using a validator to make sure the right info is entered //
               padding: const EdgeInsets.symmetric(vertical: 16.0),
               child: ElevatedButton(
                 style:
@@ -284,6 +309,7 @@ class AdminCalendarState extends State<AdminCalendar> {
         ),
       ),
       actions: <Widget>[
+        // Button that closes add / delete menu //
         TextButton(
           style: TextButton.styleFrom(
             primary: const Color(0xFF500000), // This is a custom color variable
@@ -297,17 +323,24 @@ class AdminCalendarState extends State<AdminCalendar> {
     );
   }
 
+  // This function deletes events //
+  // There is a bug with this feature where for a second there are two items in the drop down with the same unqiue identfier causing an error but quickly dissappears //
+  // Blink and you miss it sort of thing //
   Widget _buildPopupDialogDelete(BuildContext context) {
     final delForm = GlobalKey<FormState>();
     String? newValue = "";
     return AlertDialog(
       title: const Text('Delete Event'),
+      // Creates form so the app can take user submission //
       content: Form(
+        // unique identifier //
         key: delForm,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
+            // There are no text fields because all they need to do is choose and event and then press submit to confirm deletion //
+            // For detailed info on how streambuilder works see setup.dart //
             StreamBuilder<QuerySnapshot>(
                 stream:
                     FirebaseFirestore.instance.collection('Events').snapshots(),
@@ -343,6 +376,7 @@ class AdminCalendarState extends State<AdminCalendar> {
                   );
                 }),
             Padding(
+              // Button for deletion confirmation //
               padding: const EdgeInsets.symmetric(vertical: 16.0),
               child: ElevatedButton(
                 style:
@@ -360,6 +394,7 @@ class AdminCalendarState extends State<AdminCalendar> {
         ),
       ),
       actions: <Widget>[
+        // Button for closing //
         TextButton(
           style: TextButton.styleFrom(
             primary: const Color(0xFF500000), // This is a custom color variable
@@ -373,6 +408,7 @@ class AdminCalendarState extends State<AdminCalendar> {
     );
   }
 
+  // This is a function that pushes an error on the screen if all the fields are messed up in the add form //
   submitError() {
     return AlertDialog(
       title: const Text('Submission Error'),
@@ -394,6 +430,7 @@ class AdminCalendarState extends State<AdminCalendar> {
     );
   }
 
+// Widget that builds the calendar itself //
   @override
   Widget build(BuildContext context) {
     _onItemTapped(int index) async {
