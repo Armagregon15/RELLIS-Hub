@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+//class to store event information from database
 class Events {
   String? eventName;
   int? groupID;

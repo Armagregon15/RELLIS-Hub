@@ -98,7 +98,7 @@ class _LoginHub extends State<LoginHub> {
                                   'Could not sign in with those credentials';
                             });
                           } else {
-                            //if log in successful, 
+                            //if log in successful, redirect to LoadPage
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -119,6 +119,7 @@ class _LoginHub extends State<LoginHub> {
                       //onFieldSubmitted: 
                     ),
                     SizedBox(height: 20.0),
+                    //sign in button
                     RaisedButton(
                         color: const Color(0xFF500000),
                         child: Text(
@@ -131,6 +132,7 @@ class _LoginHub extends State<LoginHub> {
                             setState(() => loading = true);
                             dynamic result = await _auth
                                 .signInWithEmailAndPassword(email, password);
+                            //if everything doesn't validate show error message
                             if (result == null) {
                               setState(() {
                                 loading = false;
@@ -146,7 +148,7 @@ class _LoginHub extends State<LoginHub> {
                           }
                         }),
                     SizedBox(height: 12.0),
-                    Text(
+                    Text(//error check styling
                       error,
                       style: TextStyle(color: Colors.red, fontSize: 14.0),
                     ),
