@@ -12,7 +12,8 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'admin_calendar.dart';
 import 'calendar.dart';
 import 'package:intl/intl.dart';
-//import 'time';
+import 'authenticate.dart';
+import 'authmain.dart';
 
 Color maroon = const Color(0xFF500000);
 List<int> indexdb = [18];
@@ -146,26 +147,12 @@ class _schoolFormState extends State<schoolForm> {
               backgroundColor: maroon,
               onPressed: () async {
                 try {
-                  //var uid = await _auth.getUID();
-                  //MyUser _auth.user.uid;
-                  // indexdb = _dbs.getTheList();
-                  // print('to user ->');
-                  // print(indexdb);
                   loading ? Loading() : _dbs.updateUserData(indexdb);
-                  //DatabaseService(uid: uid).getIndexDB();
-
-                  print('new test');
-                  print(indexdb);
-                  print('new test');
                 } catch (error) {
                   loading ? Loading() : print(error.toString());
 
                   return null;
                 }
-                //print(_dbs.getTheList());
-                //indexdb = _dbs.getTheList();
-                //print('new test');
-                //print(indexdb);
                 loading
                     ? Loading()
                     : Navigator.push(context,
@@ -231,26 +218,11 @@ class _clubFormState extends State<clubForm> {
           backgroundColor: maroon,
           onPressed: () async {
             try {
-              //var uid = await _auth.getUID();
-              //MyUser _auth.user.uid;
-              // indexdb = _dbs.getTheList();
-              // print('to user ->');
-              // print(indexdb);
               loading ? Loading() : _dbs.updateUserData(indexdb);
-              //DatabaseService(uid: uid).getIndexDB();
-
-              print('new test');
-              print(indexdb);
-              print('new test');
             } catch (error) {
               loading ? Loading() : print(error.toString());
-
               return null;
             }
-            //print(_dbs.getTheList());
-            //indexdb = _dbs.getTheList();
-            //print('new test');
-            //print(indexdb);
             loading
                 ? Loading()
                 : Navigator.push(context,
@@ -303,26 +275,12 @@ class _interestFormState extends State<interestForm> {
           backgroundColor: maroon,
           onPressed: () async {
             try {
-              //var uid = await _auth.getUID();
-              //MyUser _auth.user.uid;
-              // indexdb = _dbs.getTheList();
-              // print('to user ->');
-              // print(indexdb);
               loading ? Loading() : _dbs.updateUserData(indexdb);
-              //DatabaseService(uid: uid).getIndexDB();
-
-              print('new test');
-              print(indexdb);
-              print('new test');
             } catch (error) {
               loading ? Loading() : print(error.toString());
 
               return null;
             }
-            //print(_dbs.getTheList());
-            //indexdb = _dbs.getTheList();
-            //print('new test');
-            //print(indexdb);
             loading
                 ? Loading()
                 : Navigator.push(context,
@@ -345,7 +303,6 @@ class __buildItemState extends State<_buildItem> {
   bool selected = true;
   int index = 0;
   List<int> tempIndex = [18];
-  //indexdb = [18];
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -355,14 +312,12 @@ class __buildItemState extends State<_buildItem> {
       onTap: () {
         setState(() {
           selected = !selected;
-          print(widget.value);
           if (selected == false) {
             if (!indexdb.contains(widget.value) && indexdb.length < 10) {
               indexdb.add(widget.value);
             }
           } else if (indexdb.contains(widget.value)) {
             indexdb.remove(widget.value);
-            print(indexdb);
           } else {
             print('cannot select more than 10 options');
           }
@@ -372,29 +327,16 @@ class __buildItemState extends State<_buildItem> {
   }
 }
 
-// Joe work on this //
 //there is already a loading page
 class LoadPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     _dbs.checkIfAdmin();
     _dbs.getIndexDB().then((value) {
-      // Future.delayed(
-      // const Duration(seconds: 2));
-
       indexdb = _dbs.getTheList(value);
-      print('first time');
-      print(indexdb);
-      print('am i the admin');
-      if (_dbs.getIsAdmin()) {
-        print('yeah, you the boss');
-      } else {
-        print('nope, you are a chump');
-      }
     });
     Timer(Duration(seconds: 1), () {
       if (indexdb.length == 1) {
-        print('after timer');
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => formStart()));
       } else {
@@ -425,17 +367,14 @@ class MainPage extends StatefulWidget {
 
 class HomePage extends State<MainPage> {
   int _selectedIndex = 0;
-
+  bool isPressed = false;
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   static List? userEvents = [];
 
   _onItemTapped(int index) async {
     _dbs.checkIfAdmin();
     _selectedIndex = index;
-    print(_selectedIndex);
-    print(index);
     if (_selectedIndex == 0) {
-      print('I went there');
       indexdb = [18];
       await _dbs.updateUserData(indexdb);
       _dbs.setTheList(indexdb);
@@ -463,28 +402,44 @@ class HomePage extends State<MainPage> {
           : Navigator.push(
               context, MaterialPageRoute(builder: (context) => Calendar()));
     }
-    return loading
-        ? Loading()
-        : setState(() {
-            //Calendar();
-          });
+    return loading ? Loading() : setState(() {});
   }
 
   // Builds container for each event displayed //
-  Widget _buildHomeItem(BuildContext context, DocumentSnapshot document) {
+  Widget _buildHomeItemUser(BuildContext context, DocumentSnapshot document) {
     Timestamp t = document['EventDate'];
     Timestamp from = document['EventDate'];
     Timestamp to = document['to'];
+    String docID = document.id;
     DateTime d = t.toDate();
     DateTime firstHere = from.toDate();
     DateTime here = to.toDate();
     String formattedDate = DateFormat("yyyy-MM-dd").format(d);
     String formattedFrom = DateFormat("h:mm a").format(firstHere);
     String formattedTo = DateFormat("h:mm a").format(here);
+    int likedValue = 0;
+    bool isPressed = false;
+
+    infoPage() {
+      return AlertDialog(
+        title: Text(document["EventName"]),
+        content: SingleChildScrollView(
+          child: ListBody(
+            children: <Widget>[
+              Text("Group's Name: " + document["GroupName"] + "\n"),
+              Text("Event Date: " + formattedDate + "\n"),
+              Text("Event Time: " + formattedFrom + " - " + formattedTo + "\n"),
+              Text("Event Location: " + document["Location"] + "\n"),
+              Text("Contact Organizer: " + document["Organizer"] + "\n"),
+            ],
+          ),
+        ),
+      );
+    }
+
     return loading
         ? Loading()
         : Container(
-            //color: Colors.white10,
             decoration: BoxDecoration(
                 color: Color.fromARGB(255, 0, 0, 0),
                 backgroundBlendMode: BlendMode.srcOver,
@@ -492,47 +447,175 @@ class HomePage extends State<MainPage> {
                     color: Color.fromARGB(255, 180, 179, 175),
                     width: 10,
                     style: BorderStyle.solid)),
-            height: MediaQuery.of(context).size.height / 5,
             child: Center(
               child: Card(
                 child: Column(
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: SizedBox(
-                        height: 190,
-                        child: Column(
+                    Container(
+                        padding: EdgeInsets.all(15),
+                        child: Center(
+                            child: Text(
+                          document['GroupName'],
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
+                        ))),
+                    Container(
+                        padding: EdgeInsets.all(20),
+                        child: Center(child: Text(document['EventName']))),
+                    Container(
+                        padding: EdgeInsets.all(10),
+                        child: Center(
+                            child: Text(formattedDate +
+                                "  " +
+                                formattedFrom +
+                                " - " +
+                                formattedTo))),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Column(
                           children: [
-                            Container(
-                                padding: const EdgeInsets.all(20),
-                                child: Center(
-                                    child: Text(
-                                  document['GroupName'],
-                                  style: TextStyle(fontSize: 20),
-                                ))),
-                            Container(
-                                padding: const EdgeInsets.all(20),
-                                child:
-                                    Center(child: Text(document['EventName']))),
-                            Container(
-                                padding: const EdgeInsets.all(10),
-
-                                child: Center(
-                                    child: Text("DATE: " +
-                                        formattedDate +
-                                        "  " +
-                                        " @ " +
-                                        formattedFrom +
-                                        " - " +
-                                        formattedTo))),
-                            Icon(
-                              Icons.menu_book,
+                            IconButton(
+                              onPressed: () => showDialog(
+                                context: context,
+                                builder: (context) => infoPage(),
+                              ),
+                              icon: Icon(Icons.info),
                               color: maroon,
                             ),
-
+                            //Text(""),
                           ],
                         ),
-                      ),
+                        Row(
+                          children: [
+                            IconButton(
+                              padding: EdgeInsets.all(.1),
+                              onPressed: null, //isPressed == true
+                              // : () {
+                              //     setState(() {
+                              //       // likedValue += 1;
+                              //       // FirebaseFirestore.instance
+                              //       //     .collection("Events")
+                              //       //     .doc(docID)
+                              //       //     .update({'Interest': likedValue});
+                              //       isPressed = !isPressed;
+                              //     });
+                              //   },
+                              icon: Icon(Icons.favorite),
+                              color: maroon,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                elevation: 6,
+              ),
+            ),
+          );
+  }
+
+  Widget _buildHomeItemAdmin(BuildContext context, DocumentSnapshot document) {
+    Timestamp t = document['EventDate'];
+    Timestamp from = document['EventDate'];
+    Timestamp to = document['to'];
+    String docID = document.id;
+    DateTime d = t.toDate();
+    DateTime firstHere = from.toDate();
+    DateTime here = to.toDate();
+    String formattedDate = DateFormat("yyyy-MM-dd").format(d);
+    String formattedFrom = DateFormat("h:mm a").format(firstHere);
+    String formattedTo = DateFormat("h:mm a").format(here);
+    int likedValue = document["Interest"];
+
+    infoPage() {
+      return AlertDialog(
+        title: Text(document["EventName"]),
+        content: SingleChildScrollView(
+          child: ListBody(
+            children: <Widget>[
+              Text("Group's Name: " + document["GroupName"] + "\n"),
+              Text("Event Date: " + formattedDate + "\n"),
+              Text("Event Time: " + formattedFrom + " - " + formattedTo + "\n"),
+              Text("Event Location: " + document["Location"] + "\n"),
+              Text("Contact Organizer: " + document["Organizer"] + "\n"),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return loading
+        ? Loading()
+        : Container(
+            decoration: BoxDecoration(
+                color: Color.fromARGB(255, 0, 0, 0),
+                backgroundBlendMode: BlendMode.srcOver,
+                border: Border.all(
+                    color: Color.fromARGB(255, 180, 179, 175),
+                    width: 10,
+                    style: BorderStyle.solid)),
+            child: Center(
+              child: Card(
+                child: Column(
+                  children: [
+                    Container(
+                        padding: EdgeInsets.all(15),
+                        child: Center(
+                            child: Text(
+                          document['GroupName'],
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
+                        ))),
+                    Container(
+                        padding: EdgeInsets.all(20),
+                        child: Center(child: Text(document['EventName']))),
+                    Container(
+                        padding: EdgeInsets.all(10),
+                        child: Center(
+                            child: Text(formattedDate +
+                                "  " +
+                                formattedFrom +
+                                " - " +
+                                formattedTo))),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Column(
+                          children: [
+                            IconButton(
+                              onPressed: () => showDialog(
+                                context: context,
+                                builder: (context) => infoPage(),
+                              ),
+                              icon: Icon(Icons.info),
+                              color: maroon,
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            IconButton(
+                              padding: EdgeInsets.all(.1),
+                              onPressed: null, //isPressed == true
+                              // : () {
+                              //     setState(() {
+                              //       // likedValue += 1;
+                              //       // FirebaseFirestore.instance
+                              //       //     .collection("Events")
+                              //       //     .doc(docID)
+                              //       //     .update({'Interest': likedValue});
+                              //       isPressed = !isPressed;
+                              //     });
+                              //   },
+                              icon: Icon(Icons.favorite),
+                              color: maroon,
+                            ),
+                            Text(document["Interest"].toString())
+                          ],
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -544,44 +627,13 @@ class HomePage extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
-    //return loading ? Loading() :
     _dbs.checkIfAdmin();
-    //Navigator.push(
-    //  context, MaterialPageRoute(builder:(context) => Loading()));
-
-    // _dbs.getIndexDB();
-    // indexdb = _dbs.getTheList();
-    // print('first time');
-    // print(indexdb);
-
     _dbs.getIndexDB().then((value) {
-      // Future.delayed(
-      // const Duration(seconds: 2));
-
       indexdb = _dbs.getTheList(value);
-      print('first time');
-      print(indexdb);
     });
     Future.delayed(const Duration(seconds: 2));
-    print('after delay');
-    Timer(Duration(seconds: 1), () {
-      print('after timer');
-    });
-    // if (indexdb.length == 1) {
-    //   print('the index is 18');
-    //   Navigator.push(
-    //       context, MaterialPageRoute(builder: (context) => MainPage()));
-    // }
-    // int semaphore = _dbs.getSemaphore();
-    // if (semaphore == 1) {
-    //   Navigator.push(
-    //        context, MaterialPageRoute(builder: (context) => MainPage()));
-    // }
-    // _dbs.getHomeList(context);
-    // print('second time');
-    // print(indexdb);
-    //print(newIndex);
-    //User user = Provider.of<User>(context);
+    Timer(Duration(seconds: 1), () {});
+
     if (_dbs.getIsAdmin()) {
       return MaterialApp(
           debugShowCheckedModeBanner: false,
@@ -614,10 +666,10 @@ class HomePage extends State<MainPage> {
                       return Text("Loading");
                     } else {
                       return ListView.builder(
-                        itemExtent: MediaQuery.of(context).size.height / 3.5,
+                        itemExtent: 250,
                         itemCount: snapshot.data?.docs.length,
-                        itemBuilder: (context, index) =>
-                            _buildHomeItem(context, snapshot.data!.docs[index]),
+                        itemBuilder: (context, index) => _buildHomeItemAdmin(
+                            context, snapshot.data!.docs[index]),
                       );
                     }
                   }),
@@ -672,7 +724,6 @@ class HomePage extends State<MainPage> {
                   // Implementation for saving selection goes here
                 },
               )));
-      //}); return MainPage();
     } else {
       return MaterialApp(
           debugShowCheckedModeBanner: false,
@@ -682,7 +733,6 @@ class HomePage extends State<MainPage> {
                 // ignore: prefer_const_constructors
                 title: InkWell(
                     onTap: () {
-                      //"The Hub @ RELLIS",
                       Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -705,10 +755,10 @@ class HomePage extends State<MainPage> {
                       return Text("Loading");
                     } else {
                       return ListView.builder(
-                        itemExtent: MediaQuery.of(context).size.height / 3.5,
+                        itemExtent: 250,
                         itemCount: snapshot.data?.docs.length,
-                        itemBuilder: (context, index) =>
-                            _buildHomeItem(context, snapshot.data!.docs[index]),
+                        itemBuilder: (context, index) => _buildHomeItemUser(
+                            context, snapshot.data!.docs[index]),
                       );
                     }
                   }),
@@ -733,7 +783,6 @@ class HomePage extends State<MainPage> {
                     icon: Icon(
                       Icons.person,
                       color: Colors.white,
-                      //onPressed: formStart(),
                     ),
                     label: 'Profile',
                   ),
@@ -765,20 +814,4 @@ class HomePage extends State<MainPage> {
               )));
     }
   }
-
-  // String uid = FirebaseAuth.instance.currentUser!.uid;
-  //print(DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid).getIndexDB());
-  //var uid = await _auth.getUID();
-  //Future future = DatabaseService(uid: uid).getIndexDB();
-
-  //List<int> newIndex = DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid).getIndexDB() as List<int>;
-  //List<int> newIndex = DatabaseService(uid: '').getIndexDB() as List<int>;
-  //  List newIndex = await FirebaseFirestore.instance
-  //      .doc(FirebaseAuth.instance.currentUser!.uid)
-  //      .get('EventIDs');
-
-  // Future getIndexDB(DocumentSnapshot document) async {
-  //   FirebaseFirestore.instance.collection('Users').doc(uid).get();
-  //   newIndex = document['GroupIDs'];
-  //}
 }
