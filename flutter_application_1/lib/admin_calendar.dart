@@ -556,7 +556,7 @@ class AdminCalendarState extends State<AdminCalendar> {
     _dbs.getIndexDB().then((value) {});
     _initializeEventColor();
     getDataFromFireStore().then((results) {
-      SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+      SchedulerBinding.instance?.addPostFrameCallback((timeStamp) {
         setState(() {});
       });
     });

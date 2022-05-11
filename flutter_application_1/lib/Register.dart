@@ -1,13 +1,16 @@
 // ignore_for_file: deprecated_member_use
 //import 'package:flutter_application_1/setUp.dart';
 
+
+// This file is the page for registering a user
+
 import 'constants.dart';
 import 'package:flutter/material.dart';
 import 'loading.dart';
 import 'setUp.dart';
 import "authmain.dart";
-//import 'form_start.dart';
 
+//parent class
 class Register extends StatefulWidget {
   final Function toggleView;
   Register({required this.toggleView});
@@ -16,6 +19,7 @@ class Register extends StatefulWidget {
   _RegisterState createState() => _RegisterState();
 }
 
+//_RegisterState class
 class _RegisterState extends State<Register> {
   var focusNode = FocusNode();
   final AuthService _auth = AuthService();
@@ -59,9 +63,11 @@ class _RegisterState extends State<Register> {
                 child: Column(
                   children: <Widget>[
                     const SizedBox(height: 20.0),
+                    //email text field
                     TextFormField(
                       decoration:
                           textInputDecoration.copyWith(hintText: 'Email'),
+                      //validator makes sure that a proper school email is used for account creation
                       validator: (val) => val!.isEmpty || !val.contains('.edu')
                           ? 'Enter an email ending in .edu'
                           : null,
@@ -70,22 +76,24 @@ class _RegisterState extends State<Register> {
                       },
                       onFieldSubmitted: (value) async {
                         _auth.checkIfEmailInUse(email);
+                        //checks to see if the email is already registered
                         if (_formKey.currentState!.validate()) {
                           if (_auth.validEmail() == true) {
                             setState(() {
-                              //loading = true;
                               error = 'The email is already registered';
                             });
                           }
                           setState(() => loading = true);
+                          //after checks, registers email in _auth
                           dynamic result = await _auth
                               .registerWithEmailAndPassword(email, password);
                           indexdb = [18];
+                          //redirect to formStart for school and group selections
                           Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (context) => formStart()));
-
+                          //error message if validator fails
                           if (result == null) {
                             setState(() {
                               loading = false;
@@ -101,10 +109,12 @@ class _RegisterState extends State<Register> {
                       },
                     ),
                     const SizedBox(height: 20.0),
+                    //password text field
                     TextFormField(
                       decoration:
                           textInputDecoration.copyWith(hintText: 'Password'),
                       obscureText: true,
+                      //validator checks for password length
                       validator: (val) => val!.length < 6
                           ? 'Enter a password 6+ chars long'
                           : null,
@@ -116,14 +126,13 @@ class _RegisterState extends State<Register> {
                         if (_formKey.currentState!.validate()) {
                           if (_auth.validEmail() == true) {
                             setState(() {
-                              //loading = true;
                               error = 'The email is already registered';
                             });
                           }
                           setState(() => loading = true);
                           dynamic result = await _auth
                               .registerWithEmailAndPassword(email, password);
-                          indexdb = [18];
+                          indexdb = [18]; //default rellis group
                           Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -144,10 +153,12 @@ class _RegisterState extends State<Register> {
                       },
                     ),
                     const SizedBox(height: 20.0),
+                    //password confirmation text field
                     TextFormField(
                       decoration: textInputDecoration.copyWith(
                           hintText: 'Confirm Password'),
                       obscureText: true,
+                      //validator checks if the password is long enough and if they match
                       validator: (val) {
                         if (val!.isEmpty) {
                           return 'Enter a password 6+ chars long';
@@ -169,7 +180,7 @@ class _RegisterState extends State<Register> {
                           setState(() => loading = true);
                           dynamic result = await _auth
                               .registerWithEmailAndPassword(email, password);
-                          indexdb = [18];
+                          indexdb = [18]; //default rellis group
                           Navigator.push(
                               context,
                               MaterialPageRoute(

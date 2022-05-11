@@ -5,6 +5,7 @@ import 'package:flutter_application_1/setUp.dart';
 import 'authmain.dart';
 import 'loading.dart';
 
+//parent class LoginHub
 class LoginHub extends StatefulWidget {
   final Function toggleView;
   const LoginHub({required this.toggleView});
@@ -13,6 +14,7 @@ class LoginHub extends StatefulWidget {
   _LoginHub createState() => _LoginHub();
 }
 
+//actual _LoginHub page
 class _LoginHub extends State<LoginHub> {
   final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
@@ -49,12 +51,14 @@ class _LoginHub extends State<LoginHub> {
                 child: Column(
                   children: <Widget>[
                     SizedBox(height: 20.0),
+                    //email text field
                     TextFormField(
                       onFieldSubmitted: (value) async {
                         if (_formKey.currentState!.validate()) {
                           setState(() => loading = true);
                           dynamic result = await _auth
                               .signInWithEmailAndPassword(email, password);
+                          //check for successful log in
                           if (result == null) {
                             setState(() {
                               loading = false;
@@ -62,6 +66,7 @@ class _LoginHub extends State<LoginHub> {
                                   'Could not sign in with those credentials';
                             });
                           } else {
+                            //if sign in successful redirect to LoadPage
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -71,6 +76,7 @@ class _LoginHub extends State<LoginHub> {
                       },
                       decoration:
                           textInputDecoration.copyWith(hintText: 'Email'),
+                      //checks to see if email was entered
                       validator: (val) =>
                           val!.isEmpty ? 'Enter an email' : null,
                       onChanged: (val) {
@@ -78,6 +84,7 @@ class _LoginHub extends State<LoginHub> {
                       },
                     ),
                     SizedBox(height: 20.0),
+                    //password text field
                     TextFormField(
                       onFieldSubmitted: (value) async {
                         if (_formKey.currentState!.validate()) {
@@ -91,6 +98,7 @@ class _LoginHub extends State<LoginHub> {
                                   'Could not sign in with those credentials';
                             });
                           } else {
+                            //if log in successful, 
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -101,6 +109,7 @@ class _LoginHub extends State<LoginHub> {
                       obscureText: true,
                       decoration:
                           textInputDecoration.copyWith(hintText: 'Password'),
+                          //validator checks password length
                       validator: (val) => val!.length < 6
                           ? 'Enter a password 6+ chars long'
                           : null,
@@ -117,6 +126,7 @@ class _LoginHub extends State<LoginHub> {
                           style: TextStyle(color: Colors.white),
                         ),
                         onPressed: () async {
+                          //if everything validates, sign in with auth
                           if (_formKey.currentState!.validate()) {
                             setState(() => loading = true);
                             dynamic result = await _auth
@@ -127,7 +137,7 @@ class _LoginHub extends State<LoginHub> {
                                 error =
                                     'Could not sign in with those credentials';
                               });
-                            } else {
+                            } else { //if log in successful redirect to LoadPage
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
