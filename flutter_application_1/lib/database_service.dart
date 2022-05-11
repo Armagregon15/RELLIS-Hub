@@ -7,9 +7,13 @@ import 'setUp.dart';
 
 class DatabaseService {
   final String uid;
+
   bool isAdmin = false;
   int semaphore = 0;
   List<int> thelist = [];
+
+  static List<dynamic> thelist = [];
+
   DatabaseService({required this.uid});
   final AuthService _auth = AuthService();
   final CollectionReference userCollection =
@@ -17,6 +21,7 @@ class DatabaseService {
 
   final CollectionReference eventCollection =
       FirebaseFirestore.instance.collection('Events');
+
   void setTheList(List<int> newList) {
     thelist = newList;
   }
@@ -51,6 +56,10 @@ class DatabaseService {
       print('i did a thing that was bad');
       return [18];
     }
+
+  List<int> getTheList() {
+    return thelist as List<int>;
+
   }
 
   Future<void> updateUserData(groupIDs) async {
@@ -87,6 +96,11 @@ class DatabaseService {
     var thisguy = await userCollection.doc(uid.toString()).get();
 
     Map<String, dynamic> data = thisguy.data() as Map<String, dynamic>;
+
+    //print('groupids');
+    //print(data['GroupIDs'].length);
+    //print('groupids');
+
     thelist = [];
     for (int i = 0; i <= data['GroupIDs'].length - 1; i++) {
       if (!thelist.contains(data['GroupIDs'][i])) {
@@ -94,7 +108,46 @@ class DatabaseService {
       }
     }
 
+
+    //thelist = data['GroupIDs'] as List<int>;
+
+    //print(thisguy.toString());
+    //print(thisguy);
+
+
+
+    print(data['GroupIDs']);
+    thelist = data['GroupIDs'];
+    print('look here');
+    print(thelist);
+    print('look here');
+    print(thisguy.toString());
+    print(thisguy);
+
+    //var docs = thisguy.docs.map(json.decode(json.encode(doc.data())));
+    // for (var snapshot in thisguy.docs) {
+    //   Map<String, dynamic> data = snapshot.get(1);
+    //   List<int> indexdb = data['GroupIDs'] as List<int>;
+    //   List<int> newIndex = [];
+    //   print(indexdb.length);
+    //   for (int i = 0; i < indexdb.length; i++) {
+    //     print(indexdb[i]);
+    //     newIndex.add(indexdb[i]);
+    //   }
+    //   if (newIndex == null) {
+    //     return [18];
+    //   }
+    //   return newIndex;
+    // }
+
+    // semaphore++;
+    // print('semaphore');
+    // print(semaphore);
+
     return thelist;
+
+    return data['GroupIDs'];
+
   }
 
   Stream<UserData> get userData {

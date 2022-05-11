@@ -1,13 +1,25 @@
+//import 'dart:html';
+//import 'dart:html';
+import 'dart:html';
 import 'dart:math';
+//import 'package:flutter_application_1/events.dart';
+
 import 'package:flutter/scheduler.dart';
+import 'package:path/path.dart';
+//import 'package:flutter_application_1/events.dart';
+//import 'package:flutter_application_1/events.dart';
+//import 'dart:collection';
 import 'authmain.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/setUp.dart';
+//import 'package:table_calendar/table_calendar.dart';
 import 'database_service.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:intl/intl.dart';
+
 import 'loading.dart';
+//import 'package:firebase_database/firebase_database.dart';
 
 DatabaseService _dbs = DatabaseService(uid: '');
 final AuthService _auth = AuthService();
@@ -19,29 +31,117 @@ class AdminCalendar extends StatefulWidget {
   AdminCalendarState createState() => AdminCalendarState();
 }
 
+//late Map<DateTime, List<Appointment>> _dataCollection;
+//Map<DateTime, List<_Meeting>> _dataCollection = <DateTime, List<_Meeting>>{};
+
 class AdminCalendarState extends State<AdminCalendar> {
   final List<Color> _colorCollection = <Color>[];
   final fireStoreReference = FirebaseFirestore.instance;
   MeetingDataSource? events;
-  final List<String> options = <String>['Add', 'Delete'];
+  final List<String> options = <String>['Add', 'Delete', 'Update'];
   bool isInitialLoaded = false;
+
+  // Timestamp date = DateFormat("yyyy-dd-mm") as Timestamp;
+
   String error = " ";
+
   String date = "";
   String toDate = "";
   String fromDate = "";
   String eventName = "";
   int? groupID = 0;
-  String? docID = "";
   String groupName = "";
   String location = "";
   String organizer = "";
   CollectionReference oEvents = FirebaseFirestore.instance.collection('Events');
-  int _selectedIndex = 0;
 
-  Future? addUser(String date, String eventName, int? groupID, String toDate,
+
+  @override
+  void initState() {
+    _dbs.getIndexDB().then((value) {
+      // Future.delayed(
+      // const Duration(seconds: 2));
+
+      List<int> indexdb = _dbs.getTheList(value);
+      print('first time');
+      print(indexdb);
+    });
+    _initializeEventColor();
+    getDataFromFireStore().then((results) {
+      SchedulerBinding.instance!.addPostFrameCallback((timeStamp) {
+        setState(() {});
+      });
+    });
+    fireStoreReference
+        .collection("Events")
+        .where("GroupID", whereIn: indexdb)
+        .snapshots()
+        .listen((event) {
+      for (var element in event.docChanges) {
+        // print('element printed');
+
+        //print(element);
+        if (element.type == DocumentChangeType.added) {
+          if (!isInitialLoaded) {
+            return;
+          }
+          final Random random = Random();
+          Events app = Events.fromFireBaseSnapShotData(
+              element, _colorCollection[random.nextInt(9)]);
+          setState(() {
+            events!.appointments!.add(app);
+            events!.notifyListeners(CalendarDataSourceAction.add, [app]);
+          });
+        } else if (element.type == DocumentChangeType.modified) {
+          if (!isInitialLoaded) {
+            return;
+          }
+          final Random random = Random();
+          Events app = Events.fromFireBaseSnapShotData(
+              element, _colorCollection[random.nextInt(9)]);
+          setState(() {
+            int index = events!.appointments!
+                .indexWhere((app) => app.key == element.doc.id);
+
+            Events meeting = events!.appointments![index];
+
+            events!.appointments!.remove(meeting);
+            events!.notifyListeners(CalendarDataSourceAction.remove, [meeting]);
+            events!.appointments!.add(app);
+            events!.notifyListeners(CalendarDataSourceAction.add, [app]);
+          });
+        } else if (element.type == DocumentChangeType.removed) {
+          if (!isInitialLoaded) {
+            return;
+          }
+          setState(() {
+            int index = events!.appointments!
+                .indexWhere((app) => app.key == element.doc.id);
+
+            Events meeting = events!.appointments![index];
+            events!.appointments!.remove(meeting);
+            events!.notifyListeners(CalendarDataSourceAction.remove, [meeting]);
+          });
+        }
+      }
+    });
+
+    super.initState();
+  }
+
+
+  Future addUser(String date, String eventName, int? groupID, String toDate,
       String fromDate) {
+
+    // Call the user's CollectionReference to add a new user
+    var event = FirebaseFirestore.instance
+        .collection('Events')
+        .where('GroupID', isEqualTo: groupID)
+        .get();
+
     // This map needs to be taken out. At the moment it is how events are given a group name when adding a new event to the Events collection. //
     //It needs to be replaced by placing some kind of refrence at line 154 to the documents name //
+
     Map<int, String> groups = {
       0: "Sports",
       1: "TAMUC",
@@ -63,6 +163,7 @@ class AdminCalendarState extends State<AdminCalendar> {
       17: "PVAMU",
       18: "RELLIS"
     };
+
     toDate = date + " " + toDate; // + ":00";
     fromDate = date + " " + fromDate; // + "00";
 
@@ -99,24 +200,49 @@ class AdminCalendarState extends State<AdminCalendar> {
   Future delUser(String eventName, int? groupID) {
     return fireStoreReference
         .collection("Events")
-        .doc(docID)
-        .delete()
-        .then((value) => print("Event Deleted"))
+        .doc()
+        .set({
+          'EventDate': fromTimeStamp,
+          "to": toTimeStamp,
+          //"From": fromDate,
+          'EventName': eventName,
+          'GroupID': groupID,
+          'GroupName': groups[groupID]
+        })
+        .then((value) => print("Event Added"))
         .catchError((error) => print("Failed to add event: $error"));
   }
 
   Future<void> getDataFromFireStore() async {
     await _dbs.getIndexDB().then((value) {
+      // Future.delayed(
+      // const Duration(seconds: 2));
+
       List<int> indexdb = _dbs.getTheList(value);
     });
-    var snapShotsValue = await fireStoreReference.collection("Events").get();
+    var snapShotsValue = await fireStoreReference
+        .collection("Events")
+        //.where("GroupID", whereIn: indexdb)
+        .get();
+    print("Get data from fire store");
+    print(indexdb);
+    print('snap shots value');
+    print(snapShotsValue);
+    print('snap shots value');
     final Random random = Random();
     List<Events> list = snapShotsValue.docs
         .map((e) => Events(
               eventName: e.data()['EventName'],
               from: e.data()['EventDate'].toDate(),
               to: e.data()['to'].toDate(),
+              /*
+              from: DateFormat('yyyy-mm-dd HH:mm:ss')
+                  .parse(e.data()['EventDate']),
+              to: DateFormat('yyyy-mm-dd HH:mm:ss')
+                  .parse(e.data()['EventDate']),
+                  */
               eventDate: e.data()['EventDate'],
+              //eventDateTime: e.data()['EventDate'].toDate(),
               background: _colorCollection[random.nextInt(9)],
               isAllDay: false,
               groupID: e.data()['GroupID'],
@@ -127,10 +253,38 @@ class AdminCalendarState extends State<AdminCalendar> {
         .toList();
     setState(() {
       events = MeetingDataSource(list);
+      print('List in get data');
+      print(indexdb);
+      print(events.toString());
+      //list[0].printDate();
+      // print(snapShotsValue.docs['EventDate'][0]);
+      // print(list[0]['eventDate']);
+      // print([0]['eventDate']);
+      // print(list.eventDate.toString());
+      print('List in get data');
     });
   }
 
-  Widget _buildPopupDialogAdd(BuildContext context) {
+  /*
+appBar: AppBar(
+          title: InkWell(
+
+              onTap: () {
+                //"The Hub @ RELLIS",
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            loading ? Loading() : MainPage()));
+              },
+              child: const Text(
+                "The Hub @ RELLIS",
+                style: TextStyle(fontFamily: "Roboto", fontSize: 30),
+              )),
+          backgroundColor: const Color(0xFF500000),
+        )
+        */
+  Widget _buildPopupDialog(BuildContext context) {
     final addForm = GlobalKey<FormState>();
     // This variable is being used I have no idea why it thinks it's not //
     int? newValue = 0;
@@ -189,6 +343,7 @@ class AdminCalendarState extends State<AdminCalendar> {
                   if (value!.isEmpty) {
                     return "Missing date";
                   }
+                  //if(value !=)
                   return null;
                 },
                 onChanged: (val) {
@@ -203,13 +358,14 @@ class AdminCalendarState extends State<AdminCalendar> {
                   if (value!.isEmpty) {
                     return "Missing start time";
                   }
+
                 },
                 onChanged: (val) {
                   setState(() => fromDate = val);
                 },
                 decoration: const InputDecoration(
-                  hintText: 'h:mm AM',
-                  labelText: 'From (h:mm) (AM/PM)',
+                  hintText: 'hh:mm:ss',
+                  labelText: 'From (hh:mm:ss)',
                 )),
             TextFormField(
                 validator: (value) {
@@ -222,8 +378,8 @@ class AdminCalendarState extends State<AdminCalendar> {
                   setState(() => toDate = val);
                 },
                 decoration: const InputDecoration(
-                  hintText: 'h:mm PM',
-                  labelText: 'To (h:mm) (AM/PM)',
+                  hintText: 'hh:mm:ss',
+                  labelText: 'To (hh:mm:ss)',
                 )),
             StreamBuilder<QuerySnapshot>(
                 stream:
@@ -240,6 +396,7 @@ class AdminCalendarState extends State<AdminCalendar> {
                     onChanged: (value) {
                       setState(() {
                         groupID = value;
+
                         newValue = value;
                       });
                     },
@@ -264,6 +421,7 @@ class AdminCalendarState extends State<AdminCalendar> {
                     ElevatedButton.styleFrom(primary: const Color(0xFF500000)),
                 onPressed: () {
                   if (addForm.currentState!.validate()) {
+
                     var results =
                         addUser(date, eventName, groupID, toDate, fromDate);
 
@@ -350,6 +508,7 @@ class AdminCalendarState extends State<AdminCalendar> {
                 onPressed: () {
                   if (delForm.currentState!.validate()) {
                     delUser(eventName, groupID);
+
                     Navigator.of(context).pop();
                   }
                 },
@@ -373,76 +532,34 @@ class AdminCalendarState extends State<AdminCalendar> {
     );
   }
 
-  submitError() {
-    return AlertDialog(
-      title: const Text('Submission Error'),
-      content: SingleChildScrollView(
-        child: ListBody(
-          children: const <Widget>[
-            Text('Please make sure all fields are filled'),
-          ],
-        ),
-      ),
-      actions: <Widget>[
-        TextButton(
-          child: const Text('Okay'),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-      ],
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    _onItemTapped(int index) async {
-      _selectedIndex = index;
-      if (_selectedIndex == 0) {
-        return loading
-            ? Loading()
-            : Navigator.push(
-                context, MaterialPageRoute(builder: (context) => MainPage()));
-      }
-      if (_selectedIndex == 1) {
-        return loading
-            ? Loading()
-            : Navigator.push(context,
-                MaterialPageRoute(builder: (context) => AdminCalendar()));
-      }
-    }
-
     isInitialLoaded = true;
     return Scaffold(
-      appBar: AppBar(
-          title: InkWell(
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            loading ? Loading() : MainPage()));
-              },
-              child: const Text(
-                "The Hub @ RELLIS",
-                style: TextStyle(fontFamily: "Roboto", fontSize: 30),
-              )),
-          backgroundColor: const Color(0xFF500000),
-          leading: PopupMenuButton<String>(
-            icon: Icon(Icons.add),
-            itemBuilder: (BuildContext context) => options.map((String choice) {
-              return PopupMenuItem<String>(
-                value: choice,
-                child: Text(choice),
-              );
-            }).toList(),
-            onSelected: (String value) {
-              if (value == 'Add') {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) =>
-                      _buildPopupDialogAdd(context),
+        appBar: AppBar(
+            title: InkWell(
+                onTap: () {
+                  //"The Hub @ RELLIS",
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              loading ? Loading() : MainPage()));
+                },
+                child: const Text(
+                  "The Hub @ RELLIS",
+                  style: TextStyle(fontFamily: "Roboto", fontSize: 30),
+                )),
+            backgroundColor: const Color(0xFF500000),
+            leading: PopupMenuButton<String>(
+              icon: Icon(Icons.settings),
+              itemBuilder: (BuildContext context) =>
+                  options.map((String choice) {
+                return PopupMenuItem<String>(
+                  value: choice,
+                  child: Text(choice),
                 );
+
               } else if (value == "Delete") {
                 showDialog(
                   context: context,
@@ -498,6 +615,7 @@ class AdminCalendarState extends State<AdminCalendar> {
         ],
       ),
     );
+
   }
 
   void _initializeEventColor() {
@@ -596,7 +714,7 @@ class MeetingDataSource extends CalendarDataSource {
 
   @override
   String getSubject(int index) {
-    String fullName =
+   String fullName =
         appointments![index].groupName + " - " + appointments![index].eventName;
     return fullName;
   }
@@ -638,7 +756,6 @@ class MeetingDataSource extends CalendarDataSource {
 class Events {
   String? eventName;
   int? groupID;
-  String? docID;
   Timestamp? eventDate;
   String? groupName;
   DateTime? from;
