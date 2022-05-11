@@ -3,6 +3,9 @@ import 'loading.dart';
 import 'loginPage.dart';
 import 'Register.dart';
 
+// This file will authenticate if user is signed in or out.
+// This is very important to keeping users signed in.
+
 bool loading = false;
 
 class Authenticate extends StatefulWidget {

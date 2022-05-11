@@ -88,6 +88,7 @@ class CalendarState extends State<Calendar> {
     super.initState();
   }
 
+//Gets the collection data from databse and specifc to users choices
   Future<void> getDataFromFireStore() async {
     await _dbs.getIndexDB().then((value) {
       List<int> indexdb = _dbs.getTheList(value);
@@ -114,6 +115,7 @@ class CalendarState extends State<Calendar> {
     });
   }
 
+//widget that actually builds calendar mainly at
   @override
   Widget build(BuildContext context) {
     _onItemTapped(int index) async {
@@ -197,6 +199,7 @@ class CalendarState extends State<Calendar> {
     );
   }
 
+  //assigns random color to each event on calendar
   void _initializeEventColor() {
     // ignore: deprecated_member_use
     _colorCollection.add(const Color(0xFF0F8644));
@@ -212,6 +215,8 @@ class CalendarState extends State<Calendar> {
   }
 }
 
+//gets data and will show as a appointment in calendar
+//appointments is used from the syncfusion package.
 class MeetingDataSource extends CalendarDataSource {
   MeetingDataSource(List<Events> source) {
     appointments = source;
@@ -261,6 +266,7 @@ class MeetingDataSource extends CalendarDataSource {
   }
 }
 
+//Creates the event class and all the necessary attributes
 class Events {
   String? eventName;
   int? groupID;
@@ -270,6 +276,8 @@ class Events {
   DateTime? to;
   Color? background;
   bool? isAllDay;
+
+  //Constructor
   Events({
     this.eventName,
     this.groupID,
@@ -280,6 +288,8 @@ class Events {
     this.background,
     this.isAllDay,
   });
+
+  // gets data from database and is assigned to a object of events.
   static Events fromFireBaseSnapShotData(dynamic element, Color color) {
     return Events(
       eventName: element.doc.data()!['EventName'],
