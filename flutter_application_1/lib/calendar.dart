@@ -32,10 +32,12 @@ class CalendarState extends State<Calendar> {
     });
     _initializeEventColor();
     getDataFromFireStore().then((results) {
+      //Adds events to calendar based on timestamp (date)
       SchedulerBinding.instance!.addPostFrameCallback((timeStamp) {
         setState(() {});
       });
     });
+    // will listen in the events collection for any changes
     fireStoreReference
         .collection("Events")
         .where("GroupID", whereIn: indexdb)
@@ -51,6 +53,7 @@ class CalendarState extends State<Calendar> {
               element, _colorCollection[random.nextInt(9)]);
           setState(() {
             events!.appointments!.add(app);
+            //listens for if a event was added to database
             events!.notifyListeners(CalendarDataSourceAction.add, [app]);
           });
         } else if (element.type == DocumentChangeType.modified) {
@@ -77,7 +80,7 @@ class CalendarState extends State<Calendar> {
           setState(() {
             int index = events!.appointments!
                 .indexWhere((app) => app.key == element.doc.id);
-
+            // listens for if a event was removed from database
             Events meeting = events!.appointments![index];
             events!.appointments!.remove(meeting);
             events!.notifyListeners(CalendarDataSourceAction.remove, [meeting]);
@@ -98,6 +101,7 @@ class CalendarState extends State<Calendar> {
         .where("GroupID", whereIn: indexdb)
         .get();
     final Random random = Random();
+    //maps the events and will put data to a list to show on calendar
     List<Events> list = snapShotsValue.docs
         .map((e) => Events(
               eventName: e.data()['EventName'],
